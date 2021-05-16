@@ -8,14 +8,14 @@ const Campaign = function (campaign) {
   this.campaign_url = campaign.campaign_url;
 };
 Campaign.create = (newCampaign, result) => {
-  sql.query("INSERT INTO templates SET ?", newCampaign, (err, res) => {
+  sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
       return;
     }
 
-    console.log("created template: ", {
+    console.log("created campaign: ", {
       id: res.insertId,
       ...newCampaign
     });
@@ -26,7 +26,7 @@ Campaign.create = (newCampaign, result) => {
   });
 };
 Campaign.findById = (campaignId, result) => {
-  sql.query(`SELECT * FROM campaign WHERE id = ${campaignId}`, (err, res) => {
+  sql.query(`SELECT * FROM campaigns WHERE id = ${campaignId}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -34,7 +34,7 @@ Campaign.findById = (campaignId, result) => {
     }
 
     if (res.length) {
-      console.log("found template: ", res[0]);
+      console.log("found campaign: ", res[0]);
       result(null, res[0]);
       return;
     }
@@ -46,7 +46,7 @@ Campaign.findById = (campaignId, result) => {
   });
 };
 Campaign.remove = (id, result) => {
-  sql.query("DELETE FROM templates WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM campaigns WHERE id = ?", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -61,14 +61,14 @@ Campaign.remove = (id, result) => {
       return;
     }
 
-    console.log("deleted template with id: ", id);
+    console.log("deleted campaign with id: ", id);
     result(null, res);
   });
 };
-Campaign.updateById = (id, template, result) => {
+Campaign.updateById = (id, campaign, result) => {
   sql.query(
-    "UPDATE templates SET owner_email = ?, owner_name = ? WHERE id = ?",
-    [template.owner_email, template.owner_name, id],
+    "UPDATE campaigns SET owner_email = ?, owner_name = ? WHERE id = ?",
+    [campaign.owner_email, campaign.owner_name, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -77,33 +77,33 @@ Campaign.updateById = (id, template, result) => {
       }
 
       if (res.affectedRows == 0) {
-        // not found template with the id
+        // not found campaign with the id
         result({
           kind: "not_found"
         }, null);
         return;
       }
 
-      console.log("updated template: ", {
+      console.log("updated campaign: ", {
         id: id,
-        ...template
+        ...campaign
       });
       result(null, {
         id: id,
-        ...template
+        ...campaign
       });
     }
   );
 };
 Campaign.getAll = result => {
-  sql.query("SELECT * FROM templates", async (err, res) => {
+  sql.query("SELECT * FROM campaigns", async (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
       return;
     }
 
-    console.log("templates: ", res);
+    console.log("campaigns: ", res);
     result(null, res);
   });
 };
