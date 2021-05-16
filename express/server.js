@@ -8,6 +8,7 @@ const router = express.Router()
 var cors = require('cors')
 // Controller
 const campaigns = require("../App/Controllers/campaign.controller.js");
+const companies = require("../App/Controllers/companies.controller.js");
 // App uses
 app.use(cors({
   origin: 'https://localhost:3000'
@@ -20,6 +21,7 @@ router.get("/", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>")
   res.end()
 })
+// CAMPAIGNS
 router.get("/campaigns", (req, res) => {
   console.log("Testing /campaigns");
   campaigns.findAll(req, res);
@@ -36,6 +38,10 @@ router.put('/update-campaign/:campaignId', (req, res) => {
 });
 router.delete('/delete-campaign/:campaignId', (req, res) => {
   campaigns.delete(req, res);
+});
+// COMPANIES
+router.post('/create-company', (req, res) => {
+  companies.create(req, res);
 });
 module.exports = app
 module.exports.handler = serverless(app)
