@@ -7,7 +7,7 @@ const bodyParser = require("body-parser")
 const router = express.Router()
 var cors = require('cors')
 // Controller
-const templates = require("../App/Controllers/template.controller.js");
+const campaigns = require("../App/Controllers/campaign.controller.js");
 // App uses
 app.use(cors({
   origin: 'https://localhost:3000'
@@ -20,22 +20,22 @@ router.get("/", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>")
   res.end()
 })
-router.get("/templates", (req, res) => {
-  console.log("Testing /templates");
-  templates.findAll(req, res);
+router.get("/campaigns", (req, res) => {
+  console.log("Testing /campaigns");
+  campaigns.findAll(req, res);
 })
-router.get("/templates/:templateId", (req, res) => {
-  console.log("Testing /templates");
-  templates.findOne(req, res);
+router.get("/campaigns/:campaignId", (req, res) => {
+  console.log("Testing individual campaign");
+  campaigns.findOne(req, res);
 })
-router.post('/create-template', (req, res) => {
-  templates.create(req, res);
+router.post('/create-campaign', (req, res) => {
+  campaigns.create(req, res);
 });
-router.put('/update-template/:templateId', (req, res) => {
-  templates.update(req, res);
+router.put('/update-campaign/:campaignId', (req, res) => {
+  campaigns.update(req, res);
 });
-router.delete('/delete-template/:templateId', (req, res) => {
-  templates.delete(req, res);
+router.delete('/delete-campaign/:campaignId', (req, res) => {
+  campaigns.delete(req, res);
 });
 module.exports = app
 module.exports.handler = serverless(app)

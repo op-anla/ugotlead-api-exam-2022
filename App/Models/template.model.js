@@ -1,12 +1,14 @@
 const sql = require("./db.js");
 
 // constructor
-const Template = function (template) {
-  this.owner_email = template.owner_email;
-  this.owner_name = template.owner_name;
+const Campaign = function (campaign) {
+  this.company_id = campaign.company_id;
+  this.campaign_active = campaign.campaign_active;
+  this.campaign_name = campaign.campaign_name;
+  this.campaign_url = campaign.campaign_url;
 };
-Template.create = (newTemplate, result) => {
-  sql.query("INSERT INTO templates SET ?", newTemplate, (err, res) => {
+Campaign.create = (newCampaign, result) => {
+  sql.query("INSERT INTO templates SET ?", newCampaign, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -15,16 +17,16 @@ Template.create = (newTemplate, result) => {
 
     console.log("created template: ", {
       id: res.insertId,
-      ...newTemplate
+      ...newCampaign
     });
     result(null, {
       id: res.insertId,
-      ...newTemplate
+      ...newCampaign
     });
   });
 };
-Template.findById = (templateId, result) => {
-  sql.query(`SELECT * FROM templates WHERE id = ${templateId}`, (err, res) => {
+Campaign.findById = (campaignId, result) => {
+  sql.query(`SELECT * FROM campaign WHERE id = ${campaignId}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -43,7 +45,7 @@ Template.findById = (templateId, result) => {
     }, null);
   });
 };
-Template.remove = (id, result) => {
+Campaign.remove = (id, result) => {
   sql.query("DELETE FROM templates WHERE id = ?", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
@@ -63,7 +65,7 @@ Template.remove = (id, result) => {
     result(null, res);
   });
 };
-Template.updateById = (id, template, result) => {
+Campaign.updateById = (id, template, result) => {
   sql.query(
     "UPDATE templates SET owner_email = ?, owner_name = ? WHERE id = ?",
     [template.owner_email, template.owner_name, id],
@@ -93,7 +95,7 @@ Template.updateById = (id, template, result) => {
     }
   );
 };
-Template.getAll = result => {
+Campaign.getAll = result => {
   sql.query("SELECT * FROM templates", async (err, res) => {
     if (err) {
       console.log("error: ", err);

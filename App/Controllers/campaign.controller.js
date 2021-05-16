@@ -1,8 +1,8 @@
-const Template = require("../Models/template.model");
+const Campaign = require("../Models/campaign.model");
 
-// Create and Save a new Template
+// Create and Save a new campaign
 exports.create = (req, res) => {
-  console.log("create template: ", req.body)
+  console.log("create campaign: ", req.body)
   // Validate request
   if (!req.body) {
     res.status(400).send({
@@ -11,13 +11,15 @@ exports.create = (req, res) => {
   }
 
   // Create a Customer
-  const template = new Template({
-    owner_email: req.body.owner_email,
-    owner_name: req.body.owner_name
+  const campaign = new Campaign({
+    company_id = req.body.company_id,
+    campaign_active = req.body.campaign_active,
+    campaign_name = req.body.campaign_name,
+    campaign_url = req.body.campaign_url
   });
 
   // Save Customer in the database
-  Template.create(template, (err, data) => {
+  Campaign.create(campaign, (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while creating the Customer."
@@ -27,10 +29,10 @@ exports.create = (req, res) => {
 
 };
 
-// Retrieve all Templates from the database.
+// Retrieve all campaigns from the database.
 exports.findAll = (req, res) => {
   console.log("find all");
-  Template.getAll((err, data) => {
+  Campaign.getAll((err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving customers."
@@ -38,23 +40,23 @@ exports.findAll = (req, res) => {
     else res.send(data);
   });
 };
-// Find one specific Template
+// Find one specific campaign
 exports.findOne = (req, res) => {
-  Template.findById(req.params.templateId, (err, data) => {
+  Campaign.findById(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Template with id ${req.params.templateId}.`
+          message: `Not found campaign with id ${req.params.campaignId}.`
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving Template with id " + req.params.templateId
+          message: "Error retrieving campaign with id " + req.params.campaignId
         });
       }
     } else res.send(data);
   });
 };
-// Update a template
+// Update a campaign
 exports.update = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -63,8 +65,8 @@ exports.update = (req, res) => {
     });
   }
 
-  Template.updateById(
-    req.params.templateId,
+  Campaign.updateById(
+    req.params.campaignId,
     new Template(req.body),
     (err, data) => {
       if (err) {
@@ -83,7 +85,7 @@ exports.update = (req, res) => {
 };
 // Delete template
 exports.delete = (req, res) => {
-  Template.remove(req.params.templateId, (err, data) => {
+  Campaign.remove(req.params.templateId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
