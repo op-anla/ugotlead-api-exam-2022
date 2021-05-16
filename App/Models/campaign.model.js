@@ -108,4 +108,4 @@ Campaign.getAll = result => {
   });
 };
 
-module.exports = Template;
+module.exports = Campaign;

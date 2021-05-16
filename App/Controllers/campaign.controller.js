@@ -12,10 +12,10 @@ exports.create = (req, res) => {
 
   // Create a Customer
   const campaign = new Campaign({
-    company_id = req.body.company_id,
-    campaign_active = req.body.campaign_active,
-    campaign_name = req.body.campaign_name,
-    campaign_url = req.body.campaign_url
+    company_id: req.body.company_id,
+    campaign_active: req.body.campaign_active,
+    campaign_name: req.body.campaign_name,
+    campaign_url: req.body.campaign_url
   });
 
   // Save Customer in the database
