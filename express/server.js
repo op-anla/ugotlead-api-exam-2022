@@ -11,7 +11,7 @@ const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 // App uses
 app.use(cors({
-  origin: 'https://localhost:3000'
+  origin: 'http://localhost:3000'
 }))
 app.use(bodyParser.json())
 app.use("/.netlify/functions/server", router) // path must route to lambda
