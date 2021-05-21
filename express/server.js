@@ -43,5 +43,6 @@ router.delete('/delete-campaign/:campaignId', (req, res) => {
 router.post('/create-company', (req, res) => {
   companies.create(req, res);
 });
+
 module.exports = app
 module.exports.handler = serverless(app)
