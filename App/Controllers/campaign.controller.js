@@ -67,7 +67,7 @@ exports.update = (req, res) => {
 
   Campaign.updateById(
     req.params.campaignId,
-    new Template(req.body),
+    new Campaign(req.body),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
