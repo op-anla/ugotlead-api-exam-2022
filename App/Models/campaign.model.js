@@ -26,7 +26,7 @@ Campaign.create = (newCampaign, result) => {
   });
 };
 Campaign.findById = (campaignId, result) => {
-  sql.query(`SELECT * FROM campaigns WHERE id = ${campaignId}`, (err, res) => {
+  sql.query(`SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
