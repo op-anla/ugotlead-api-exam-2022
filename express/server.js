@@ -53,8 +53,11 @@ These endpoints are required for the process to work
 router.post('/auth/login', (req, res) => {
   user.create(req, res)
 })
-router.get('/auth/user/:userId', (req, res) => {
+router.get('/user/:userId', (req, res) => {
   user.getById(req, res)
+})
+router.put('/user/:userId', (req, res) => {
+  user.putById(req, res)
 })
 
 module.exports = app

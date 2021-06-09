@@ -72,11 +72,11 @@ exports.update = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found Template with id ${req.params.templateId}.`
+            message: `Not found Template with id ${req.params.campaignId}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating Template with id " + req.params.templateId
+            message: "Error updating Template with id " + req.params.campaignId
           });
         }
       } else res.send(data);
@@ -85,15 +85,15 @@ exports.update = (req, res) => {
 };
 // Delete template
 exports.delete = (req, res) => {
-  Campaign.remove(req.params.templateId, (err, data) => {
+  Campaign.remove(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Template with id ${req.params.templateId}.`
+          message: `Not found Template with id ${req.params.campaignId}.`
         });
       } else {
         res.status(500).send({
-          message: "Could not delete Template with id " + req.params.templateId
+          message: "Could not delete Template with id " + req.params.campaignId
         });
       }
     } else res.send({

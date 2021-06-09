@@ -51,4 +51,34 @@ User.findById = (userId, result) => {
     }, null);
   });
 };
+User.updateById = (id, user, result) => {
+  sql.query(
+    "UPDATE user SET username = ? WHERE iduser = ?",
+    [user.username, id],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found user with the id
+        result({
+          kind: "not_found"
+        }, null);
+        return;
+      }
+
+      console.log("updated user: ", {
+        id: id,
+        ...user
+      });
+      result(null, {
+        id: id,
+        ...user
+      });
+    }
+  );
+};
 module.exports = User;
