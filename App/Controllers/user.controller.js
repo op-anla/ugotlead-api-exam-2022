@@ -1,6 +1,7 @@
 const User = require("../Models/user.model");
 const crypto = require('crypto');
-
+const jwtSecret = process.env.jwt_secret,
+  jwt = require('jsonwebtoken');
 // Create and Save a new user
 exports.create = (req, res) => {
   console.log("create user: ", req.body)
@@ -49,6 +50,33 @@ exports.getById = (req, res) => {
       } else {
         res.status(500).send({
           message: "Error retrieving user with id " + req.params.userId
+        });
+      }
+    } else res.send(data);
+  });
+};
+// Find one specific user by token
+exports.getByToken = (req, res) => {
+  console.log(req.headers['authorization'])
+  let token = req.headers['authorization'];
+  let authorization = token.split(' ')[1],
+    decoded;
+  try {
+    decoded = jwt.verify(authorization, jwtSecret)
+  } catch (e) {
+    return res.status(401).send('unauthorized')
+  }
+  var userId = decoded.userId;
+
+  User.findById(userId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found user with id ${userId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving user with id " + userId
         });
       }
     } else res.send(data);

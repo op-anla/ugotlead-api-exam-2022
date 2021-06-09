@@ -6,7 +6,7 @@ exports.hasAuthValidFields = (req, res, next) => {
 
   if (req.body) {
     if (!req.body.username) {
-      errors.push('Missing email field');
+      errors.push('Missing username field');
     }
     if (!req.body.password) {
       errors.push('Missing password field');
@@ -21,7 +21,7 @@ exports.hasAuthValidFields = (req, res, next) => {
     }
   } else {
     return res.status(400).send({
-      errors: 'Missing email and password fields'
+      errors: 'Missing username and password fields'
     });
   }
 };

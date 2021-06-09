@@ -23,6 +23,24 @@ User.create = (newUser, result) => {
     });
   });
 };
+User.findByToken = (token) => {
+  return new Promise((resolve, reject) => {
+    sql.query(`SELECT * FROM user WHERE token = "${token}"`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        return reject(err);
+      }
+      if (res.length) {
+        //   result(null, validatedUser);
+        return resolve(res[0]);
+      }
+
+
+    });
+  });
+
+
+}
 User.findByUsername = (username) => {
   return new Promise((resolve, reject) => {
     sql.query(`SELECT * FROM user WHERE username = "${username}"`, (err, res) => {

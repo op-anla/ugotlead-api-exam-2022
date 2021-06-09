@@ -60,6 +60,10 @@ router.get('/user/:userId', [
   ValidationMiddleware.validJWTNeeded,
   user.getById
 ])
+router.get('/user', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getByToken
+])
 router.put('/user/:userId', [
   ValidationMiddleware.validJWTNeeded,
   user.putById
