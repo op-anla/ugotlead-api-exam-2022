@@ -23,6 +23,25 @@ User.create = (newUser, result) => {
     });
   });
 };
+User.findByUsername = (username) => {
+  return new Promise((resolve, reject) => {
+    sql.query(`SELECT * FROM user WHERE username = "${username}"`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        return reject(err);
+      }
+      if (res.length) {
+        //   result(null, validatedUser);
+        return resolve(res[0]);
+      }
+
+
+    });
+  });
+
+
+}
+
 User.findById = (userId, result) => {
   sql.query(`SELECT * FROM user WHERE iduser = ${userId}`, (err, res) => {
     if (err) {
@@ -53,8 +72,8 @@ User.findById = (userId, result) => {
 };
 User.updateById = (id, user, result) => {
   sql.query(
-    "UPDATE user SET username = ? WHERE iduser = ?",
-    [user.username, id],
+    "UPDATE user SET username = ?,password = ? WHERE iduser = ?",
+    [user.username, user.password, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -69,16 +88,56 @@ User.updateById = (id, user, result) => {
         }, null);
         return;
       }
-
+      /* 
+      Here we validate the response the client will receive.
+      We will remove the password from the response
+      */
+      const validatedUser = {
+        username: user.username
+      }
       console.log("updated user: ", {
         id: id,
-        ...user
+        ...validatedUser
       });
       result(null, {
         id: id,
-        ...user
+        ...validatedUser
       });
     }
   );
+};
+// Get all
+User.getAll = result => {
+  sql.query("SELECT * FROM user", async (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("users: ", res);
+    result(null, res);
+  });
+};
+// Delete user
+User.remove = (id, result) => {
+  sql.query("DELETE FROM user WHERE iduser = ?", id, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found User with the id
+      result({
+        kind: "not_found"
+      }, null);
+      return;
+    }
+
+    console.log("deleted user with id: ", id);
+    result(null, res);
+  });
 };
 module.exports = User;

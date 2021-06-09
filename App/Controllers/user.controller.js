@@ -18,6 +18,8 @@ exports.create = (req, res) => {
     .update(req.body.password)
     .digest("base64");
   req.body.password = salt + "$" + hash;
+  console.log(hash);
+  console.log(req.body.password)
   // Create a USER
 
   const user = new User({
@@ -60,7 +62,14 @@ exports.putById = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-
+  /* 
+  Here we hash the new password if that is changed
+  */
+  if (req.body.password) {
+    let salt = crypto.randomBytes(16).toString('base64');
+    let hash = crypto.createHmac('sha512', salt).update(req.body.password).digest("base64");
+    req.body.password = salt + "$" + hash;
+  }
   User.updateById(
     req.params.userId,
     new User(req.body),
@@ -78,4 +87,34 @@ exports.putById = (req, res) => {
       } else res.send(data);
     }
   );
+};
+
+// Retrieve all users from the database.
+exports.getAll = (req, res) => {
+  console.log("find all");
+  User.getAll((err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving users."
+      });
+    else res.send(data);
+  });
+};
+// Delete user
+exports.deleteUser = (req, res) => {
+  User.remove(req.params.userId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found User with id ${req.params.userId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete User with id " + req.params.userId
+        });
+      }
+    } else res.send({
+      message: `User was deleted successfully!`
+    });
+  });
 };

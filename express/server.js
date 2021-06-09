@@ -10,6 +10,9 @@ var cors = require('cors')
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const user = require("../App/Controllers/user.controller.js");
+const AuthorizationController = require("../App/Controllers/authorization.controller.js");
+// Middleware
+const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
 // App uses
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -47,10 +50,9 @@ router.post('/create-company', (req, res) => {
 // Users
 /* 
 USERS:
-This is a JWT based login method currently in place. 
-These endpoints are required for the process to work
+These are all the user endpoints
 */
-router.post('/auth/login', (req, res) => {
+router.post('/user', (req, res) => {
   user.create(req, res)
 })
 router.get('/user/:userId', (req, res) => {
@@ -59,6 +61,22 @@ router.get('/user/:userId', (req, res) => {
 router.put('/user/:userId', (req, res) => {
   user.putById(req, res)
 })
+router.get('/users', (req, res) => {
+  user.getAll(req, res);
+})
+router.delete('/user/:userId', (req, res) => {
+  user.deleteUser(req, res)
+})
+/* 
+Auth endpoints:
+We use a JWT based login system - These endpoints are required for the app to work
+*/
+router.post('/auth', [
+  VerifyUserMiddleware.hasAuthValidFields,
+  VerifyUserMiddleware.isPasswordAndUserMatch,
+  AuthorizationController.login
+
+])
 
 module.exports = app
 module.exports.handler = serverless(app)
