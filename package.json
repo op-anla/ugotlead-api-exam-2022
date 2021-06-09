@@ -1,7 +1,7 @@
 {
-  "name": "netlify-express",
+  "name": "UGOTLEAD-Express-API",
   "version": "0.0.1",
-  "description": "Example of how to deploy a Express.js Netlify app.",
+  "description": "This is an Express Server created for UGOTLEAD Product",
   "main": "functions/server.js",
   "scripts": {
     "build": "node ./create-env.js && netlify-lambda build express --config ./webpack.functions.js",
@@ -12,7 +12,7 @@
     "netlify",
     "express.js"
   ],
-  "author": "neverendingqs",
+  "author": "AndreasLagoni",
   "license": "Apache-2.0",
   "devDependencies": {
     "body-parser": "^1.19.0",
