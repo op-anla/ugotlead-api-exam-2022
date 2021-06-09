@@ -23,4 +23,32 @@ User.create = (newUser, result) => {
     });
   });
 };
+User.findById = (userId, result) => {
+  sql.query(`SELECT * FROM user WHERE iduser = ${userId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log(res[0].password);
+    /* 
+    Here we validate the response so the client will never get the hashed password. 
+    Even if the password is hashed they should NEVER be able to see it.
+    */
+    const validatedUser = {
+      iduser: res[0].iduser,
+      username: res[0].username
+    }
+    if (res.length) {
+      console.log("found user: ", validatedUser);
+      result(null, validatedUser);
+      return;
+    }
+
+    // not found User with the id
+    result({
+      kind: "not_found"
+    }, null);
+  });
+};
 module.exports = User;

@@ -53,7 +53,9 @@ These endpoints are required for the process to work
 router.post('/auth/login', (req, res) => {
   user.create(req, res)
 })
-
+router.get('/auth/user/:userId', (req, res) => {
+  user.getById(req, res)
+})
 
 module.exports = app
 module.exports.handler = serverless(app)
