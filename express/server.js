@@ -9,6 +9,7 @@ var cors = require('cors')
 // Controller
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
+const user = require("../App/Controllers/user.controller.js");
 // App uses
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -43,6 +44,16 @@ router.delete('/delete-campaign/:campaignId', (req, res) => {
 router.post('/create-company', (req, res) => {
   companies.create(req, res);
 });
+// Users
+/* 
+USERS:
+This is a JWT based login method currently in place. 
+These endpoints are required for the process to work
+*/
+router.post('/auth/login', (req, res) => {
+  user.create(req, res)
+})
+
 
 module.exports = app
 module.exports.handler = serverless(app)
