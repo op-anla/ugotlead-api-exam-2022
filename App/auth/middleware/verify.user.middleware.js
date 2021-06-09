@@ -32,16 +32,10 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
       if (!user) {
         res.status(404).send({});
       } else {
-        console.log(user);
         let passwordFields = user.password.split('$');
-        console.log("fields", passwordFields)
         let salt = passwordFields[0];
-        console.log("salt", salt)
-        console.log("body", req.body)
         let hash = crypto.createHmac('sha512', salt).update(req.body.password).digest("base64");
 
-
-        console.log("hash", hash)
         if (hash === passwordFields[1]) {
           console.log("SUCCESS")
           req.body = {

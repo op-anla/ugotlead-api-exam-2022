@@ -23,24 +23,6 @@ User.create = (newUser, result) => {
     });
   });
 };
-User.findByToken = (token) => {
-  return new Promise((resolve, reject) => {
-    sql.query(`SELECT * FROM user WHERE token = "${token}"`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        return reject(err);
-      }
-      if (res.length) {
-        //   result(null, validatedUser);
-        return resolve(res[0]);
-      }
-
-
-    });
-  });
-
-
-}
 User.findByUsername = (username) => {
   return new Promise((resolve, reject) => {
     sql.query(`SELECT * FROM user WHERE username = "${username}"`, (err, res) => {
@@ -73,8 +55,11 @@ User.findById = (userId, result) => {
     Even if the password is hashed they should NEVER be able to see it.
     */
     const validatedUser = {
-      iduser: res[0].iduser,
-      username: res[0].username
+      user: {
+
+        iduser: res[0].iduser,
+        username: res[0].username
+      }
     }
     if (res.length) {
       console.log("found user: ", validatedUser);

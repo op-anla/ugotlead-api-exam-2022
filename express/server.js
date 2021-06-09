@@ -28,21 +28,26 @@ router.get("/", (req, res) => {
 })
 // CAMPAIGNS
 router.get("/campaigns", (req, res) => {
-  console.log("Testing /campaigns");
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /campaigns");
   campaigns.findAll(req, res);
 })
 router.get("/campaigns/:campaignId", (req, res) => {
-  console.log("Testing individual campaign");
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing individual campaign");
   campaigns.findOne(req, res);
 })
 router.post('/create-campaign', (req, res) => {
-  campaigns.create(req, res);
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.create(req, res);
 });
 router.put('/update-campaign/:campaignId', (req, res) => {
-  campaigns.update(req, res);
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.update(req, res);
 });
 router.delete('/delete-campaign/:campaignId', (req, res) => {
-  campaigns.delete(req, res);
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.delete(req, res);
 });
 // COMPANIES
 router.post('/create-company', (req, res) => {

@@ -2,7 +2,6 @@ const Company = require("../Models/company.model");
 
 // Create and Save a new company
 exports.create = (req, res) => {
-  console.log("create company: ", req.body)
   // Validate request
   if (!req.body) {
     res.status(400).send({

@@ -102,8 +102,6 @@ Campaign.getAll = result => {
       result(null, err);
       return;
     }
-
-    console.log("campaigns: ", res);
     result(null, res);
   });
 };
