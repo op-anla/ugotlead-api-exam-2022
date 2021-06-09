@@ -10,9 +10,10 @@ var cors = require('cors')
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const user = require("../App/Controllers/user.controller.js");
-const AuthorizationController = require("../App/Controllers/authorization.controller.js");
+const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
 const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
+const ValidationMiddleware = require('../App/common/middleware/auth.validation.middleware')
 // App uses
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -52,21 +53,25 @@ router.post('/create-company', (req, res) => {
 USERS:
 These are all the user endpoints
 */
-router.post('/user', (req, res) => {
-  user.create(req, res)
-})
-router.get('/user/:userId', (req, res) => {
-  user.getById(req, res)
-})
-router.put('/user/:userId', (req, res) => {
-  user.putById(req, res)
-})
-router.get('/users', (req, res) => {
-  user.getAll(req, res);
-})
-router.delete('/user/:userId', (req, res) => {
-  user.deleteUser(req, res)
-})
+router.post('/user', [
+  user.create
+])
+router.get('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getById
+])
+router.put('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.putById
+])
+router.get('/users', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getAll
+])
+router.delete('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.deleteUser
+])
 /* 
 Auth endpoints:
 We use a JWT based login system - These endpoints are required for the app to work
