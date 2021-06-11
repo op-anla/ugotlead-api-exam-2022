@@ -2,7 +2,6 @@ const Campaign = require("../Models/campaign.model");
 
 // Create and Save a new campaign
 exports.create = (req, res) => {
-  console.log("create campaign: ", req.body)
   // Validate request
   if (!req.body) {
     res.status(400).send({
@@ -22,7 +21,7 @@ exports.create = (req, res) => {
   Campaign.create(campaign, (err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Customer."
+        message: err.message || "Some error occurred while creating the campaign."
       });
     else res.send(data);
   });
@@ -35,7 +34,7 @@ exports.findAll = (req, res) => {
   Campaign.getAll((err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving customers."
+        message: err.message || "Some error occurred while retrieving campaigns."
       });
     else res.send(data);
   });
@@ -72,11 +71,11 @@ exports.update = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found Template with id ${req.params.campaignId}.`
+            message: `Not found campaign with id ${req.params.campaignId}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating Template with id " + req.params.campaignId
+            message: "Error updating campaign with id " + req.params.campaignId
           });
         }
       } else res.send(data);
@@ -89,15 +88,15 @@ exports.delete = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Template with id ${req.params.campaignId}.`
+          message: `Not found campaign with id ${req.params.campaignId}.`
         });
       } else {
         res.status(500).send({
-          message: "Could not delete Template with id " + req.params.campaignId
+          message: "Could not delete campaign with id " + req.params.campaignId
         });
       }
     } else res.send({
-      message: `Template was deleted successfully!`
+      message: `Campaign was deleted successfully!`
     });
   });
 };
