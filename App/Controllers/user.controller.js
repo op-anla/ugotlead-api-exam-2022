@@ -4,7 +4,6 @@ const jwtSecret = process.env.jwt_secret,
   jwt = require('jsonwebtoken');
 // Create and Save a new user
 exports.create = (req, res) => {
-  console.log("create user: ", req.body)
   // Validate request
   if (!req.body) {
     res.status(400).send({
@@ -19,8 +18,6 @@ exports.create = (req, res) => {
     .update(req.body.password)
     .digest("base64");
   req.body.password = salt + "$" + hash;
-  console.log(hash);
-  console.log(req.body.password)
   // Create a USER
 
   const user = new User({
@@ -119,7 +116,6 @@ exports.putById = (req, res) => {
 
 // Retrieve all users from the database.
 exports.getAll = (req, res) => {
-  console.log("find all");
   User.getAll((err, data) => {
     if (err)
       res.status(500).send({
