@@ -15,6 +15,7 @@ exports.validJWTNeeded = (req, res, next) => {
         return next();
       }
     } catch (err) {
+      console.log("🚀 ~ file: auth.validation.middleware.js ~ line 18 ~ err", err)
       return res.status(403).send();
     }
   } else {

@@ -17,7 +17,8 @@ exports.login = (req, res) => {
       userid: req.body.userId
     });
   } catch (err) {
-    console.log("error", err)
+
+    console.log("🚀 ~ file: authorization.controller.js ~ line 22 ~ err", err)
     res.status(500).send({
       errors: err
     });

@@ -26,4 +26,17 @@ exports.create = (req, res) => {
     else res.send(data);
   });
 
+
+
+};
+
+exports.findAll = (req, res) => {
+  console.log("find all companies");
+  Company.getAll((err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving campaigns."
+      });
+    else res.send(data);
+  });
 };

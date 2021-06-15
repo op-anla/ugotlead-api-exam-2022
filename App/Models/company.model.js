@@ -10,7 +10,7 @@ const Company = function (company) {
 Company.create = (newCompany, result) => {
   sql.query("INSERT INTO companies SET ?", newCompany, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: company.model.js ~ line 13 ~ sql.query ~ err", err)
       result(err, null);
       return;
     }
@@ -23,6 +23,16 @@ Company.create = (newCompany, result) => {
       id: res.insertId,
       ...newCompany
     });
+  });
+};
+Company.getAll = result => {
+  sql.query("SELECT * FROM companies", async (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err", err)
+      result(null, err);
+      return;
+    }
+    result(null, res);
   });
 };
 module.exports = Company;

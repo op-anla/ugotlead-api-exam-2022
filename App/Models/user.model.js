@@ -8,7 +8,7 @@ const User = function (user) {
 User.create = (newUser, result) => {
   sql.query("INSERT INTO user SET ?", newUser, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: user.model.js ~ line 11 ~ sql.query ~ err", err)
       result(err, null);
       return;
     }
@@ -27,7 +27,7 @@ User.findByUsername = (username) => {
   return new Promise((resolve, reject) => {
     sql.query(`SELECT * FROM user WHERE username = "${username}"`, (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.log("🚀 ~ file: user.model.js ~ line 30 ~ sql.query ~ err", err)
         return reject(err);
       }
       if (res.length) {
@@ -45,7 +45,7 @@ User.findByUsername = (username) => {
 User.findById = (userId, result) => {
   sql.query(`SELECT * FROM user WHERE iduser = ${userId}`, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: user.model.js ~ line 48 ~ sql.query ~ err", err)
       result(err, null);
       return;
     }
@@ -79,7 +79,7 @@ User.updateById = (id, user, result) => {
     [user.username, user.password, id],
     (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.log("🚀 ~ file: user.model.js ~ line 82 ~ err", err)
         result(null, err);
         return;
       }
@@ -113,7 +113,7 @@ User.updateById = (id, user, result) => {
 User.getAll = result => {
   sql.query("SELECT * FROM user", async (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: user.model.js ~ line 116 ~ sql.query ~ err", err)
       result(null, err);
       return;
     }
@@ -126,7 +126,7 @@ User.getAll = result => {
 User.remove = (id, result) => {
   sql.query("DELETE FROM user WHERE iduser = ?", id, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: user.model.js ~ line 129 ~ sql.query ~ err", err)
       result(null, err);
       return;
     }

@@ -51,8 +51,14 @@ router.delete('/delete-campaign/:campaignId', (req, res) => {
 });
 // COMPANIES
 router.post('/create-company', (req, res) => {
-  companies.create(req, res);
+  ValidationMiddleware.validJWTNeeded,
+    companies.create(req, res);
 });
+router.get("/companies", (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /companies");
+  companies.findAll(req, res);
+})
 // Users
 /* 
 USERS:

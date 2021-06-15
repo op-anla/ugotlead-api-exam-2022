@@ -10,7 +10,7 @@ const Campaign = function (campaign) {
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err", err)
       result(err, null);
       return;
     }
@@ -28,7 +28,7 @@ Campaign.create = (newCampaign, result) => {
 Campaign.findById = (campaignId, result) => {
   sql.query(`SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err", err)
       result(err, null);
       return;
     }
@@ -48,7 +48,7 @@ Campaign.findById = (campaignId, result) => {
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE id = ?", id, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err", err)
       result(null, err);
       return;
     }
@@ -71,7 +71,7 @@ Campaign.updateById = (id, campaign, result) => {
     [campaign.owner_email, campaign.owner_name, id],
     (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err)
         result(null, err);
         return;
       }
@@ -98,7 +98,7 @@ Campaign.updateById = (id, campaign, result) => {
 Campaign.getAll = result => {
   sql.query("SELECT * FROM campaigns", async (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.log("🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err", err)
       result(null, err);
       return;
     }
