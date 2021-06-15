@@ -6,6 +6,11 @@ const app = express()
 const bodyParser = require("body-parser")
 const router = express.Router()
 var cors = require('cors')
+const mailchimp = require("@mailchimp/mailchimp_marketing");
+const {
+  URLSearchParams
+} = require("url");
+const querystring = require("querystring");
 // Controller
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
@@ -16,11 +21,16 @@ const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middlew
 const ValidationMiddleware = require('../App/common/middleware/auth.validation.middleware')
 // App uses
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: '*'
 }))
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(bodyParser.json())
 app.use("/.netlify/functions/server", router) // path must route to lambda
-app.use("/", router)
+app.use("/", router);
 // Router
 router.get("/", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>")
@@ -107,8 +117,6 @@ const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
 const BASE_URL = "http://localhost:3005";
 const OAUTH_CALLBACK = `${BASE_URL}/oauth/mailchimp/callback`;
 router.get('/auth/mailchimp', (req, res) => {
-
-
   res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
       response_type: "code",
       client_id: MAILCHIMP_CLIENT_ID,
