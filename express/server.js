@@ -90,6 +90,7 @@ router.delete('/user/:userId', [
 /* 
 Auth endpoints:
 We use a JWT based login system - These endpoints are required for the app to work
+You will also notice we have endpoints for Mailchimp. We use this endpoint to create the Oauth2 integration
 */
 router.post('/auth', [
   VerifyUserMiddleware.hasAuthValidFields,
@@ -97,6 +98,23 @@ router.post('/auth', [
   AuthorizationController.login
 
 ])
+/* 
+MAILCHIMP
+*/
+// You should always store your client id and secret in environment variables for security — the exception: sample code.
+const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
+const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
+const BASE_URL = "http://localhost:3005";
+const OAUTH_CALLBACK = `${BASE_URL}/oauth/mailchimp/callback`;
+router.get('/auth/mailchimp', (req, res) => {
+
+
+  res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+      response_type: "code",
+      client_id: MAILCHIMP_CLIENT_ID,
+      redirect_uri: OAUTH_CALLBACK
+    })}`)
+})
 
 module.exports = app
 module.exports.handler = serverless(app)
