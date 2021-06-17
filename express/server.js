@@ -140,16 +140,19 @@ router.get('/auth/mailchimp', (req, res) => {
 })
 
 router.get('/auth/mailchimp/login', async (req, res) => {
+
   const {
-    query: {
+    headers: {
       code
     }
   } = req;
-
+  console.log("Mailchimp login", code)
   // Here we're exchanging the temporary code for the user's access token.
+
   const tokenResponse = await fetch(
     "https://login.mailchimp.com/oauth2/token", {
       method: "POST",
+
       body: new URLSearchParams({
         grant_type: "authorization_code",
         client_id: MAILCHIMP_CLIENT_ID,
@@ -159,10 +162,13 @@ router.get('/auth/mailchimp/login', async (req, res) => {
       })
     }
   );
+
+
   const {
     access_token
   } = await tokenResponse.json();
-  console.log(access_token);
+  console.log("🚀 ~ file: server.js ~ line 167 ~ router.get ~ access_token", access_token)
+  // console.log("🚀 ~ file: server.js ~ line 167 ~ router.get ~ access_token", await tokenResponse.json())
 
   // Now we're using the access token to get information about the user.
   // Specifically, we want to get the user's server prefix, which we'll use to
@@ -179,7 +185,8 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   const {
     dc
   } = await metadataResponse.json();
-  console.log(dc);
+  console.log("🚀 ~ file: server.js ~ line 184 ~ router.get ~ dc", dc)
+
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.
