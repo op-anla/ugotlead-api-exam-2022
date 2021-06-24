@@ -29,6 +29,7 @@ exports.hasAuthValidFields = (req, res, next) => {
 exports.isPasswordAndUserMatch = (req, res, next) => {
   UserModel.findByUsername(req.body.username)
     .then((user) => {
+      console.log("User", req.body)
       if (!user) {
         res.status(404).send({});
       } else {
@@ -40,7 +41,7 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           console.log("SUCCESS")
           req.body = {
             userId: user.iduser,
-            username: user.username,
+            userName: user.username,
           };
           return next();
         } else {
