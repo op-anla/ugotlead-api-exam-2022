@@ -122,20 +122,20 @@ router.get("/test", function (req, res) {
     '<p>Welcome to the sample Mailchimp OAuth app! Click <a href="/auth/mailchimp">here</a> to log in</p>'
   );
 });
-router.get('/auth/mailchimp', (req, res) => {
-  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-      response_type: "code",
-      client_id: MAILCHIMP_CLIENT_ID,
-      redirect_uri: OAUTH_CALLBACK
-  })}`
-  res.send({
-    url: url
-  });
-  // res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+router.get('/auth/mailchimp/', (req, res) => {
+  // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
   //     response_type: "code",
   //     client_id: MAILCHIMP_CLIENT_ID,
   //     redirect_uri: OAUTH_CALLBACK
-  // })}`)
+  // })}`
+  // res.send({
+  //   url: url
+  // });
+  res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+      response_type: "code",
+      client_id: MAILCHIMP_CLIENT_ID,
+      redirect_uri: OAUTH_CALLBACK
+  })}`)
 
 })
 
