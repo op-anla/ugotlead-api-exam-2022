@@ -112,37 +112,42 @@ router.post('/auth', [
 /* 
 MAILCHIMP
 */
-// You should always store your client id and secret in environment variables for security — the exception: sample code.
+// You should always store your client id and secret in environment variables for security
 const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
 const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
-const BASE_URL = "http://127.0.0.1:3000";
-const OAUTH_CALLBACK = `${BASE_URL}/login/dashboard/create-campaign`;
+const BASE_URL = "http://127.0.0.1:3005";
+const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
 router.get("/test", function (req, res) {
   res.send(
     '<p>Welcome to the sample Mailchimp OAuth app! Click <a href="/auth/mailchimp">here</a> to log in</p>'
   );
 });
+
 router.get('/auth/mailchimp/', (req, res) => {
-  // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-  //     response_type: "code",
-  //     client_id: MAILCHIMP_CLIENT_ID,
-  //     redirect_uri: OAUTH_CALLBACK
-  // })}`
-  // res.send({
-  //   url: url
-  // });
-  res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
       response_type: "code",
       client_id: MAILCHIMP_CLIENT_ID,
       redirect_uri: OAUTH_CALLBACK
-  })}`)
-
+  })}`
+  res.send({
+    url: url
+  });
+  // res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+  //     response_type: "code",
+  //     client_id: MAILCHIMP_CLIENT_ID,
+  //     redirect_uri: OAUTH_CALLBACK
+  // })}`)
 })
 
 router.get('/auth/mailchimp/login', async (req, res) => {
 
+  // const {
+  //   headers: {
+  //     code
+  //   }
+  // } = req;
   const {
-    headers: {
+    query: {
       code
     }
   } = req;
@@ -200,14 +205,14 @@ router.get('/auth/mailchimp/login', async (req, res) => {
 
   const response = await mailchimp.ping.get();
   console.log(response);
+  res.redirect(`http://127.0.0.1:3000/login/dashboard/create-campaign`)
+  // res.send(`
+  //   <p>This user's access token is ${access_token} and their server prefix is ${dc}.</p>
 
-  res.send(`
-    <p>This user's access token is ${access_token} and their server prefix is ${dc}.</p>
+  //   <p>When pinging the Mailchimp Marketing API's ping endpoint, the server responded:<p>
 
-    <p>When pinging the Mailchimp Marketing API's ping endpoint, the server responded:<p>
-
-    <code>${response}</code>
-  `);
+  //   <code>${response}</code>
+  // `);
 })
 
 module.exports = app
