@@ -127,7 +127,7 @@ router.get('/auth/mailchimp/', (req, res) => {
   let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
       response_type: "code",
       client_id: MAILCHIMP_CLIENT_ID,
-      redirect_uri: OAUTH_CALLBACK
+    redirect_uri: OAUTH_CALLBACK,
   })}`
   res.send({
     url: url
@@ -140,6 +140,7 @@ router.get('/auth/mailchimp/', (req, res) => {
 })
 
 router.get('/auth/mailchimp/login', async (req, res) => {
+  console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req)
 
   // const {
   //   headers: {
@@ -179,6 +180,11 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   // Specifically, we want to get the user's server prefix, which we'll use to
   // make calls to the API on their behalf.  This prefix will change from user
   // to user.
+
+
+
+
+
   const metadataResponse = await fetch(
     "https://login.mailchimp.com/oauth2/metadata", {
       headers: {
@@ -191,7 +197,15 @@ router.get('/auth/mailchimp/login', async (req, res) => {
     dc
   } = await metadataResponse.json();
   console.log("🚀 ~ file: server.js ~ line 184 ~ router.get ~ dc", dc)
-
+  /* 
+   First we encrypt the accesstoken and send that to the DB
+   The campaign the user is updating will be the mailchimp integration for that specific campaign
+   */
+  const campaignMailchimp = {
+    dc: dc,
+    access_token: access_token
+  }
+  console.log("🚀 ~ file: server.js ~ line 192 ~ router.get ~ campaignMailchimp", campaignMailchimp)
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.
@@ -206,6 +220,8 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   const response = await mailchimp.ping.get();
   console.log(response);
   res.redirect(`http://127.0.0.1:3000/login/dashboard/create-campaign`)
+
+
   // res.send(`
   //   <p>This user's access token is ${access_token} and their server prefix is ${dc}.</p>
 
