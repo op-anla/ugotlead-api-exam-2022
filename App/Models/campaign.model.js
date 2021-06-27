@@ -6,6 +6,7 @@ const Campaign = function (campaign) {
   this.campaign_active = campaign.campaign_active;
   this.campaign_name = campaign.campaign_name;
   this.campaign_url = campaign.campaign_url;
+  this.campaign_owner_id = campaign.campaign_owner_id;
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -19,10 +20,34 @@ Campaign.create = (newCampaign, result) => {
       id: res.insertId,
       ...newCampaign
     });
+    let newURL = `/embed/campaign/${res.insertId}`
+    sql.query("UPDATE campaigns SET campaign_url = ? WHERE campaign_id = ?", [newURL, res.insertId], (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err)
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found campaign with the id
+        result({
+          kind: "not_found"
+        }, null);
+        return;
+      }
+
+      console.log("updated campaign: ", {
+        id: res.insertId,
+        campaign_url: newURL
+      });
+      return newURL;
+    });
+
     result(null, {
       id: res.insertId,
       ...newCampaign
     });
+
   });
 };
 Campaign.findById = (campaignId, result) => {
@@ -46,7 +71,7 @@ Campaign.findById = (campaignId, result) => {
   });
 };
 Campaign.remove = (id, result) => {
-  sql.query("DELETE FROM campaigns WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err", err)
       result(null, err);
@@ -61,13 +86,13 @@ Campaign.remove = (id, result) => {
       return;
     }
 
-    console.log("deleted campaign with id: ", id);
+    console.log("deleted campaign with campaign_id: ", id);
     result(null, res);
   });
 };
 Campaign.updateById = (id, campaign, result) => {
   sql.query(
-    "UPDATE campaigns SET owner_email = ?, owner_name = ? WHERE id = ?",
+    "UPDATE campaigns SET owner_email = ?, owner_name = ? WHERE campaign_id = ?",
     [campaign.owner_email, campaign.owner_name, id],
     (err, res) => {
       if (err) {

@@ -8,17 +8,20 @@ exports.create = (req, res) => {
       message: "Content can not be empty!"
     });
   }
+  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body)
 
   // Create a Customer
   const campaign = new Campaign({
     company_id: req.body.company_id,
     campaign_active: req.body.campaign_active,
     campaign_name: req.body.campaign_name,
-    campaign_url: req.body.campaign_url
+    campaign_url: req.body.campaign_url,
+    campaign_owner_id: req.body.campaign_owner_id,
   });
 
   // Save Customer in the database
   Campaign.create(campaign, (err, data) => {
+
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while creating the campaign."
