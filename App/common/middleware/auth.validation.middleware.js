@@ -3,6 +3,7 @@ const secret = process.env.jwt_secret,
 // const crypto = require('crypto');
 
 exports.validJWTNeeded = (req, res, next) => {
+  console.log("Inside the valid JWT needed middleware - with headers", req.headers)
   if (req.headers['authorization']) {
     try {
       let authorization = req.headers['authorization'].split(' ');
@@ -19,6 +20,7 @@ exports.validJWTNeeded = (req, res, next) => {
       return res.status(403).send();
     }
   } else {
+    console.log("Else in validation middleware")
     return res.status(401).send();
   }
 };

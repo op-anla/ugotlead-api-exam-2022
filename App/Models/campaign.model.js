@@ -120,6 +120,38 @@ Campaign.updateById = (id, campaign, result) => {
     }
   );
 };
+Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
+  console.log("🚀 ~ file: campaign.model.js ~ line 124 ~ id, mailchimpInfo", id, mailchimpInfo)
+
+  sql.query(
+    "UPDATE campaigns SET mailchimp_info = ? WHERE campaign_id = ?",
+    [mailchimpInfo, id],
+    (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err)
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found campaign with the id
+        result({
+          kind: "not_found"
+        }, null);
+        return;
+      }
+
+      console.log("updated campaign: ", {
+        id: id,
+        mailchimpInfo: mailchimpInfo
+      });
+      result(null, {
+        id: id,
+        mailchimpInfo: mailchimpInfo
+      });
+    }
+  );
+};
 Campaign.getAll = result => {
   sql.query("SELECT * FROM campaigns", async (err, res) => {
     if (err) {
