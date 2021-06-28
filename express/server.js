@@ -124,24 +124,36 @@ router.get("/test", function (req, res) {
 });
 
 router.get('/auth/mailchimp/', (req, res) => {
-  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-      response_type: "code",
-      client_id: MAILCHIMP_CLIENT_ID,
-    redirect_uri: OAUTH_CALLBACK,
-  })}`
-  res.send({
-    url: url
-  });
-  // res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+  // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
   //     response_type: "code",
   //     client_id: MAILCHIMP_CLIENT_ID,
-  //     redirect_uri: OAUTH_CALLBACK
-  // })}`)
+  //   redirect_uri: OAUTH_CALLBACK,
+  // })}`
+  // res.send({
+  //   url: url
+  // });
+  res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+      response_type: "code",
+      client_id: MAILCHIMP_CLIENT_ID,
+      redirect_uri: OAUTH_CALLBACK
+  })}`)
 })
 
 router.get('/auth/mailchimp/login', async (req, res) => {
-  console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req)
-
+  console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req.headers.cookie)
+  /* 
+  Check if cookies has the campaign id with it. If not return to the application with an error code  
+  We send the campaign id cookie from the Nuxt application so our API knows which campaign to update with access token og DC.
+  */
+  const cookies = req.headers.cookie;
+  var campaignId = null;
+  if (cookies.includes('auth.campaignid')) {
+    console.log("found campaign id in cookies")
+    const splitCookie = cookies.split('auth.campaignid=')
+    console.log("split the cookie", splitCookie)
+    campaignId = splitCookie[1];
+  }
+  console.log("checking campaign id outside loop", campaignId)
   // const {
   //   headers: {
   //     code
@@ -219,8 +231,8 @@ router.get('/auth/mailchimp/login', async (req, res) => {
 
   const response = await mailchimp.ping.get();
   console.log(response);
-  res.redirect(`http://127.0.0.1:3000/login/dashboard/create-campaign`)
-
+  res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}`)
+  // res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/1`)
 
   // res.send(`
   //   <p>This user's access token is ${access_token} and their server prefix is ${dc}.</p>
