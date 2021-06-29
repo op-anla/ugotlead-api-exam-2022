@@ -267,5 +267,36 @@ router.get(`/${apiUrl}/getlists`, async (req, res) => {
     lists
   })
 })
+router.post(`/${apiUrl}/addmember`, async (req, res) => {
+  ValidationMiddleware.validJWTNeeded;
+  const mailchimpInfo = req.body.currentUser;
+  console.log("🚀 ~ file: server.js ~ line 274 ~ router.post ~ mailchimpInfo", mailchimpInfo)
+  const mailchimpListId = req.headers.mailchimplistid
+  console.log("🚀 ~ file: server.js ~ line 275 ~ router.post ~ mailchimpListId", mailchimpListId)
+  const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
+  console.log("🚀 ~ file: server.js ~ line 277 ~ router.post ~ mailchimpAccessInfo", mailchimpAccessInfo)
+  mailchimp.setConfig({
+    accessToken: mailchimpAccessInfo.access_token,
+    server: mailchimpAccessInfo.dc
+  });
+  const mergeFields = {
+    FNAME: mailchimpInfo.navn
+  };
+
+  try {
+    const response = await mailchimp.lists.addListMember(mailchimpListId, {
+      email_address: mailchimpInfo.email,
+      merge_fields: mergeFields,
+      status: "subscribed",
+    });
+    // console.log("response: ", response);
+    res.status(200).send("Added member");
+  } catch (error) {
+    console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error.response.text)
+    res.status(400).send(error.response.text)
+  }
+
+  // res.send(response)
+})
 module.exports = app
 module.exports.handler = serverless(app)

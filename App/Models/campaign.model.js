@@ -7,6 +7,8 @@ const Campaign = function (campaign) {
   this.campaign_name = campaign.campaign_name;
   this.campaign_url = campaign.campaign_url;
   this.campaign_owner_id = campaign.campaign_owner_id;
+  this.mailchimp_info = campaign.mailchimp_info;
+  this.mailchimp_list = campaign.mailchimp_list;
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -91,9 +93,18 @@ Campaign.remove = (id, result) => {
   });
 };
 Campaign.updateById = (id, campaign, result) => {
+  console.log(campaign)
   sql.query(
-    "UPDATE campaigns SET owner_email = ?, owner_name = ? WHERE campaign_id = ?",
-    [campaign.owner_email, campaign.owner_name, id],
+    "UPDATE campaigns SET    company_id = ?,    campaign_active = ?,    campaign_name = ? ,      campaign_url = ? ,        campaign_owner_id = ? ,          mailchimp_info = ? ,            mailchimp_list = ?    WHERE campaign_id = ?",
+    [campaign.company_id,
+      campaign.campaign_active,
+      campaign.campaign_name,
+      campaign.campaign_url,
+      campaign.campaign_owner_id,
+      campaign.mailchimp_info,
+      campaign.mailchimp_list,
+      id
+    ],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err)

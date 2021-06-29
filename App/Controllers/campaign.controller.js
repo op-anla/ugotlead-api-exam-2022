@@ -17,6 +17,8 @@ exports.create = (req, res) => {
     campaign_name: req.body.campaign_name,
     campaign_url: req.body.campaign_url,
     campaign_owner_id: req.body.campaign_owner_id,
+    mailchimp_info: req.body.mailchimp_info,
+    mailchimp_list: req.body.mailchimp_list,
   });
 
   // Save Customer in the database
@@ -66,10 +68,10 @@ exports.update = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-
+  console.log(req.body)
   Campaign.updateById(
     req.params.campaignId,
-    new Campaign(req.body),
+    new Campaign(req.body.campaignInfo),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
