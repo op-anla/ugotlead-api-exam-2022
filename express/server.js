@@ -142,19 +142,22 @@ router.get('/auth/mailchimp/', (req, res) => {
 
 router.get('/auth/mailchimp/login', async (req, res) => {
   ValidationMiddleware.validJWTNeeded,
-    console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req.headers.cookie)
+    console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req.headers)
   /* 
   Check if cookies has the campaign id with it. If not return to the application with an error code  
   We send the campaign id cookie from the Nuxt application so our API knows which campaign to update with access token og DC.
   */
   const cookies = req.headers.cookie;
   var campaignId = null;
-  if (cookies.includes('auth.campaignid')) {
-    console.log("found campaign id in cookies")
-    const splitCookie = cookies.split('auth.campaignid=')
-    console.log("split the cookie", splitCookie)
-    campaignId = splitCookie[1].replace(/(^\d+)(.+$)/i, '$1');
+  if (cookies) {
+    if (cookies.includes('auth.campaignid')) {
+      console.log("found campaign id in cookies")
+      const splitCookie = cookies.split('auth.campaignid=')
+      console.log("split the cookie", splitCookie)
+      campaignId = splitCookie[1].replace(/[^\d].*/, '');
+    }
   }
+
   console.log("checking campaign id outside loop", campaignId)
   // const {
   //   headers: {
