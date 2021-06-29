@@ -298,5 +298,12 @@ router.post(`/${apiUrl}/addmember`, async (req, res) => {
 
   // res.send(response)
 })
+router.get(`/${apiUrl}/checkreward`, async (req, res) => {
+  const user = {
+    name: req.headers.username,
+    email: req.headers.useremail
+  }
+  console.log("🚀 ~ file: server.js ~ line 306 ~ router.get ~ user", user)
+})
 module.exports = app
 module.exports.handler = serverless(app)
