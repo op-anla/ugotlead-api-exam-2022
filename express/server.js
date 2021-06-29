@@ -142,7 +142,7 @@ router.get('/auth/mailchimp/', (req, res) => {
 
 router.get('/auth/mailchimp/login', async (req, res) => {
   ValidationMiddleware.validJWTNeeded,
-    console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req", req.headers)
+    console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req")
   /* 
   Check if cookies has the campaign id with it. If not return to the application with an error code  
   We send the campaign id cookie from the Nuxt application so our API knows which campaign to update with access token og DC.
@@ -151,9 +151,9 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   var campaignId = null;
   if (cookies) {
     if (cookies.includes('auth.campaignid')) {
-      console.log("found campaign id in cookies")
+      // console.log("found campaign id in cookies")
       const splitCookie = cookies.split('auth.campaignid=')
-      console.log("split the cookie", splitCookie)
+      // console.log("split the cookie", splitCookie)
       campaignId = splitCookie[1].replace(/[^\d].*/, '');
     }
   }
@@ -227,13 +227,15 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   // You wouldn't keep this in your production code, but it's here to
   // demonstrate how the call is made.
 
-  // mailchimp.setConfig({
-  //   accessToken: access_token,
-  //   server: dc
-  // });
+  mailchimp.setConfig({
+    accessToken: access_token,
+    server: dc
+  });
 
-  // const response = await mailchimp.ping.get();
-  // console.log(response);
+  const response = await mailchimp.lists.getAllLists();
+  console.log(response);
+  const stringifyList = JSON.stringify(response.lists);
+  campaigns.updateMailchimpList(campaignId, stringifyList)
   res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}`)
   // res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/1`)
 
@@ -245,6 +247,25 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   //   <code>${response}</code>
   // `);
 })
-
+/* 
+VERSION 1.0 API
+- Mailchimp
+*/
+const version = "v1";
+const apiUrl = `api/${version}`
+router.get(`/${apiUrl}/getlists`, async (req, res) => {
+  ValidationMiddleware.validJWTNeeded;
+  // console.log("🚀 ~ file: server.js ~ line 257 ~ router.get ~ req", req.headers)
+  const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
+  mailchimp.setConfig({
+    accessToken: mailchimpInfo.access_token,
+    server: mailchimpInfo.dc
+  });
+  const response = await mailchimp.lists.getAllLists();
+  const lists = response.lists
+  res.send({
+    lists
+  })
+})
 module.exports = app
 module.exports.handler = serverless(app)

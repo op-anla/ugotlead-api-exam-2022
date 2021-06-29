@@ -115,3 +115,11 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
     } else return data;
   })
 }
+exports.updateMailchimpList = (campaignId, mailchimpLists) => {
+  console.log("🚀 ~ file: campaign.controller.js ~ line 119 ~ campaignId, mailchimpLists", campaignId, mailchimpLists)
+  Campaign.updateMailchimpLists(campaignId, mailchimpLists, (err, data) => {
+    if (err) {
+      return err
+    } else return data;
+  })
+}
