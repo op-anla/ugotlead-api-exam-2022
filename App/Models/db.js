@@ -37,15 +37,6 @@ connection.on('error', function (err) {
     throw err;
   }
 });
-// Monitor error
-connection.on('error', function (err) {
-  console.log('db error', err);
-  // If the connection is disconnected, automatically reconnect
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    handleError();
-  } else {
-    throw err;
-  }
-});
+
 
 module.exports = connection;
