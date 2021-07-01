@@ -303,6 +303,12 @@ router.get(`/${apiUrl}/checkreward`, async (req, res) => {
     name: req.headers.username,
     email: req.headers.useremail
   }
+  if (user.name === "" || user.email === "") {
+    res.status(400).send("Error: User hasn't been submitted")
+    console.log("Error: User hasn't been submitted")
+  } else {
+
+  }
   console.log("🚀 ~ file: server.js ~ line 306 ~ router.get ~ user", user)
 })
 module.exports = app
