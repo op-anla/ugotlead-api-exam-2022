@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
 Version: 1.0
 */
 const version = "v1";
-const apiUrl = `api/${version}`
+const apiUrl = `${version}/api`
 /* 
 -----------------------------------------------
 CAMPAIGNS

@@ -3,7 +3,9 @@ const crypto = require('crypto');
 
 exports.hasAuthValidFields = (req, res, next) => {
   let errors = [];
-
+  /* 
+  Very short verify of the request
+  */
   if (req.body) {
     if (!req.body.username) {
       errors.push('Missing username field');
