@@ -37,67 +37,7 @@ router.get("/", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>")
   res.end()
 })
-// CAMPAIGNS
-router.get("/campaigns", (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /campaigns");
-  campaigns.findAll(req, res);
-})
-router.get("/campaigns/:campaignId", (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing individual campaign");
-  campaigns.findOne(req, res);
-})
-router.post('/create-campaign', (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.create(req, res);
-});
-router.put('/update-campaign/:campaignId', (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.update(req, res);
-});
-router.delete('/delete-campaign/:campaignId', (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.delete(req, res);
-});
-// COMPANIES
-router.post('/create-company', (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    companies.create(req, res);
-});
-router.get("/companies", (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /companies");
-  companies.findAll(req, res);
-})
-// Users
-/* 
-USERS:
-These are all the user endpoints
-*/
-router.post('/user', [
-  user.create
-])
-router.get('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getById
-])
-router.get('/user', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getByToken
-])
-router.put('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.putById
-])
-router.get('/users', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getAll
-])
-router.delete('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.deleteUser
-])
+
 /* 
 Auth endpoints:
 We use a JWT based login system - These endpoints are required for the app to work
@@ -248,11 +188,86 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   // `);
 })
 /* 
-VERSION 1.0 API
-- Mailchimp
+Version: 1.0
 */
 const version = "v1";
 const apiUrl = `api/${version}`
+/* 
+-----------------------------------------------
+CAMPAIGNS
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/campaigns`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /campaigns");
+  campaigns.findAll(req, res);
+})
+router.get(`/${apiUrl}/campaigns/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing individual campaign");
+  campaigns.findOne(req, res);
+})
+router.post(`/${apiUrl}/create-campaign`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.create(req, res);
+});
+router.put(`/${apiUrl}/update-campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.update(req, res);
+});
+router.delete(`/${apiUrl}/delete-campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.delete(req, res);
+});
+/* 
+-----------------------------------------------
+COMPANIES
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/create-company`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    companies.create(req, res);
+});
+router.get(`/${apiUrl}/companies`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /companies");
+  companies.findAll(req, res);
+})
+/* 
+-----------------------------------------------
+USERS
+Later we will have Auth endpoints for our JWT based login
+-----------------------------------------------
+*/
+router.post('/user', [
+  user.create
+])
+router.get('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getById
+])
+router.get('/user', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getByToken
+])
+router.put('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.putById
+])
+router.get('/users', [
+  ValidationMiddleware.validJWTNeeded,
+  user.getAll
+])
+router.delete('/user/:userId', [
+  ValidationMiddleware.validJWTNeeded,
+  user.deleteUser
+])
+/* 
+-----------------------------------------------
+AUTH
+Extending the USER part - This is Auth with internal JWT Login
+-----------------------------------------------
+*/
 router.get(`/${apiUrl}/getlists`, async (req, res) => {
   ValidationMiddleware.validJWTNeeded;
   // console.log("🚀 ~ file: server.js ~ line 257 ~ router.get ~ req", req.headers)
