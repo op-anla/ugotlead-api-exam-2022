@@ -242,6 +242,9 @@ router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
 
 })
 router.get(`/${apiUrl}/getlists`, async (req, res) => {
+  /* 
+  Here we get lists available from Mailchimp with the access token og DC.
+  */
   ValidationMiddleware.validJWTNeeded;
   // console.log("🚀 ~ file: server.js ~ line 257 ~ router.get ~ req", req.headers)
   const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
@@ -256,6 +259,10 @@ router.get(`/${apiUrl}/getlists`, async (req, res) => {
   })
 })
 router.post(`/${apiUrl}/addmember`, async (req, res) => {
+  /* 
+  This endpoint will add members to the list from request. The information required will normally be
+  fullname and email. 
+  */
   ValidationMiddleware.validJWTNeeded;
   const mailchimpInfo = req.body.currentUser;
   console.log("🚀 ~ file: server.js ~ line 274 ~ router.post ~ mailchimpInfo", mailchimpInfo)
@@ -277,14 +284,11 @@ router.post(`/${apiUrl}/addmember`, async (req, res) => {
       merge_fields: mergeFields,
       status: "subscribed",
     });
-    // console.log("response: ", response);
     res.status(200).send("Added member");
   } catch (error) {
     console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error.response.text)
     res.status(400).send(error.response.text)
   }
-
-  // res.send(response)
 })
 router.get(`/${apiUrl}/checkreward`, async (req, res) => {
   const user = {
