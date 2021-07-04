@@ -39,17 +39,6 @@ router.get("/", (req, res) => {
 })
 
 /* 
-Auth endpoints:
-We use a JWT based login system - These endpoints are required for the app to work
-You will also notice we have endpoints for Mailchimp. We use this endpoint to create the Oauth2 integration
-*/
-router.post('/auth', [
-  VerifyUserMiddleware.hasAuthValidFields,
-  VerifyUserMiddleware.isPasswordAndUserMatch,
-  AuthorizationController.login
-
-])
-/* 
 MAILCHIMP
 */
 // You should always store your client id and secret in environment variables for security
@@ -62,8 +51,101 @@ router.get("/test", function (req, res) {
     '<p>Welcome to the sample Mailchimp OAuth app! Click <a href="/auth/mailchimp">here</a> to log in</p>'
   );
 });
+/* 
+Version: 1.0
+*/
+const version = "v1";
+const apiUrl = `api/${version}`
+/* 
+-----------------------------------------------
+CAMPAIGNS
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/campaigns`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /campaigns");
+  campaigns.findAll(req, res);
+})
+router.get(`/${apiUrl}/campaigns/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing individual campaign");
+  campaigns.findOne(req, res);
+})
+router.post(`/${apiUrl}/create-campaign`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.create(req, res);
+});
+router.put(`/${apiUrl}/update-campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.update(req, res);
+});
+router.delete(`/${apiUrl}/delete-campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    campaigns.delete(req, res);
+});
+/* 
+-----------------------------------------------
+COMPANIES
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/create-company`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    companies.create(req, res);
+});
+router.get(`/${apiUrl}/companies`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /companies");
+  companies.findAll(req, res);
+})
+/* 
+-----------------------------------------------
+USERS
+Later we will have Auth endpoints for our JWT based login
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/user`, [
+  user.create
+])
+router.get(`/${apiUrl}/user/:userId`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.getById
+])
+router.get(`/${apiUrl}/user`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.getByToken
+])
+router.put(`/${apiUrl}/user/:userId`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.putById
+])
+router.get(`/${apiUrl}/users`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.getAll
+])
+router.delete(`/${apiUrl}/user/:userId`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.deleteUser
+])
+/* 
+-----------------------------------------------
+AUTH
+Extending the USER part - This is Auth with internal JWT Login
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/auth`, [
+  VerifyUserMiddleware.hasAuthValidFields,
+  VerifyUserMiddleware.isPasswordAndUserMatch,
+  AuthorizationController.login
 
-router.get('/auth/mailchimp/', (req, res) => {
+])
+/* 
+-----------------------------------------------
+MAILCHIMP 
+This is actually extending the Campaign because each campaign will have auth endpoints for mailchimp
+The Maillchimp info will also be saved for that specific campaign and not on the specific user. 
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/auth/mailchimp/`, (req, res) => {
 
   // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
   //     response_type: "code",
@@ -80,7 +162,7 @@ router.get('/auth/mailchimp/', (req, res) => {
   })}`)
 })
 
-router.get('/auth/mailchimp/login', async (req, res) => {
+router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
   ValidationMiddleware.validJWTNeeded,
     console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req")
   /* 
@@ -187,87 +269,6 @@ router.get('/auth/mailchimp/login', async (req, res) => {
   //   <code>${response}</code>
   // `);
 })
-/* 
-Version: 1.0
-*/
-const version = "v1";
-const apiUrl = `api/${version}`
-/* 
------------------------------------------------
-CAMPAIGNS
------------------------------------------------
-*/
-router.get(`/${apiUrl}/campaigns`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /campaigns");
-  campaigns.findAll(req, res);
-})
-router.get(`/${apiUrl}/campaigns/:campaignId`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing individual campaign");
-  campaigns.findOne(req, res);
-})
-router.post(`/${apiUrl}/create-campaign`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.create(req, res);
-});
-router.put(`/${apiUrl}/update-campaign/:campaignId`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.update(req, res);
-});
-router.delete(`/${apiUrl}/delete-campaign/:campaignId`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    campaigns.delete(req, res);
-});
-/* 
------------------------------------------------
-COMPANIES
------------------------------------------------
-*/
-router.post(`/${apiUrl}/create-company`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    companies.create(req, res);
-});
-router.get(`/${apiUrl}/companies`, (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /companies");
-  companies.findAll(req, res);
-})
-/* 
------------------------------------------------
-USERS
-Later we will have Auth endpoints for our JWT based login
------------------------------------------------
-*/
-router.post('/user', [
-  user.create
-])
-router.get('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getById
-])
-router.get('/user', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getByToken
-])
-router.put('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.putById
-])
-router.get('/users', [
-  ValidationMiddleware.validJWTNeeded,
-  user.getAll
-])
-router.delete('/user/:userId', [
-  ValidationMiddleware.validJWTNeeded,
-  user.deleteUser
-])
-/* 
------------------------------------------------
-AUTH
-Extending the USER part - This is Auth with internal JWT Login
------------------------------------------------
-*/
 router.get(`/${apiUrl}/getlists`, async (req, res) => {
   ValidationMiddleware.validJWTNeeded;
   // console.log("🚀 ~ file: server.js ~ line 257 ~ router.get ~ req", req.headers)
