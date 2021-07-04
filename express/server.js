@@ -291,6 +291,10 @@ router.post(`/${apiUrl}/addmember`, async (req, res) => {
   }
 })
 router.get(`/${apiUrl}/checkreward`, async (req, res) => {
+  /* 
+  This endpoint will be used to check whether or not the current user / player 
+  has won anything from the available rewards in the specific campaign.
+  */
   const user = {
     name: req.headers.username,
     email: req.headers.useremail
