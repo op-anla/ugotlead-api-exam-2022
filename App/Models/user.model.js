@@ -24,6 +24,10 @@ User.create = (newUser, result) => {
   });
 };
 User.findByUsername = (username) => {
+  /* 
+  This functions is being called from verify.user.middleware and will find the specific user with that username
+  It will return the whole user response which will contain the password
+  */
   return new Promise((resolve, reject) => {
     sql.query(`SELECT * FROM user WHERE username = "${username}"`, (err, res) => {
       if (err) {

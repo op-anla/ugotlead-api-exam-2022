@@ -2,6 +2,10 @@ const UserModel = require('../../Models/user.model');
 const crypto = require('crypto');
 
 exports.hasAuthValidFields = (req, res, next) => {
+  /* 
+  This function will validate the request and make sure it has the correct fields. 
+  There should already be client validation before this happens. 
+  */
   let errors = [];
   /* 
   Very short verify of the request
@@ -19,6 +23,9 @@ exports.hasAuthValidFields = (req, res, next) => {
         errors: errors.join(',')
       });
     } else {
+      /* 
+      Calling the next function
+      */
       return next();
     }
   } else {
@@ -29,6 +36,9 @@ exports.hasAuthValidFields = (req, res, next) => {
 };
 
 exports.isPasswordAndUserMatch = (req, res, next) => {
+  /* 
+  This will check if the username and password that the request contains is in the database
+  */
   UserModel.findByUsername(req.body.username)
     .then((user) => {
       console.log("User", req.body)
@@ -37,6 +47,10 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
       } else {
         let passwordFields = user.password.split('$');
         let salt = passwordFields[0];
+        /* 
+        Here we basically try to replicate the hash in the database to match with the one in the DB.
+        This will always be the same if the password is correct and if not -> FAIL
+        */
         let hash = crypto.createHmac('sha512', salt).update(req.body.password).digest("base64");
 
         if (hash === passwordFields[1]) {
