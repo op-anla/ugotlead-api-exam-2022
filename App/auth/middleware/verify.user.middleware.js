@@ -59,6 +59,7 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
             userId: user.iduser,
             userName: user.username,
           };
+          // Go next function
           return next();
         } else {
           return res.status(400).send({

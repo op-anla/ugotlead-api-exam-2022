@@ -138,15 +138,11 @@ const BASE_URL = `http://127.0.0.1:3005/${apiUrl}`;
 const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
 
 router.get(`/${apiUrl}/auth/mailchimp/`, (req, res) => {
-
-  // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-  //     response_type: "code",
-  //     client_id: MAILCHIMP_CLIENT_ID,
-  //   redirect_uri: OAUTH_CALLBACK,
-  // })}`
-  // res.send({
-  //   url: url
-  // });
+  /* 
+  We redirect the user to the official Mailchimp oauth page where the user has to verify our App
+  After they verify the application they will be redirected to another API Endpoint we have
+  */
+  ValidationMiddleware.validJWTNeeded;
   res.redirect(`https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
       response_type: "code",
       client_id: MAILCHIMP_CLIENT_ID,
@@ -155,8 +151,10 @@ router.get(`/${apiUrl}/auth/mailchimp/`, (req, res) => {
 })
 
 router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
-  ValidationMiddleware.validJWTNeeded,
-    console.log("🚀 ~ file: server.js ~ line 143 ~ router.get ~ req")
+  /* 
+  The user will be coming from the official Mailchimp oauth2 page with a code. 
+  */
+  ValidationMiddleware.validJWTNeeded;
   /* 
   Check if cookies has the campaign id with it. If not return to the application with an error code  
   We send the campaign id cookie from the Nuxt application so our API knows which campaign to update with access token og DC.
@@ -165,19 +163,12 @@ router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
   var campaignId = null;
   if (cookies) {
     if (cookies.includes('auth.campaignid')) {
-      // console.log("found campaign id in cookies")
       const splitCookie = cookies.split('auth.campaignid=')
-      // console.log("split the cookie", splitCookie)
       campaignId = splitCookie[1].replace(/[^\d].*/, '');
     }
   }
 
   console.log("checking campaign id outside loop", campaignId)
-  // const {
-  //   headers: {
-  //     code
-  //   }
-  // } = req;
   const {
     query: {
       code
@@ -204,8 +195,6 @@ router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
   const {
     access_token
   } = await tokenResponse.json();
-  // console.log("🚀 ~ file: server.js ~ line 167 ~ router.get ~ access_token", access_token)
-  // console.log("🚀 ~ file: server.js ~ line 167 ~ router.get ~ access_token", await tokenResponse.json())
 
   // Now we're using the access token to get information about the user.
   // Specifically, we want to get the user's server prefix, which we'll use to
@@ -223,7 +212,6 @@ router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
   const {
     dc
   } = await metadataResponse.json();
-  // console.log("🚀 ~ file: server.js ~ line 184 ~ router.get ~ dc", dc)
   /* 
    First we encrypt the accesstoken and send that to the DB
    The campaign the user is updating will be the mailchimp integration for that specific campaign
@@ -247,19 +235,11 @@ router.get(`/${apiUrl}/auth/mailchimp/login`, async (req, res) => {
   });
 
   const response = await mailchimp.lists.getAllLists();
-  console.log(response);
   const stringifyList = JSON.stringify(response.lists);
   campaigns.updateMailchimpList(campaignId, stringifyList)
+  // We redirect the user back to our application with the campaign ID they were updating. 
   res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}`)
-  // res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/1`)
 
-  // res.send(`
-  //   <p>This user's access token is ${access_token} and their server prefix is ${dc}.</p>
-
-  //   <p>When pinging the Mailchimp Marketing API's ping endpoint, the server responded:<p>
-
-  //   <code>${response}</code>
-  // `);
 })
 router.get(`/${apiUrl}/getlists`, async (req, res) => {
   ValidationMiddleware.validJWTNeeded;

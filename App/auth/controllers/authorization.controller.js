@@ -3,6 +3,12 @@ const jwtSecret = process.env.jwt_secret,
 const crypto = require('crypto');
 
 exports.login = (req, res) => {
+  /* 
+  This is used in the /auth endpoint when the user tries to login and is the last part of our JWT
+  It will generate a access token to the user and also send back the user ID.
+
+  These information will later be used by the user for all requests where it's required. 
+  */
   try {
     let refreshId = req.body.userId + jwtSecret;
     let salt = crypto.randomBytes(16).toString('base64');
