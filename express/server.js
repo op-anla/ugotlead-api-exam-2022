@@ -37,20 +37,6 @@ router.get("/", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>")
   res.end()
 })
-
-/* 
-MAILCHIMP
-*/
-// You should always store your client id and secret in environment variables for security
-const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
-const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
-const BASE_URL = "http://127.0.0.1:3005";
-const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
-router.get("/test", function (req, res) {
-  res.send(
-    '<p>Welcome to the sample Mailchimp OAuth app! Click <a href="/auth/mailchimp">here</a> to log in</p>'
-  );
-});
 /* 
 Version: 1.0
 */
@@ -145,6 +131,12 @@ This is actually extending the Campaign because each campaign will have auth end
 The Maillchimp info will also be saved for that specific campaign and not on the specific user. 
 -----------------------------------------------
 */
+// You should always store your client id and secret in environment variables for security
+const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
+const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
+const BASE_URL = `http://127.0.0.1:3005/${apiUrl}`;
+const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
+
 router.get(`/${apiUrl}/auth/mailchimp/`, (req, res) => {
 
   // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
