@@ -2,15 +2,13 @@ const sql = require("./db.js");
 
 // constructor
 const Reward = function (reward) {
-  this.company_id = campaign.company_id;
-  this.campaign_active = campaign.campaign_active;
-  this.campaign_name = campaign.campaign_name;
-  this.campaign_url = campaign.campaign_url;
-  this.campaign_owner_id = campaign.campaign_owner_id;
-  this.mailchimp_info = campaign.mailchimp_info;
-  this.mailchimp_list = campaign.mailchimp_list;
-  this.campaign_startdate = campaign.campaign_startdate;
-  this.campaign_enddate = campaign.campaign_enddate;
+  this.campaign_id = reward.campaign_id;
+  this.reward_image_url = reward.reward_image_url;
+  this.reward_name = reward.reward_name;
+  this.reward_description = reward.reward_description;
+  this.reward_value_type = reward.reward_value_type;
+  this.reward_value = reward.reward_value;
+  this.reward_type = reward.reward_type;
 };
 
 
@@ -25,7 +23,7 @@ Reward.findByCampaignId = (campaignId, result) => {
 
     if (res.length) {
       console.log("found rewards: ", res);
-      result(null, res[0]);
+      result(null, res);
       return;
     }
 
@@ -33,6 +31,27 @@ Reward.findByCampaignId = (campaignId, result) => {
     result({
       kind: "not_found"
     }, null);
+  });
+};
+Reward.create = (newReward, result) => {
+  sql.query("INSERT INTO rewards SET ?", newReward, (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err", err)
+      result(err, null);
+      return;
+    }
+
+    console.log("created reward: ", {
+      id: res.insertId,
+      ...newReward
+    });
+
+
+    result(null, {
+      id: res.insertId,
+      ...newReward
+    });
+
   });
 };
 module.exports = Reward;

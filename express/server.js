@@ -322,6 +322,10 @@ router.get(`/${apiUrl}/rewards/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   rewards.findRewardsByCampaignId
 ])
+router.post(`/${apiUrl}/create-reward`, [
+  ValidationMiddleware.validJWTNeeded,
+  rewards.create
+])
 
 
 
