@@ -12,9 +12,14 @@ const {
   URLSearchParams
 } = require("url");
 const querystring = require("querystring");
-// Controller
+/* 
+-----------------------------------------------
+CONTROLLERS
+-----------------------------------------------
+*/
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
+const rewards = require("../App/Controllers/rewards.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
@@ -307,5 +312,18 @@ router.get(`/${apiUrl}/checkreward`, async (req, res) => {
   }
   console.log("🚀 ~ file: server.js ~ line 306 ~ router.get ~ user", user)
 })
+
+/* 
+-----------------------------------------------
+REWARDS 
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/rewards/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  rewards.findRewardsByCampaignId
+])
+
+
+
 module.exports = app
 module.exports.handler = serverless(app)
