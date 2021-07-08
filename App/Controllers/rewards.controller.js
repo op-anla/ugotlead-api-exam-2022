@@ -7,8 +7,8 @@ exports.findRewardsByCampaignId = (req, res) => {
       console.log("🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err", err)
 
       if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found rewards with id ${req.params.campaignId}.`
+        res.status(200).send({
+          empty: true
         });
       } else {
         res.status(500).send({
