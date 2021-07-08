@@ -326,7 +326,10 @@ router.post(`/${apiUrl}/create-reward`, [
   ValidationMiddleware.validJWTNeeded,
   rewards.create
 ])
-
+router.put(`/${apiUrl}/update-reward/:reward_id`, [
+  ValidationMiddleware.validJWTNeeded,
+  rewards.updateById
+])
 
 
 module.exports = app

@@ -23,12 +23,12 @@ var pool = mysql.createPool({
   debug: true,
 });
 
-pool.getConnection(function (err, connection) {
-  if (err) {
-    console.log('error when connecting to db:', err);
-  }
-  console.log('Connected to database.');
-});
+// pool.getConnection(function (err, connection) {
+//   if (err) {
+//     console.log('error when connecting to db:', err);
+//   }
+//   console.log('Connected to database.');
+// });
 // Monitor error
 pool.on('error', function (err) {
   console.log('db error', err);

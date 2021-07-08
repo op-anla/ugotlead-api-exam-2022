@@ -51,3 +51,30 @@ exports.create = (req, res) => {
   });
 
 };
+// Update reward by id
+exports.updateById = (req, res) => {
+  console.log("🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body", req.body.reward)
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+  Rewards.updateById(
+    req.params.reward_id,
+    new Rewards(req.body.reward),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found reward with id ${req.params.reward_id}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating reward with id " + req.params.reward_id
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
