@@ -20,7 +20,6 @@ var pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   connectTimeout: 100000,
-  debug: true,
 });
 
 // pool.getConnection(function (err, connection) {

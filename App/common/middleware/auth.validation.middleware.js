@@ -3,7 +3,7 @@ const secret = process.env.jwt_secret,
 // const crypto = require('crypto');
 
 exports.validJWTNeeded = (req, res, next) => {
-  console.log("Inside the valid JWT needed middleware - with headers", req.headers)
+  console.log("Inside the valid JWT needed middleware - with headers", req.headers.authorization)
   /* 
   First we check if the headers include authorization header.
   This should always be in the header if the user is authorized
