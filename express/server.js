@@ -20,6 +20,7 @@ CONTROLLERS
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const rewards = require("../App/Controllers/rewards.controller.js");
+const layout = require("../App/Controllers/layout.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
@@ -83,8 +84,12 @@ EXTENDED CAMPAIGN
 router.get(`/${apiUrl}/layout/campaign/:campaignId`, (req, res) => {
   ValidationMiddleware.validJWTNeeded,
     console.log("Testing /layout/campaing/:campaignId");
-  campaigns.findLayoutForSpecificCampaign(req, res);
+  layout.findLayoutForSpecificCampaign(req, res);
 })
+router.put(`/${apiUrl}/update-layout/campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    layout.updateLayoutForSpecificCampaign(req, res);
+});
 /* 
 -----------------------------------------------
 COMPANIES
