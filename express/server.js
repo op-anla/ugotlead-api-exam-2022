@@ -76,6 +76,17 @@ router.delete(`/${apiUrl}/delete-campaign/:campaignId`, (req, res) => {
 });
 /* 
 -----------------------------------------------
+LAYOUT FOR CAMPAIGNS
+EXTENDED CAMPAIGN
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/layout/campaign/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /layout/campaing/:campaignId");
+  campaigns.findLayoutForSpecificCampaign(req, res);
+})
+/* 
+-----------------------------------------------
 COMPANIES
 -----------------------------------------------
 */

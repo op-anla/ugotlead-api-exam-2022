@@ -34,6 +34,17 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all campaigns from the database.
+exports.findLayoutForSpecificCampaign = (req, res) => {
+  console.log("find all layout for this campaign");
+  Campaign.findLayoutForCampaign(req.params.campaignId, (err, data)  => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving the layouts for that specific campaign."
+      });
+    else res.send(data);
+  });
+};
+// Retrieve all campaigns from the database.
 exports.findAll = (req, res) => {
   console.log("find all");
   Campaign.getAll((err, data) => {
