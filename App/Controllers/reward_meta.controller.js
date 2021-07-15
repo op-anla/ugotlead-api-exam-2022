@@ -41,7 +41,7 @@ exports.updateById = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-  Rewards.updateById(
+  RewardMeta.updateById(
     req.params.reward_meta.reward_meta_id,
     new RewardMeta(req.body.reward_meta),
     (err, data) => {
