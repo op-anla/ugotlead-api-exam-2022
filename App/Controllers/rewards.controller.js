@@ -44,7 +44,7 @@ exports.create = (req, res, next) => {
 
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the campaign."
+        message: err.message || "Some error occurred while creating the reward."
       });
     else {
       console.log("DATA", data);
