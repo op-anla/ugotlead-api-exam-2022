@@ -51,11 +51,7 @@ Reward.create = (newReward, result) => {
       ...newReward
     });
 
-
   });
-
-
-
 };
 
 Reward.updateById = (id, reward, result) => {

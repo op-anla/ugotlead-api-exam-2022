@@ -39,7 +39,6 @@ exports.create = (req, res, next) => {
     reward_type: req.body.reward.reward_type,
   });
 
-  // Create the reward meta
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
 
@@ -49,6 +48,15 @@ exports.create = (req, res, next) => {
       });
     else {
       console.log("DATA", data);
+      /* 
+      We first make the reward in the database and then we create the reward meta in the database using next. 
+      Next will call the next function in line in our server.js
+      There we have reward_meta function to create those. 
+
+      The thing is:
+      To be able to create reward meta we need the reward id of the newly created reward. We can only get that if we change the response body
+      And then send that new response body to the next function. 
+      */
       req.body.reward_meta.reward_id = data.id;
       next();
 
