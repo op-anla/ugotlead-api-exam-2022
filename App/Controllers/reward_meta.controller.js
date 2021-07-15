@@ -31,3 +31,53 @@ exports.create = (req, res) => {
     }
   })
 };
+
+// Update reward by id
+exports.updateById = (req, res) => {
+  console.log("🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body", req.body.reward_meta)
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+  Rewards.updateById(
+    req.params.reward_meta.reward_meta_id,
+    new RewardMeta(req.body.reward_meta),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found reward_meta with id ${req.params.reward_id}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating reward_meta with id " + req.params.reward_id
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
+
+// Find the specific rewards meta for one campaign
+exports.findRewardMetaForReward = (req, res) => {
+  console.log("GOT BODY", req.body, req.params.rewardId)
+  RewardMeta.findByRewardId(req.params.rewardId, (err, data) => {
+    if (err) {
+      console.log("🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err", err)
+
+      if (err.kind === "not_found") {
+        res.status(200).send({
+          empty: true
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving reward_meta with id " + req.params.rewardId
+        });
+      }
+    } else {
+      res.status(200).send(data)
+    };
+  });
+};

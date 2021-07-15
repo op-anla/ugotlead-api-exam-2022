@@ -337,7 +337,11 @@ REWARDS
 */
 router.get(`/${apiUrl}/rewards/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-  rewards.findRewardsByCampaignId
+  rewards.findRewardsByCampaignId,
+])
+router.get(`/${apiUrl}/rewards-meta/:rewardId`, [
+  ValidationMiddleware.validJWTNeeded,
+  reward_meta.findRewardMetaForReward,
 ])
 router.post(`/${apiUrl}/create-reward`, [
   ValidationMiddleware.validJWTNeeded,
@@ -346,7 +350,8 @@ router.post(`/${apiUrl}/create-reward`, [
 ])
 router.put(`/${apiUrl}/update-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
-  rewards.updateById
+  rewards.updateById,
+  reward_meta.updateById
 ])
 
 

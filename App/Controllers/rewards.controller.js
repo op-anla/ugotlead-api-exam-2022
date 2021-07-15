@@ -15,7 +15,9 @@ exports.findRewardsByCampaignId = (req, res) => {
           message: "Error retrieving rewards with id " + req.params.campaignId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).send(data)
+    };
   });
 };
 // Create and Save a new reward
@@ -66,7 +68,7 @@ exports.create = (req, res, next) => {
 
 };
 // Update reward by id
-exports.updateById = (req, res) => {
+exports.updateById = (req, res, next) => {
   console.log("🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body", req.body.reward)
   // Validate Request
   if (!req.body) {
@@ -88,7 +90,7 @@ exports.updateById = (req, res) => {
             message: "Error updating reward with id " + req.params.reward_id
           });
         }
-      } else res.send(data);
+      } else next();
     }
   );
 };
