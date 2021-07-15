@@ -19,27 +19,27 @@ exports.findRewardsByCampaignId = (req, res) => {
   });
 };
 // Create and Save a new reward
-exports.create = (req, res) => {
+exports.create = (req, res, next) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
   }
-  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body.newReward)
+  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs", req.body)
 
   // Create a reward
   const rewardVar = new Rewards({
-    campaign_id: req.body.newReward.campaign_id,
-    reward_image_url: req.body.newReward.reward_image_url,
-    reward_name: req.body.newReward.reward_name,
-    reward_description: req.body.newReward.reward_description,
-    reward_value_type: req.body.newReward.price_value_type,
-    reward_value: req.body.newReward.reward_value,
-    reward_type: req.body.newReward.reward_type,
+    campaign_id: req.body.reward.campaign_id,
+    reward_image_url: req.body.reward.reward_image_url,
+    reward_name: req.body.reward.reward_name,
+    reward_description: req.body.reward.reward_description,
+    reward_value_type: req.body.reward.reward_value_type,
+    reward_value: req.body.reward.reward_value,
+    reward_type: req.body.reward.reward_type,
   });
-  console.log("🚀 ~ file: rewards.controller.js ~ line 41 ~ rewardVar", rewardVar)
 
+  // Create the reward meta
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
 
@@ -47,7 +47,13 @@ exports.create = (req, res) => {
       res.status(500).send({
         message: err.message || "Some error occurred while creating the campaign."
       });
-    else res.send(data);
+    else {
+      console.log("DATA", data);
+      req.body.reward_meta.reward_id = data.id;
+      next();
+
+    };
+
   });
 
 };

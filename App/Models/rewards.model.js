@@ -46,13 +46,16 @@ Reward.create = (newReward, result) => {
       ...newReward
     });
 
-
     result(null, {
       id: res.insertId,
       ...newReward
     });
 
+
   });
+
+
+
 };
 
 Reward.updateById = (id, reward, result) => {

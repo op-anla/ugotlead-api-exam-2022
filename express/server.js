@@ -20,6 +20,7 @@ CONTROLLERS
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const rewards = require("../App/Controllers/rewards.controller.js");
+const reward_meta = require("../App/Controllers/reward_meta.controller.js");
 const layout = require("../App/Controllers/layout.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
@@ -340,7 +341,8 @@ router.get(`/${apiUrl}/rewards/:campaignId`, [
 ])
 router.post(`/${apiUrl}/create-reward`, [
   ValidationMiddleware.validJWTNeeded,
-  rewards.create
+  rewards.create,
+  reward_meta.create
 ])
 router.put(`/${apiUrl}/update-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
