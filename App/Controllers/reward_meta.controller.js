@@ -41,27 +41,27 @@ exports.updateById = (req, res) => {
       message: "Content can not be empty!"
     });
   }
+  console.log("Update reward meta id by id = ", req.body.reward_meta.reward_meta_data_id, req.body.reward_meta)
   RewardMeta.updateById(
-    req.params.reward_meta.reward_meta_id,
+    req.body.reward_meta.reward_meta_data_id,
     new RewardMeta(req.body.reward_meta),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found reward_meta with id ${req.params.reward_id}.`
+            message: `Not found reward_meta with id ${req.body.reward_meta.reward_meta_data_id}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating reward_meta with id " + req.params.reward_id
+            message: "Error updating reward_meta with id " + req.body.reward_meta.reward_meta_data_id
           });
         }
-      } else res.send(data);
+      } else res.status(200).send("Updated reward and reward meta");
     }
   );
 };
 // Delete reward meta
 exports.deleteById = (req, res, next) => {
-  next();
   console.log("eyy", req.headers)
   RewardMeta.remove(req.headers.reward_meta_id, (err, data) => {
     if (err) {
