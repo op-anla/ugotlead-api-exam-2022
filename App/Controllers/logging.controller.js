@@ -14,13 +14,14 @@ exports.findLogForUser = (req, res) => {
 
   }
   Logging.findLog(req.params.campaignId, log, (err, data) => {
-    console.log("🚀 ~ file: logging.controller.js ~ line 17 ~ Logging.findLog ~ err", err)
-    if (err)
-      if (err.kind === 'not_found')
+    console.log("🚀 ~ file: logging.controller.js ~ line 17 ~ Logging.findLog ~ err", err, data)
+    if (err) {
+      if (err.kind === 'not_found') {
         res.status(404).send({
           message: err.kind
         });
-      else res.send(data);
+      }
+    } else res.status(200).send(data);
   });
 };
 exports.createLogForUser = (req, res) => {
