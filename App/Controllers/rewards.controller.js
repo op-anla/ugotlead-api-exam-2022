@@ -20,6 +20,23 @@ exports.findRewardsByCampaignId = (req, res) => {
     };
   });
 };
+// Delete reward
+exports.deleteById = (req, res) => {
+  console.log("ID", req.params.reward_id)
+  Rewards.remove(req.params.reward_id, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Reward with id ${req.params.reward_id}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Reward with id " + req.params.reward_id
+        });
+      }
+    } else res.status(200).send("Deleted reward and reward meta");
+  });
+};
 // Create and Save a new reward
 exports.create = (req, res, next) => {
   // Validate request

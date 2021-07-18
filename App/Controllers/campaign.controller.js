@@ -85,7 +85,7 @@ exports.update = (req, res) => {
     }
   );
 };
-// Delete template
+// Delete campaign
 exports.delete = (req, res) => {
   Campaign.remove(req.params.campaignId, (err, data) => {
     if (err) {

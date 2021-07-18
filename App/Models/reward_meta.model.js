@@ -7,6 +7,26 @@ const RewardMeta = function (rewardMeta) {
   this.reward_chance_info = rewardMeta.reward_chance_info;
   this.reward_email_notification_info = rewardMeta.reward_email_notification_info;
 };
+RewardMeta.remove = (id, result) => {
+  sql.query("DELETE FROM reward_meta_data WHERE reward_meta_data_id = ?", id, (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err", err)
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found Customer with the id
+      result({
+        kind: "not_found"
+      }, null);
+      return;
+    }
+
+    console.log("deleted reward_meta with reward_meta_data_id: ", id);
+    result(null, res);
+  });
+};
 RewardMeta.findByRewardId = (rewardId, result) => {
   sql.query(`SELECT * FROM reward_meta_data WHERE reward_id = ${rewardId}`, (err, res) => {
     console.log("🚀 ~ file: rewards.model.js ~ line 19 ~ sql.query ~ err, res", err, res)

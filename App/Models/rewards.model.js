@@ -33,6 +33,27 @@ Reward.findByCampaignId = (campaignId, result) => {
     }, null);
   });
 };
+Reward.remove = (id, result) => {
+  console.log("🚀 ~ file: rewards.model.js ~ line 37 ~ id", id)
+  sql.query("DELETE FROM rewards WHERE reward_id = ?", id, (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err", err)
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found Customer with the id
+      result({
+        kind: "not_found"
+      }, null);
+      return;
+    }
+
+    console.log("deleted reward with reward_id: ", id);
+    result(null, res);
+  });
+};
 Reward.create = (newReward, result) => {
   sql.query("INSERT INTO rewards SET ?", newReward, (err, res) => {
     if (err) {
