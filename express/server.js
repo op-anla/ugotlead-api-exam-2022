@@ -28,6 +28,7 @@ const AuthorizationController = require("../App/auth/controllers/authorization.c
 // Middleware
 const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
 const ValidationMiddleware = require('../App/common/middleware/auth.validation.middleware')
+const RequestValidation = require('../App/common/middleware/request.validation.middleware')
 // App uses
 app.use(cors({
   origin: '*'
@@ -376,5 +377,14 @@ router.get(`/${apiUrl}/checklogging/:campaignId`, [
 router.post(`/${apiUrl}/create-logging/:campaignId`, [
   logging.createLogForUser
 ])
+/* 
+-----------------------------------------------
+REWARD AND REDEEM 
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/checkreward/:campaignId`, [
+  RequestValidation.validateDomain,
+])
+
 module.exports = app
 module.exports.handler = serverless(app)
