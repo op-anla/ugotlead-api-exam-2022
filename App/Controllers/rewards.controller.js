@@ -1,5 +1,27 @@
 const Rewards = require("../Models/rewards.model");
+exports.getAllRewardsForRedeem = (req, res, next) => {
+  console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId)
+  Rewards.findByCampaignId(req.params.campaignId, (err, data) => {
+    if (err) {
+      console.log("🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err", err)
 
+      if (err.kind === "not_found") {
+        res.status(200).send({
+          empty: true
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving rewards with id " + req.params.campaignId
+        });
+      }
+    } else {
+      console.log("GOT REWARDS FOR REDEEM", data)
+      req.body.rewards = data;
+      console.log("BODY NOW ", req.body)
+      next()
+    };
+  });
+}
 // Find the specific rewards for one campaign
 exports.findRewardsByCampaignId = (req, res) => {
   Rewards.findByCampaignId(req.params.campaignId, (err, data) => {

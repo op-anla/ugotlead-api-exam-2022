@@ -44,6 +44,7 @@ exports.findAll = (req, res) => {
     else res.send(data);
   });
 };
+
 // Find one specific campaign
 exports.findOne = (req, res) => {
   Campaign.findById(req.params.campaignId, (err, data) => {

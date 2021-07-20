@@ -28,6 +28,7 @@ const user = require("../App/Controllers/user.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
 const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
+const RedeemValidation = require('../App/common/middleware/redeem.validation.middleware')
 const ValidationMiddleware = require('../App/common/middleware/auth.validation.middleware')
 const RequestValidation = require('../App/common/middleware/request.validation.middleware')
 // App uses
@@ -365,9 +366,10 @@ router.post(`/${apiUrl}/create-logging/:campaignId`, [
 REWARD AND REDEEM 
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/checkreward/:campaignId`, [
+router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
-
+  rewards.getAllRewardsForRedeem,
+  RedeemValidation.didUserWin,
 ])
 
 module.exports = app
