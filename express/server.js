@@ -23,6 +23,7 @@ const rewards = require("../App/Controllers/rewards.controller.js");
 const reward_meta = require("../App/Controllers/reward_meta.controller.js");
 const layout = require("../App/Controllers/layout.controller.js");
 const logging = require("../App/Controllers/logging.controller.js");
+const player = require("../App/Controllers/player.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
@@ -308,35 +309,17 @@ router.post(`/${apiUrl}/addmember`, async (req, res) => {
       merge_fields: mergeFields,
       status: "subscribed",
     });
-    res.status(200).send("Added member");
+    // console.log("🚀 ~ file: server.js ~ line 311 ~ router.post ~ response", response)
+    /* 
+    Now we will create the player in our DB
+    */
+    player.createPlayer(req, res);
+    // res.status(200).send("Added member");
   } catch (error) {
     console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error.response.text)
     res.status(400).send(error.response.text)
   }
 })
-router.get(`/${apiUrl}/checkreward`, async (req, res) => {
-  /* 
-  This endpoint will be used to check whether or not the current user / player 
-  has won anything from the available rewards in the specific campaign. 
-  */
-  console.log("HEADER", req.headers)
-  const CampaignId = req.headers.campaignid;
-  console.log("🚀 ~ file: server.js ~ line 321 ~ router.get ~ CampaignId", CampaignId)
-  const user = {
-    name: req.headers.username,
-    email: req.headers.useremail
-  }
-  if (user.name === "" || user.email === "") {
-    res.status(400).send("Error: User hasn't been submitted")
-    console.log("Error: User hasn't been submitted")
-  } else {
-    /* 
-
-    */
-  }
-  console.log("🚀 ~ file: server.js ~ line 306 ~ router.get ~ user", user)
-})
-
 /* 
 -----------------------------------------------
 REWARDS 
@@ -384,6 +367,7 @@ REWARD AND REDEEM
 */
 router.get(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
+
 ])
 
 module.exports = app

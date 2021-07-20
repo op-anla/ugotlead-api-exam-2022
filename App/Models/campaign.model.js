@@ -11,6 +11,8 @@ const Campaign = function (campaign) {
   this.mailchimp_list = campaign.mailchimp_list;
   this.campaign_startdate = campaign.campaign_startdate;
   this.campaign_enddate = campaign.campaign_enddate;
+  this.campaign_leads = campaign.campaign_leads;
+  this.campaign_description = campaign.campaign_description;
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -97,16 +99,18 @@ Campaign.remove = (id, result) => {
 Campaign.updateById = (id, campaign, result) => {
   console.log(campaign)
   sql.query(
-    "UPDATE campaigns SET    company_id = ?,    campaign_active = ?,    campaign_name = ? ,      campaign_url = ? ,        campaign_owner_id = ? ,          mailchimp_info = ? ,            mailchimp_list = ? ,            campaign_startdate = ? ,            campaign_enddate = ?    WHERE campaign_id = ?",
+    "UPDATE campaigns SET    company_id = ?,    campaign_active = ?,    campaign_name = ? , campaign_description = ? ,     campaign_url = ? ,        campaign_owner_id = ? ,          mailchimp_info = ? ,            mailchimp_list = ? ,            campaign_startdate = ? ,            campaign_enddate = ? ,campaign_leads = ?   WHERE campaign_id = ?",
     [campaign.company_id,
       campaign.campaign_active,
       campaign.campaign_name,
+      campaign.campaign_description,
       campaign.campaign_url,
       campaign.campaign_owner_id,
       campaign.mailchimp_info,
       campaign.mailchimp_list,
       campaign.campaign_startdate,
       campaign.campaign_enddate,
+      campaign.campaign_leads,
       id
     ],
     (err, res) => {
