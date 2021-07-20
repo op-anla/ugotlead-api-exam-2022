@@ -11,12 +11,19 @@ exports.didUserWin = (req, res) => {
   console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum", baseNum)
   var basePercentage = 100 - percentOfWinning;
   console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage", basePercentage)
-  if (baseNum >= basePercentage) {
+
+  //   Test percentage
+  // Comment for not testing
+  var testPercentage = 10;
+  if (baseNum >= testPercentage) {
     console.log("USER WON")
+    var random = Math.floor(Math.random() * req.body.rewards.length)
+    console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 17 ~ choosenReward", random)
+    console.log("RANDOM REwARD CHOOSEN", req.body.rewards[random])
     res.status(200).send({
       won: true,
       data: {
-
+        reward: req.body.rewards[random]
       }
     });
   } else {
