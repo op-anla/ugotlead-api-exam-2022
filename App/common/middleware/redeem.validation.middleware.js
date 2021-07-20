@@ -13,8 +13,17 @@ exports.didUserWin = (req, res) => {
   console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage", basePercentage)
   if (baseNum >= basePercentage) {
     console.log("USER WON")
+    res.status(200).send({
+      won: true,
+      data: {
 
+      }
+    });
   } else {
     console.log("DIDNT WIN")
+    res.status(200).send({
+      won: false,
+      data: {}
+    });
   }
 }
