@@ -25,6 +25,7 @@ const layout = require("../App/Controllers/layout.controller.js");
 const logging = require("../App/Controllers/logging.controller.js");
 const player = require("../App/Controllers/player.controller.js");
 const user = require("../App/Controllers/user.controller.js");
+const entry = require("../App/Controllers/entry.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
 const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
@@ -370,6 +371,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
+  entry.createEntry
 ])
 
 module.exports = app

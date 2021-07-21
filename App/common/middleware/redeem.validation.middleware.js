@@ -1,4 +1,4 @@
-exports.didUserWin = (req, res) => {
+exports.didUserWin = (req, res, next) => {
   console.log("NOW WE CALCULATE WINNING FOR USER", req.body)
   const leads = req.body.campaign.campaign_leads
   console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 4 ~ leads", leads)
@@ -20,17 +20,20 @@ exports.didUserWin = (req, res) => {
     var random = Math.floor(Math.random() * req.body.rewards.length)
     console.log("🚀 ~ file: redeem.validation.middleware.js ~ line 17 ~ choosenReward", random)
     console.log("RANDOM REwARD CHOOSEN", req.body.rewards[random])
-    res.status(200).send({
+    req.body.redeemInfo = {
       won: true,
       data: {
         reward: req.body.rewards[random]
       }
-    });
+    };
+    next()
   } else {
     console.log("DIDNT WIN")
-    res.status(200).send({
+
+    req.body.redeemInfo = {
       won: false,
       data: {}
-    });
+    };
+    next()
   }
 }
