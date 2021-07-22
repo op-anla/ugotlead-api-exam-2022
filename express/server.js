@@ -69,6 +69,11 @@ router.get(`/${apiUrl}/campaigns/:campaignId`, (req, res) => {
     console.log("Testing individual campaign");
   campaigns.findOne(req, res);
 })
+router.get(`/${apiUrl}/campaign-stats/:campaignId`, (req, res) => {
+  ValidationMiddleware.validJWTNeeded,
+    console.log("Testing /campaigns/campaignstats");
+  campaigns.findStatsForCampaign(req, res);
+})
 router.post(`/${apiUrl}/create-campaign`, (req, res) => {
   ValidationMiddleware.validJWTNeeded,
     campaigns.create(req, res);

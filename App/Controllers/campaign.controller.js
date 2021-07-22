@@ -44,7 +44,21 @@ exports.findAll = (req, res) => {
     else res.send(data);
   });
 };
-
+exports.findStatsForCampaign = (req, res) => {
+  Campaign.findStatsForCampaign(req.params.campaignId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found campaignstats with id ${req.params.campaignId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving campaignstats with id " + req.params.campaignId
+        });
+      }
+    } else res.send(data);
+  });
+};
 // Find one specific campaign
 exports.findOne = (req, res) => {
   Campaign.findById(req.params.campaignId, (err, data) => {

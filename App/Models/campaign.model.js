@@ -56,6 +56,44 @@ Campaign.create = (newCampaign, result) => {
 
   });
 };
+Campaign.findStatsForCampaign = (campaignId, result) => {
+  const campaignStats = {}
+  const logs = new Promise((resolve, reject) => {
+    sql.query(`SELECT COUNT(*) FROM logs WHERE campaign_id = ${campaignId}`, (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err", err)
+        reject(err)
+      }
+      if (res.length) {
+        console.log("found logs: ", res[0]);
+        resolve(res[0]['COUNT(*)'])
+      }
+    })
+  })
+  logs.then((res) => {
+    campaignStats.logs = res;
+    console.log("STATS", campaignStats)
+    const entries = new Promise((resolve, reject) => {
+      sql.query(`SELECT COUNT(*) FROM entries WHERE campaign_id = ${campaignId}`, (err, res) => {
+        if (err) {
+          console.log("🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err", err)
+          reject(err)
+        }
+        if (res.length) {
+          console.log("found ENTRIES: ", res[0]);
+          resolve(res[0]['COUNT(*)'])
+        }
+      })
+    })
+    entries.then((res) => {
+      campaignStats.entries = res;
+      result(null, campaignStats);
+      return;
+    })
+  })
+
+
+};
 Campaign.findById = (campaignId, result) => {
   sql.query(`SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`, (err, res) => {
     if (err) {
