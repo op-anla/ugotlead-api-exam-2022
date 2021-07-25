@@ -25,6 +25,7 @@
     "@mailchimp/mailchimp_marketing": "^3.0.47",
     "cors": "^2.8.5",
     "dotenv": "^8.5.1",
+    "encoding": "^0.1.13",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
