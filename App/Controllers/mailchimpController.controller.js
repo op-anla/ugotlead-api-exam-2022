@@ -1,5 +1,12 @@
 const campaigns = require("./campaign.controller.js");
 const player = require("./player.controller.js");
+
+const mailchimp = require("@mailchimp/mailchimp_marketing");
+const fetch = require("node-fetch");
+const querystring = require("querystring");
+const {
+  URLSearchParams
+} = require("url");
 /* 
 Version: 1.0
 */

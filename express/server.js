@@ -6,12 +6,7 @@ const app = express()
 const bodyParser = require("body-parser")
 const router = express.Router()
 var cors = require('cors')
-const mailchimp = require("@mailchimp/mailchimp_marketing");
-const fetch = require("node-fetch");
-const {
-  URLSearchParams
-} = require("url");
-const querystring = require("querystring");
+
 /* 
 -----------------------------------------------
 CONTROLLERS
