@@ -4,7 +4,7 @@
   "description": "This is an Express Server created for UGOTLEAD Product",
   "main": "functions/server.js",
   "scripts": {
-    "build": "node ./create-env.js && netlify-lambda build express --config ./webpack.functions.js",
+    "build": "node ./create-env.js && npm install && netlify-lambda build express --config ./webpack.functions.js",
     "start": "nodemon server-local.js",
     "start:lambda": "netlify-lambda serve express --config ./webpack.functions.js"
   },
