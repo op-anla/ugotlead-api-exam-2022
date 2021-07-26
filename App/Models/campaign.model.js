@@ -87,6 +87,11 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     })
     entries.then((res) => {
       campaignStats.entries = res;
+      let roi = (campaignStats.entries * 100) / campaignStats.logs
+      campaignStats.roi = roi.toFixed(1);
+      if (campaignStats.roi === null || isNaN(campaignStats.roi) || campaignStats.roi === '0.0') {
+        campaignStats.roi = "0";
+      }
       result(null, campaignStats);
       return;
     })
