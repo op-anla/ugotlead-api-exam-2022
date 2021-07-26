@@ -57,7 +57,14 @@ Campaign.create = (newCampaign, result) => {
   });
 };
 Campaign.findStatsForCampaign = (campaignId, result) => {
+  /* 
+  Here we find stats for a campaign. 
+  */
+  // Initialize a new empty object which will be filled with stats later
   const campaignStats = {}
+  /* 
+  Promise based logs variable which will reject or resolve whether or not it finds logs on campaign
+  */
   const logs = new Promise((resolve, reject) => {
     sql.query(`SELECT COUNT(*) FROM logs WHERE campaign_id = ${campaignId}`, (err, res) => {
       if (err) {
@@ -66,13 +73,18 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
       }
       if (res.length) {
         console.log("found logs: ", res[0]);
+        // Send the actual number of logs to resolve (then)
         resolve(res[0]['COUNT(*)'])
       }
     })
   })
+  // .then - Successfull 
   logs.then((res) => {
+    // Set our empty object with first variable (logs)
     campaignStats.logs = res;
     console.log("STATS", campaignStats)
+    // When we have the logs we now retrieve the entries for this campaign
+    // Again we use promise based variables so we can resolve and reject the response
     const entries = new Promise((resolve, reject) => {
       sql.query(`SELECT COUNT(*) FROM entries WHERE campaign_id = ${campaignId}`, (err, res) => {
         if (err) {
@@ -81,17 +93,21 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
         }
         if (res.length) {
           console.log("found ENTRIES: ", res[0]);
+          // Send the actual number to stats
           resolve(res[0]['COUNT(*)'])
         }
       })
     })
     entries.then((res) => {
+      // Set another variable in our campaignstats object
       campaignStats.entries = res;
+      // Create ROI variable as well with logs and entries
       let roi = (campaignStats.entries * 100) / campaignStats.logs
       campaignStats.roi = roi.toFixed(1);
       if (campaignStats.roi === null || isNaN(campaignStats.roi) || campaignStats.roi === '0.0') {
         campaignStats.roi = "0";
       }
+      // Result in the end
       result(null, campaignStats);
       return;
     })
