@@ -24,6 +24,7 @@ Campaign.create = (newCampaign, result) => {
 
     console.log("created campaign: ", {
       id: res.insertId,
+      // Spread operator to extend the object with data
       ...newCampaign
     });
     let newURL = `/embed/campaign/${res.insertId}`
