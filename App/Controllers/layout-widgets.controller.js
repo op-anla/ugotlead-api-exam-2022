@@ -32,3 +32,32 @@ exports.createwidget = (req, res) => {
     }
   })
 };
+
+// Update reward by id
+exports.updateWidget = (req, res) => {
+  console.log("🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body", req.body)
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+  LayoutWidgetModel.updateById(
+    req.params.widgetId,
+    new LayoutWidgetModel(req.body),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found widget with id ${req.params.widgetId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating widget with id " + req.params.widgetId
+          });
+        }
+      }
+      res.status(200).send("Updated widget with id: " + req.params.widgetId)
+    }
+  );
+};
