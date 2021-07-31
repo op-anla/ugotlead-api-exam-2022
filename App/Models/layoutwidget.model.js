@@ -2,13 +2,13 @@ const sql = require("./db.js");
 
 // constructor
 const LayoutWidgetModel = function (widget) {
-  this.template_layout_name = widget.template_layout_name;
-  this.template_layout_content = widget.template_layout_content;
-  this.template_layout_options = widget.template_layout_options;
-  this.template_layout_pos_x = widget.template_layout_pos_x;
-  this.template_layout_pos_y = widget.template_layout_pos_y;
-  this.template_layout_size_h = widget.template_layout_size_h;
-  this.template_layout_size_w = widget.template_layout_size_w;
+  this.template_layout_name = widget.name;
+  this.template_layout_content = widget.content;
+  this.template_layout_options = widget.options;
+  this.template_layout_pos_x = widget.x;
+  this.template_layout_pos_y = widget.y;
+  this.template_layout_size_h = widget.h;
+  this.template_layout_size_w = widget.w;
 };
 
 LayoutWidgetModel.create = (newWidget, result) => {
@@ -32,42 +32,42 @@ LayoutWidgetModel.create = (newWidget, result) => {
   });
 };
 LayoutWidgetModel.updateById = (id, widget, result) => {
-  console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", widget)
+  console.log("🚀 ~ file: layoutwidget.model.js ~ line 35 ~ widget", widget)
 
   sql.query(
-    "UPDATE rewards SET    reward_name = ?,    reward_description = ? ,      reward_value = ? ,        reward_value_type = ? ,          reward_image_url = ? ,            reward_type = ? ,            reward_claimed = ?  WHERE reward_id = ?",
+    "UPDATE template_layout_components SET    template_layout_name = ?,    template_layout_content = ? ,      template_layout_options = ? ,        template_layout_pos_x = ? ,          template_layout_pos_y = ? ,            template_layout_size_h = ? ,            template_layout_size_w = ?  WHERE template_layout_id = ?",
     [
-      reward.reward_name,
-      reward.reward_description,
-      reward.reward_value,
-      reward.reward_value_type,
-      reward.reward_image_url,
-      reward.reward_type,
-      reward.reward_claimed,
+      widget.name,
+      widget.content,
+      widget.options,
+      widget.x,
+      widget.y,
+      widget.h,
+      widget.w,
       id
     ],
     (err, res) => {
       if (err) {
-        console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err)
+        console.log("🚀 ~ file: layoutwidget.model.js ~ line 51 ~ err", err)
         result(null, err);
         return;
       }
 
       if (res.affectedRows == 0) {
-        // not found reward with the id
+        // not found widget with the id
         result({
           kind: "not_found"
         }, null);
         return;
       }
 
-      console.log("updated reward: ", {
+      console.log("updated widget: ", {
         id: id,
-        ...reward
+        ...widget
       });
       result(null, {
         id: id,
-        ...reward
+        ...widget
       });
     }
   );

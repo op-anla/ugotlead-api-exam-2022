@@ -8,13 +8,13 @@ LAYOUTWIDGET
 exports.createwidget = (req, res) => {
   console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body)
   const newWidget = new LayoutWidgetModel({
-    template_layout_name: req.body.name,
-    template_layout_content: req.body.content,
-    template_layout_options: req.body.options,
-    template_layout_pos_x: req.body.x,
-    template_layout_pos_y: req.body.y,
-    template_layout_size_h: req.body.h,
-    template_layout_size_w: req.body.w
+    name: req.body.name,
+    content: req.body.content,
+    options: req.body.options,
+    x: req.body.x,
+    y: req.body.y,
+    h: req.body.h,
+    w: req.body.w
   });
 
   // Save layout widget in db

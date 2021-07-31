@@ -241,7 +241,7 @@ router.post(`/${apiUrl}/layout/create-widget`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.createwidget
 ])
-router.put(`/${apiUrl}/layout/update-widget/widgetId`, [
+router.put(`/${apiUrl}/layout/update-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.updateWidget
 ])
