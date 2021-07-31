@@ -19,6 +19,8 @@ const reward_meta = require("../App/Controllers/reward_meta.controller.js");
 const layout = require("../App/Controllers/layout.controller.js");
 const logging = require("../App/Controllers/logging.controller.js");
 const player = require("../App/Controllers/player.controller.js");
+
+const layoutWidgets = require("../App/Controllers/layout-widgets.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
@@ -230,6 +232,16 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RedeemValidation.didUserWin,
   entry.createEntry
 ])
+/* 
+-----------------------------------------------
+LAYOUT AND WIDGETS
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/layout/create-widget`, [
+  ValidationMiddleware.validJWTNeeded,
+  layoutWidgets.createwidget
+])
+
 
 module.exports = app
 module.exports.handler = serverless(app)
