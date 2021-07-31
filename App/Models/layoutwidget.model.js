@@ -10,6 +10,16 @@ const LayoutWidgetModel = function (widget) {
   this.template_layout_size_h = widget.h;
   this.template_layout_size_w = widget.w;
 };
+LayoutWidgetModel.getAll = result => {
+  sql.query("SELECT * FROM template_layout_components", async (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err", err)
+      result(null, err);
+      return;
+    }
+    result(null, res);
+  });
+};
 
 LayoutWidgetModel.create = (newWidget, result) => {
   sql.query("INSERT INTO template_layout_components SET ?", newWidget, (err, res) => {

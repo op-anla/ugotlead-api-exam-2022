@@ -5,6 +5,17 @@ const LayoutWidgetModel = require("../Models/layoutwidget.model");
 LAYOUTWIDGET
 -----------------------------------------------
 */
+// Retrieve all widgets from the database.
+exports.findAllWidgets = (req, res) => {
+  console.log("find all");
+  LayoutWidgetModel.getAll((err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving widgets."
+      });
+    else res.send(data);
+  });
+};
 exports.createwidget = (req, res) => {
   console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body)
   const newWidget = new LayoutWidgetModel({

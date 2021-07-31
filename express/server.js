@@ -245,7 +245,9 @@ router.put(`/${apiUrl}/layout/update-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.updateWidget
 ])
-
-
+router.get(`/${apiUrl}/layout/widgets`, [
+  ValidationMiddleware.validJWTNeeded,
+  layoutWidgets.findAllWidgets,
+])
 module.exports = app
 module.exports.handler = serverless(app)
