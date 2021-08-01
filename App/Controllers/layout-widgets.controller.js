@@ -72,3 +72,21 @@ exports.updateWidget = (req, res) => {
     }
   );
 };
+// Delete campaign
+exports.deleteSelectedWidget = (req, res) => {
+  LayoutWidgetModel.remove(req.params.widgetId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Widget with id ${req.params.widgetId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Widget with id " + req.params.widgetId
+        });
+      }
+    } else res.send({
+      message: `Widget was deleted successfully!`
+    });
+  });
+};

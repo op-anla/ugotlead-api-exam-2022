@@ -249,5 +249,9 @@ router.get(`/${apiUrl}/layout/widgets`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.findAllWidgets,
 ])
+router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
+  ValidationMiddleware.validJWTNeeded,
+  layoutWidgets.deleteSelectedWidget,
+])
 module.exports = app
 module.exports.handler = serverless(app)

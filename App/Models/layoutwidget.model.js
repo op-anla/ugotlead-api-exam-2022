@@ -47,13 +47,13 @@ LayoutWidgetModel.updateById = (id, widget, result) => {
   sql.query(
     "UPDATE template_layout_components SET    template_layout_name = ?,    template_layout_content = ? ,      template_layout_options = ? ,        template_layout_pos_x = ? ,          template_layout_pos_y = ? ,            template_layout_size_h = ? ,            template_layout_size_w = ?  WHERE template_layout_id = ?",
     [
-      widget.name,
-      widget.content,
-      widget.options,
-      widget.x,
-      widget.y,
-      widget.h,
-      widget.w,
+      widget.template_layout_name,
+      widget.template_layout_content,
+      widget.template_layout_options,
+      widget.template_layout_pos_x,
+      widget.template_layout_pos_y,
+      widget.template_layout_size_h,
+      widget.template_layout_size_w,
       id
     ],
     (err, res) => {
@@ -81,5 +81,25 @@ LayoutWidgetModel.updateById = (id, widget, result) => {
       });
     }
   );
+};
+LayoutWidgetModel.remove = (id, result) => {
+  sql.query("DELETE FROM template_layout_components WHERE template_layout_id = ?", id, (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: layoutwidget.model.js ~ line 88 ~ sql.query ~ err", err)
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found Widget with the id
+      result({
+        kind: "not_found"
+      }, null);
+      return;
+    }
+
+    console.log("deleted widget with widget_id: ", id);
+    result(null, res);
+  });
 };
 module.exports = LayoutWidgetModel;
