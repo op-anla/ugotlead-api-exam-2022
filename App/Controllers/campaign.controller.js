@@ -7,31 +7,30 @@ exports.create = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body)
+  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
 
   // Create a Customer
   const campaign = new Campaign({
     company_id: req.body.company_id,
     campaign_active: req.body.campaign_active,
     campaign_name: req.body.campaign_name,
-    description: req.body.campaign_description,
+    description: req.body.description,
     campaign_url: req.body.campaign_url,
     campaign_owner_id: req.body.campaign_owner_id,
     mailchimp_info: req.body.mailchimp_info,
     mailchimp_list: req.body.mailchimp_list,
-    campaign_leads: req.body.campaign_leads,
+    campaign_leads: req.body.campaign_leads
   });
 
   // Save Customer in the database
   Campaign.create(campaign, (err, data) => {
-
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the campaign."
+        message:
+          err.message || "Some error occurred while creating the campaign."
       });
     else res.send(data);
   });
-
 };
 // Retrieve all campaigns from the database.
 exports.findAll = (req, res) => {
@@ -39,7 +38,8 @@ exports.findAll = (req, res) => {
   Campaign.getAll((err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving campaigns."
+        message:
+          err.message || "Some error occurred while retrieving campaigns."
       });
     else res.send(data);
   });
@@ -53,7 +53,8 @@ exports.findStatsForCampaign = (req, res) => {
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving campaignstats with id " + req.params.campaignId
+          message:
+            "Error retrieving campaignstats with id " + req.params.campaignId
         });
       }
     } else res.send(data);
@@ -83,7 +84,7 @@ exports.update = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-  console.log(req.body)
+  console.log(req.body);
   Campaign.updateById(
     req.params.campaignId,
     new Campaign(req.body.campaignInfo),
@@ -115,27 +116,36 @@ exports.delete = (req, res) => {
           message: "Could not delete campaign with id " + req.params.campaignId
         });
       }
-    } else res.send({
-      message: `Campaign was deleted successfully!`
-    });
+    } else
+      res.send({
+        message: `Campaign was deleted successfully!`
+      });
   });
 };
 /* 
 Mailchimp update
 */
 exports.updateMailchimp = (campaignId, mailchimpInfo) => {
-  console.log("🚀 ~ file: campaign.controller.js ~ line 111 ~ campaignId, mailchimpInfo", campaignId, mailchimpInfo)
+  console.log(
+    "🚀 ~ file: campaign.controller.js ~ line 111 ~ campaignId, mailchimpInfo",
+    campaignId,
+    mailchimpInfo
+  );
   Campaign.updateMailchimpInfo(campaignId, mailchimpInfo, (err, data) => {
     if (err) {
-      return err
+      return err;
     } else return data;
-  })
-}
+  });
+};
 exports.updateMailchimpList = (campaignId, mailchimpLists) => {
-  console.log("🚀 ~ file: campaign.controller.js ~ line 119 ~ campaignId, mailchimpLists", campaignId, mailchimpLists)
+  console.log(
+    "🚀 ~ file: campaign.controller.js ~ line 119 ~ campaignId, mailchimpLists",
+    campaignId,
+    mailchimpLists
+  );
   Campaign.updateMailchimpLists(campaignId, mailchimpLists, (err, data) => {
     if (err) {
-      return err
+      return err;
     } else return data;
-  })
-}
+  });
+};
