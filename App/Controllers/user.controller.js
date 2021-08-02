@@ -1,7 +1,7 @@
 const User = require("../Models/user.model");
-const crypto = require('crypto');
+const crypto = require("crypto");
 const jwtSecret = process.env.jwt_secret,
-  jwt = require('jsonwebtoken');
+  jwt = require("jsonwebtoken");
 // Create and Save a new user
 exports.create = (req, res) => {
   // Validate request
@@ -13,18 +13,19 @@ exports.create = (req, res) => {
   /* 
   Here we have some validation of the user and also hashing the created user password
   */
-  let salt = crypto.randomBytes(16).toString('base64');
-  let hash = crypto.createHmac('sha512', salt)
+  let salt = crypto.randomBytes(16).toString("base64");
+  let hash = crypto
+    .createHmac("sha512", salt)
     .update(req.body.password)
     .digest("base64");
+  // Changing the req.body password to the hashed password
   req.body.password = salt + "$" + hash;
   // Create a USER
 
   const user = new User({
     username: req.body.username,
-    password: req.body.password,
+    password: req.body.password
   });
-
 
   // Save USER in the database
   User.create(user, (err, data) => {
@@ -34,7 +35,6 @@ exports.create = (req, res) => {
       });
     else res.send(data);
   });
-
 };
 // Find one specific user
 exports.getById = (req, res) => {
@@ -54,14 +54,14 @@ exports.getById = (req, res) => {
 };
 // Find one specific user by token
 exports.getByToken = (req, res) => {
-  console.log(req.headers['authorization'])
-  let token = req.headers['authorization'];
-  let authorization = token.split(' ')[1],
+  console.log(req.headers["authorization"]);
+  let token = req.headers["authorization"];
+  let authorization = token.split(" ")[1],
     decoded;
   try {
-    decoded = jwt.verify(authorization, jwtSecret)
+    decoded = jwt.verify(authorization, jwtSecret);
   } catch (e) {
-    return res.status(401).send('unauthorized')
+    return res.status(401).send("unauthorized");
   }
   var userId = decoded.userId;
 
@@ -91,27 +91,26 @@ exports.putById = (req, res) => {
   Here we hash the new password if that is changed
   */
   if (req.body.password) {
-    let salt = crypto.randomBytes(16).toString('base64');
-    let hash = crypto.createHmac('sha512', salt).update(req.body.password).digest("base64");
+    let salt = crypto.randomBytes(16).toString("base64");
+    let hash = crypto
+      .createHmac("sha512", salt)
+      .update(req.body.password)
+      .digest("base64");
     req.body.password = salt + "$" + hash;
   }
-  User.updateById(
-    req.params.userId,
-    new User(req.body),
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message: `Not found User with id ${req.params.userId}.`
-          });
-        } else {
-          res.status(500).send({
-            message: "Error updating User with id " + req.params.userId
-          });
-        }
-      } else res.send(data);
-    }
-  );
+  User.updateById(req.params.userId, new User(req.body), (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found User with id ${req.params.userId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating User with id " + req.params.userId
+        });
+      }
+    } else res.send(data);
+  });
 };
 
 // Retrieve all users from the database.
@@ -137,8 +136,9 @@ exports.deleteUser = (req, res) => {
           message: "Could not delete User with id " + req.params.userId
         });
       }
-    } else res.send({
-      message: `User was deleted successfully!`
-    });
+    } else
+      res.send({
+        message: `User was deleted successfully!`
+      });
   });
 };
