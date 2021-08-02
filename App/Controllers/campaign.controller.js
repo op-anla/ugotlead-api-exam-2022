@@ -85,9 +85,12 @@ exports.update = (req, res) => {
     });
   }
   console.log(req.body);
+  if (req.body.campaignInfo) {
+    req.body = req.body.campaignInfo;
+  }
   Campaign.updateById(
     req.params.campaignId,
-    new Campaign(req.body.campaignInfo),
+    new Campaign(req.body),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {

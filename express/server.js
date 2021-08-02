@@ -33,7 +33,7 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 // App uses
 app.use(
   cors({
-    origin: "*"
+    origin: ["http:localhost:3306", "http://127.0.0.1:3306"]
   })
 );
 app.use(function(req, res, next) {
@@ -117,7 +117,6 @@ router.get(`/${apiUrl}/companies`, [
 /* 
 -----------------------------------------------
 USERS
-Later we will have Auth endpoints for our JWT based login
 -----------------------------------------------
 */
 router.post(`/${apiUrl}/user`, [user.create]);

@@ -9,7 +9,7 @@ exports.create = (req, res) => {
     });
   }
 
-  // Create a Customer
+  // Create a company
   const company = new Company({
     company_name: req.body.company_name,
     company_email: req.body.company_email,
@@ -17,17 +17,15 @@ exports.create = (req, res) => {
     company_zipcode: req.body.company_zipcode
   });
 
-  // Save Customer in the database
+  // Save company in the database
   Company.create(company, (err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the company."
+        message:
+          err.message || "Some error occurred while creating the company."
       });
     else res.send(data);
   });
-
-
-
 };
 
 exports.findAll = (req, res) => {
@@ -35,7 +33,8 @@ exports.findAll = (req, res) => {
   Company.getAll((err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving campaigns."
+        message:
+          err.message || "Some error occurred while retrieving campaigns."
       });
     else res.send(data);
   });
