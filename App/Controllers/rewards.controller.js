@@ -1,9 +1,12 @@
 const Rewards = require("../Models/rewards.model");
 exports.getAllRewardsForRedeem = (req, res, next) => {
-  console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId)
+  console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId);
   Rewards.findByCampaignId(req.params.campaignId, (err, data) => {
     if (err) {
-      console.log("🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err", err)
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
+        err
+      );
 
       if (err.kind === "not_found") {
         res.status(200).send({
@@ -15,18 +18,21 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
         });
       }
     } else {
-      console.log("GOT REWARDS FOR REDEEM", data)
+      console.log("GOT REWARDS FOR REDEEM", data);
       req.body.rewards = data;
-      console.log("BODY NOW ", req.body)
-      next()
-    };
+      console.log("BODY NOW ", req.body);
+      next();
+    }
   });
-}
+};
 // Find the specific rewards for one campaign
 exports.findRewardsByCampaignId = (req, res) => {
   Rewards.findByCampaignId(req.params.campaignId, (err, data) => {
     if (err) {
-      console.log("🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err", err)
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
+        err
+      );
 
       if (err.kind === "not_found") {
         res.status(200).send({
@@ -38,13 +44,13 @@ exports.findRewardsByCampaignId = (req, res) => {
         });
       }
     } else {
-      res.status(200).send(data)
-    };
+      res.status(200).send(data);
+    }
   });
 };
 // Delete reward
 exports.deleteById = (req, res) => {
-  console.log("ID", req.params.reward_id)
+  console.log("ID", req.params.reward_id);
   Rewards.remove(req.params.reward_id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -67,7 +73,7 @@ exports.create = (req, res, next) => {
       message: "Content can not be empty!"
     });
   }
-  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs", req.body)
+  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs", req.body);
 
   // Create a reward
   const rewardVar = new Rewards({
@@ -77,12 +83,11 @@ exports.create = (req, res, next) => {
     reward_description: req.body.reward.reward_description,
     reward_value_type: req.body.reward.reward_value_type,
     reward_value: req.body.reward.reward_value,
-    reward_type: req.body.reward.reward_type,
+    reward_type: req.body.reward.reward_type
   });
 
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
-
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while creating the reward."
@@ -100,15 +105,15 @@ exports.create = (req, res, next) => {
       */
       req.body.reward_meta.reward_id = data.id;
       next();
-
-    };
-
+    }
   });
-
 };
 // Update reward by id
 exports.updateById = (req, res, next) => {
-  console.log("🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body", req.body.reward)
+  console.log(
+    "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
+    req.body.reward
+  );
   // Validate Request
   if (!req.body) {
     res.status(400).send({

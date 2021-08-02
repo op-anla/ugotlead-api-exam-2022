@@ -58,6 +58,10 @@ Version: 1.0
 const version = "v1";
 const apiUrl = `${version}/api`;
 /* 
+Routing docs
+https://expressjs.com/en/guide/routing.html
+*/
+/* 
 -----------------------------------------------
 CAMPAIGNS
 -----------------------------------------------
@@ -210,8 +214,12 @@ router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
 LOGGGING 
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/checklogging/:campaignId`, [logging.findLogForUser]);
+router.get(`/${apiUrl}/checklogging/:campaignId`, [
+  RequestValidation.validateDomain,
+  logging.findLogForUser
+]);
 router.post(`/${apiUrl}/create-logging/:campaignId`, [
+  RequestValidation.validateDomain,
   logging.createLogForUser
 ]);
 /* 
