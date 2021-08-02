@@ -1,5 +1,5 @@
 exports.didUserWin = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", req.body);
+  console.log("NOW WE CALCULATE WINNING FOR USER");
   const leads = req.body.campaign.campaign_leads;
   console.log(
     "🚀 ~ file: redeem.validation.middleware.js ~ line 4 ~ leads",

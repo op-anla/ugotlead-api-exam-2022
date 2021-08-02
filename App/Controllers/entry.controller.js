@@ -6,12 +6,17 @@ ENTRY
 -----------------------------------------------
 */
 exports.createEntry = (req, res) => {
-  console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body)
-  console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD", req.body.redeemInfo.data)
+  console.log(
+    "🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD",
+    req.body.redeemInfo.data
+  );
   const datenow = Date.now();
   const now = new Date(datenow);
   const utcstring = now.toUTCString();
-  console.log("🚀 ~ file: entry.controller.js ~ line 14 ~ utcstring", utcstring)
+  console.log(
+    "🚀 ~ file: entry.controller.js ~ line 14 ~ utcstring",
+    utcstring
+  );
   // Create an entry
   const newEntry = new EntryModel({
     campaign_id: req.body.campaign.campaign_id,
@@ -30,11 +35,11 @@ exports.createEntry = (req, res) => {
         message: err.message || "Some error occurred while creating the entry."
       });
     else {
-      console.log("DATA IN LOG", data)
+      console.log("DATA IN LOG", data);
       res.status(200).send({
         message: "Added entry",
-        data: data,
-      })
+        data: data
+      });
     }
-  })
+  });
 };
