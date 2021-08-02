@@ -27,7 +27,7 @@ exports.redirectToLogin = (req, res, next) => {
       redirect_uri: OAUTH_CALLBACK
     })}`
   );
-  next();
+  return next();
 };
 
 exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {

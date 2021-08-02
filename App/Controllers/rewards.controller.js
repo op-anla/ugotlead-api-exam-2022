@@ -21,7 +21,7 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
       console.log("GOT REWARDS FOR REDEEM", data);
       req.body.rewards = data;
       console.log("BODY NOW ", req.body);
-      next();
+      return next();
     }
   });
 };
@@ -104,7 +104,7 @@ exports.create = (req, res, next) => {
       And then send that new response body to the next function. 
       */
       req.body.reward_meta.reward_id = data.id;
-      next();
+      return next();
     }
   });
 };
@@ -134,7 +134,7 @@ exports.updateById = (req, res, next) => {
             message: "Error updating reward with id " + req.params.reward_id
           });
         }
-      } else next();
+      } else return next();
     }
   );
 };

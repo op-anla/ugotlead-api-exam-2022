@@ -27,7 +27,7 @@ exports.hasAuthValidFields = (req, res, next) => {
       Calling the next function
       */
       console.log("Calling next function");
-      next();
+      return next();
     }
   } else {
     return res.status(400).send({
@@ -65,7 +65,7 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
             userName: user.username
           };
           // Go next function
-          next();
+          return next();
         } else {
           return res.status(400).send({
             errors: ["Invalid password"]

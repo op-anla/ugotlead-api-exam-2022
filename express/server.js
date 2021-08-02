@@ -42,7 +42,7 @@ app.use(function(req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  next();
+  return next();
 });
 app.use(bodyParser.json());
 app.use("/.netlify/functions/server", router); // path must route to lambda

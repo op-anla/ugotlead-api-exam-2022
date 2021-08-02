@@ -88,7 +88,7 @@ exports.deleteById = (req, res, next) => {
             "Could not delete reward meta with id " + req.headers.reward_meta_id
         });
       }
-    } else next();
+    } else return next();
   });
 };
 // Find the specific rewards meta for one campaign
