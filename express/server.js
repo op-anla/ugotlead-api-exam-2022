@@ -1,11 +1,11 @@
-"use strict"
+"use strict";
 // Used services
-const express = require("express")
-const serverless = require("serverless-http")
-const app = express()
-const bodyParser = require("body-parser")
-const router = express.Router()
-var cors = require('cors')
+const express = require("express");
+const serverless = require("serverless-http");
+const app = express();
+const bodyParser = require("body-parser");
+const router = express.Router();
+var cors = require("cors");
 
 /* 
 -----------------------------------------------
@@ -26,122 +26,121 @@ const entry = require("../App/Controllers/entry.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 // Middleware
-const VerifyUserMiddleware = require('../App/auth/middleware/verify.user.middleware')
-const RedeemValidation = require('../App/common/middleware/redeem.validation.middleware')
-const ValidationMiddleware = require('../App/common/middleware/auth.validation.middleware')
-const RequestValidation = require('../App/common/middleware/request.validation.middleware')
+const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
+const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
+const ValidationMiddleware = require("../App/common/middleware/auth.validation.middleware");
+const RequestValidation = require("../App/common/middleware/request.validation.middleware");
 // App uses
-app.use(cors({
-  origin: '*'
-}))
-app.use(function (req, res, next) {
+app.use(
+  cors({
+    origin: "*"
+  })
+);
+app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
-app.use(bodyParser.json())
-app.use("/.netlify/functions/server", router) // path must route to lambda
+app.use(bodyParser.json());
+app.use("/.netlify/functions/server", router); // path must route to lambda
 app.use("/", router);
 // Router
 router.get("/", (req, res) => {
-  res.write("<h1>Server is up and running! Make your requests</h1>")
-  res.end()
-})
+  res.write("<h1>Server is up and running! Make your requests</h1>");
+  res.end();
+});
 /* 
 Version: 1.0
 */
 const version = "v1";
-const apiUrl = `${version}/api`
+const apiUrl = `${version}/api`;
 /* 
 -----------------------------------------------
 CAMPAIGNS
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/campaigns`, (req, res) => {
+
+router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /campaigns");
-  campaigns.findAll(req, res);
-})
-router.get(`/${apiUrl}/campaigns/:campaignId`, (req, res) => {
+  campaigns.findAll
+]);
+router.get(`/${apiUrl}/campaigns/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    console.log("Testing individual campaign");
-  campaigns.findOne(req, res);
-})
-router.get(`/${apiUrl}/campaign-stats/:campaignId`, (req, res) => {
+  campaigns.findOne
+]);
+router.get(`/${apiUrl}/campaign-stats/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /campaigns/campaignstats");
-  campaigns.findStatsForCampaign(req, res);
-})
-router.post(`/${apiUrl}/create-campaign`, (req, res) => {
+  campaigns.findStatsForCampaign
+]);
+router.post(`/${apiUrl}/create-campaign`, [
   ValidationMiddleware.validJWTNeeded,
-    campaigns.create(req, res);
-});
-router.put(`/${apiUrl}/update-campaign/:campaignId`, (req, res) => {
+  campaigns.create
+]);
+router.put(`/${apiUrl}/update-campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    campaigns.update(req, res);
-});
-router.delete(`/${apiUrl}/delete-campaign/:campaignId`, (req, res) => {
+  campaigns.update
+]);
+router.delete(`/${apiUrl}/delete-campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    campaigns.delete(req, res);
-});
+  campaigns.delete
+]);
 /* 
 -----------------------------------------------
 LAYOUT FOR CAMPAIGNS
 EXTENDED CAMPAIGN
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/layout/campaign/:campaignId`, (req, res) => {
+router.get(`/${apiUrl}/layout/campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /layout/campaing/:campaignId");
-  layout.findLayoutForSpecificCampaign(req, res);
-})
-router.put(`/${apiUrl}/update-layout/campaign/:campaignId`, (req, res) => {
+  layout.findLayoutForSpecificCampaign
+]);
+router.put(`/${apiUrl}/update-layout/campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-    layout.updateLayoutForSpecificCampaign(req, res);
-});
+  layout.updateLayoutForSpecificCampaign
+]);
 /* 
 -----------------------------------------------
 COMPANIES
 -----------------------------------------------
 */
-router.post(`/${apiUrl}/create-company`, (req, res) => {
+router.post(`/${apiUrl}/create-company`, [
   ValidationMiddleware.validJWTNeeded,
-    companies.create(req, res);
-});
-router.get(`/${apiUrl}/companies`, (req, res) => {
+  companies.create
+]);
+router.get(`/${apiUrl}/companies`, [
   ValidationMiddleware.validJWTNeeded,
-    console.log("Testing /companies");
-  companies.findAll(req, res);
-})
+  companies.findAll
+]);
 /* 
 -----------------------------------------------
 USERS
 Later we will have Auth endpoints for our JWT based login
 -----------------------------------------------
 */
-router.post(`/${apiUrl}/user`, [
-  user.create
-])
+router.post(`/${apiUrl}/user`, [user.create]);
 router.get(`/${apiUrl}/user/:userId`, [
   ValidationMiddleware.validJWTNeeded,
   user.getById
-])
+]);
 router.get(`/${apiUrl}/user`, [
   ValidationMiddleware.validJWTNeeded,
   user.getByToken
-])
+]);
 router.put(`/${apiUrl}/user/:userId`, [
   ValidationMiddleware.validJWTNeeded,
   user.putById
-])
+]);
 router.get(`/${apiUrl}/users`, [
   ValidationMiddleware.validJWTNeeded,
   user.getAll
-])
+]);
 router.delete(`/${apiUrl}/user/:userId`, [
   ValidationMiddleware.validJWTNeeded,
   user.deleteUser
-])
+]);
 /* 
 -----------------------------------------------
 AUTH
@@ -152,8 +151,7 @@ router.post(`/${apiUrl}/auth`, [
   VerifyUserMiddleware.hasAuthValidFields,
   VerifyUserMiddleware.isPasswordAndUserMatch,
   AuthorizationController.login
-
-])
+]);
 /* 
 -----------------------------------------------
 MAILCHIMP 
@@ -162,25 +160,23 @@ The Maillchimp info will also be saved for that specific campaign and not on the
 -----------------------------------------------
 */
 
-
 router.get(`/${apiUrl}/auth/mailchimp/`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.redirectToLogin
-])
+]);
 
 router.get(`/${apiUrl}/auth/mailchimp/login`, [
   ValidationMiddleware.validJWTNeeded,
-  mailchimpController.updateCampaignWithMailchimpInfo,
-
-])
+  mailchimpController.updateCampaignWithMailchimpInfo
+]);
 router.get(`/${apiUrl}/getlists`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.getAudienceLists
-])
+]);
 router.post(`/${apiUrl}/addmember`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.addMemberToMailchimp
-])
+]);
 /* 
 -----------------------------------------------
 REWARDS 
@@ -188,39 +184,37 @@ REWARDS
 */
 router.get(`/${apiUrl}/rewards/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
-  rewards.findRewardsByCampaignId,
-])
+  rewards.findRewardsByCampaignId
+]);
 router.get(`/${apiUrl}/rewards-meta/:rewardId`, [
   ValidationMiddleware.validJWTNeeded,
-  reward_meta.findRewardMetaForReward,
-])
+  reward_meta.findRewardMetaForReward
+]);
 router.post(`/${apiUrl}/create-reward`, [
   ValidationMiddleware.validJWTNeeded,
   rewards.create,
   reward_meta.create
-])
+]);
 router.put(`/${apiUrl}/update-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
   rewards.updateById,
   reward_meta.updateById
-])
+]);
 router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
   reward_meta.deleteById,
   rewards.deleteById
-])
+]);
 
 /* 
 -----------------------------------------------
 LOGGGING 
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/checklogging/:campaignId`, [
-  logging.findLogForUser
-])
+router.get(`/${apiUrl}/checklogging/:campaignId`, [logging.findLogForUser]);
 router.post(`/${apiUrl}/create-logging/:campaignId`, [
   logging.createLogForUser
-])
+]);
 /* 
 -----------------------------------------------
 REWARD AND REDEEM 
@@ -231,7 +225,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
   entry.createEntry
-])
+]);
 /* 
 -----------------------------------------------
 LAYOUT AND WIDGETS
@@ -240,18 +234,18 @@ LAYOUT AND WIDGETS
 router.post(`/${apiUrl}/layout/create-widget`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.createwidget
-])
+]);
 router.put(`/${apiUrl}/layout/update-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.updateWidget
-])
+]);
 router.get(`/${apiUrl}/layout/widgets`, [
   ValidationMiddleware.validJWTNeeded,
-  layoutWidgets.findAllWidgets,
-])
+  layoutWidgets.findAllWidgets
+]);
 router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
-  layoutWidgets.deleteSelectedWidget,
-])
-module.exports = app
-module.exports.handler = serverless(app)
+  layoutWidgets.deleteSelectedWidget
+]);
+module.exports = app;
+module.exports.handler = serverless(app);

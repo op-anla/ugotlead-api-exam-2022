@@ -3,7 +3,7 @@ const secret = process.env.jwt_secret,
 // const crypto = require('crypto');
 
 exports.validJWTNeeded = (req, res, next) => {
-  console.log("Inside the valid JWT needed middleware - with headers", req.headers.authorization)
+  console.log("Inside the valid JWT needed middleware - with headers", req.headers)
   /* 
   First we check if the headers include authorization header.
   This should always be in the header if the user is authorized
@@ -30,13 +30,13 @@ exports.validJWTNeeded = (req, res, next) => {
       }
     } catch (err) {
       console.log("🚀 ~ file: auth.validation.middleware.js ~ line 18 ~ err", err)
-      return res.status(403).send();
+      return res.status(401).send();
     }
   } else {
     /* 
     If the request doesn't have authorization header we assume the person is not logged in and therefore not authorized
     */
     console.log("Else in validation middleware")
-    return res.status(401).send();
+    return res.status(401).send('You are not authorized');
   }
 };
