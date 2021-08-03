@@ -31,19 +31,9 @@ const RedeemValidation = require("../App/common/middleware/redeem.validation.mid
 const ValidationMiddleware = require("../App/common/middleware/auth.validation.middleware");
 const RequestValidation = require("../App/common/middleware/request.validation.middleware");
 // App uses
-app.use(
-  cors({
-    origin: ["http:localhost:3306", "http://127.0.0.1:3306"]
-  })
-);
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  return next();
-});
+
+app.use(cors())
+
 app.use(bodyParser.json());
 app.use("/.netlify/functions/server", router); // path must route to lambda
 app.use("/", router);
@@ -163,7 +153,7 @@ The Maillchimp info will also be saved for that specific campaign and not on the
 -----------------------------------------------
 */
 
-router.get(`/${apiUrl}/auth/mailchimp/`, [
+router.get(`/${apiUrl}/auth/mailchimp`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.redirectToLogin
 ]);

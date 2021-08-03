@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 // constructor
-const Campaign = function(campaign) {
+const Campaign = function (campaign) {
   this.company_id = campaign.company_id;
   this.campaign_active = campaign.campaign_active;
   this.campaign_name = campaign.campaign_name;
@@ -127,6 +127,7 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
       campaignStats.entries = res;
       // Create ROI variable as well with logs and entries
       let roi = (campaignStats.entries * 100) / campaignStats.logs;
+      console.log("🚀 ~ file: campaign.model.js ~ line 130 ~ roi", roi)
       campaignStats.roi = roi.toFixed(1);
       if (
         campaignStats.roi === null ||

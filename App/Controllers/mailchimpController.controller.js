@@ -20,13 +20,19 @@ exports.redirectToLogin = (req, res, next) => {
   We redirect the user to the official Mailchimp oauth page where the user has to verify our App
   After they verify the application they will be redirected to another API Endpoint we have
   */
-  res.redirect(
-    `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-      response_type: "code",
-      client_id: MAILCHIMP_CLIENT_ID,
-      redirect_uri: OAUTH_CALLBACK
-    })}`
-  );
+  // res.redirect(
+  //   `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+  //     response_type: "code",
+  //     client_id: MAILCHIMP_CLIENT_ID,
+  //     redirect_uri: OAUTH_CALLBACK
+  //   })}`
+  // );
+  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
+    response_type: "code",
+    client_id: MAILCHIMP_CLIENT_ID,
+    redirect_uri: OAUTH_CALLBACK
+  })}`
+  res.status(200).send(url)
   return next();
 };
 
