@@ -27,12 +27,14 @@ exports.redirectToLogin = (req, res, next) => {
   //     redirect_uri: OAUTH_CALLBACK
   //   })}`
   // );
-  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-    response_type: "code",
-    client_id: MAILCHIMP_CLIENT_ID,
-    redirect_uri: OAUTH_CALLBACK
-  })}`
-  res.status(200).send(url)
+  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify(
+    {
+      response_type: "code",
+      client_id: MAILCHIMP_CLIENT_ID,
+      redirect_uri: OAUTH_CALLBACK,
+    }
+  )}`;
+  res.status(200).send(url);
   return next();
 };
 
@@ -55,7 +57,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
 
   console.log("checking campaign id outside loop", campaignId);
   const {
-    query: { code }
+    query: { code },
   } = req;
   console.log("Mailchimp login", code);
   // Here we're exchanging the temporary code for the user's access token.
@@ -70,8 +72,8 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
         client_id: MAILCHIMP_CLIENT_ID,
         client_secret: MAILCHIMP_CLIENT_SECRET,
         redirect_uri: OAUTH_CALLBACK,
-        code
-      })
+        code,
+      }),
     }
   );
 
@@ -86,8 +88,8 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
     "https://login.mailchimp.com/oauth2/metadata",
     {
       headers: {
-        Authorization: `OAuth ${access_token}`
-      }
+        Authorization: `OAuth ${access_token}`,
+      },
     }
   );
 
@@ -98,7 +100,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
    */
   const campaignMailchimp = {
     dc: dc,
-    access_token: access_token
+    access_token: access_token,
   };
   const stringifyInfo = JSON.stringify(campaignMailchimp);
   console.log(
@@ -112,7 +114,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
 
   mailchimp.setConfig({
     accessToken: access_token,
-    server: dc
+    server: dc,
   });
 
   const response = await mailchimp.lists.getAllLists();
@@ -140,12 +142,12 @@ exports.getAudienceLists = async (req, res, next) => {
   }
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,
-    server: mailchimpInfo.dc
+    server: mailchimpInfo.dc,
   });
   const response = await mailchimp.lists.getAllLists();
   const lists = response.lists;
   res.send({
-    lists
+    lists,
   });
 };
 exports.addMemberToMailchimp = async (req, res, next) => {
@@ -174,17 +176,17 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   );
   mailchimp.setConfig({
     accessToken: mailchimpAccessInfo.access_token,
-    server: mailchimpAccessInfo.dc
+    server: mailchimpAccessInfo.dc,
   });
   const mergeFields = {
-    FNAME: mailchimpInfo.navn
+    FNAME: mailchimpInfo.navn,
   };
 
   try {
     const response = await mailchimp.lists.addListMember(mailchimpListId, {
       email_address: mailchimpInfo.email,
       merge_fields: mergeFields,
-      status: "subscribed"
+      status: "subscribed",
     });
     // console.log("🚀 ~ file: server.js ~ line 311 ~ router.post ~ response", response)
     /* 

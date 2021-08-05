@@ -13,7 +13,7 @@ exports.findLayoutForSpecificCampaign = (req, res) => {
       res.status(500).send({
         message:
           err.message ||
-          "Some error occurred while retrieving the layouts for that specific campaign."
+          "Some error occurred while retrieving the layouts for that specific campaign.",
       });
     else res.send(data);
   });
@@ -22,7 +22,7 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Content can not be empty!",
     });
   }
   console.log("TRYING TO UPDATE LAYOUT", req.body, req.params.campaignId);
@@ -33,11 +33,11 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found layout with id ${req.body.layout_id}.`
+            message: `Not found layout with id ${req.body.layout_id}.`,
           });
         } else {
           res.status(500).send({
-            message: "Error updating layout with id " + req.body.layout_id
+            message: "Error updating layout with id " + req.body.layout_id,
           });
         }
       } else res.send(data);
