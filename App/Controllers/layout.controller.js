@@ -31,6 +31,7 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
     new Layout(req.body),
     (err, data) => {
       if (err) {
+        console.log("🚀 ~ file: layout.controller.js ~ line 34 ~ err", err);
         if (err.kind === "not_found") {
           res.status(404).send({
             message: `Not found layout with id ${req.body.layout_id}.`,
@@ -43,4 +44,32 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
       } else res.send(data);
     }
   );
+};
+// Create new component in layout
+exports.createNewComponentForCampaign = (req, res) => {
+  console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);
+  const newWidget = new Layout({
+    content: req.body.content,
+    options: JSON.stringify(req.body.options),
+    x: req.body.x,
+    y: req.body.y,
+    h: req.body.h,
+    w: req.body.w,
+  });
+
+  // Save layout widget in db
+  Layout.create(newWidget, req.params.campaignId, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the widget.",
+      });
+    else {
+      console.log("DATA IN LOG", data);
+      res.status(200).send({
+        message: "Added widget",
+        data: data,
+      });
+    }
+  });
 };

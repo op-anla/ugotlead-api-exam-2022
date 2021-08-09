@@ -1,13 +1,14 @@
 const sql = require("./db.js");
 
 // constructor
-const Layout = function(layout) {
-  this.layout_id = layout.id;
+const Layout = function (layout) {
+  this.id = layout.id;
   this.content = layout.content;
-  this.pos_x = layout.x;
-  this.pos_y = layout.y;
-  this.size_w = layout.w;
-  this.size_h = layout.h;
+  this.options = layout.options;
+  this.x = layout.x;
+  this.y = layout.y;
+  this.w = layout.w;
+  this.h = layout.h;
 };
 
 Layout.findLayoutForCampaign = (campaignId, result) => {
@@ -32,7 +33,7 @@ Layout.findLayoutForCampaign = (campaignId, result) => {
       // not found layout with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
@@ -50,15 +51,16 @@ Layout.updateLayoutByCampaignId = (id, layout, result) => {
 We need both the id of layout we wanna change but also the id of the campaign the layout belongs too
 */
   sql.query(
-    "UPDATE layout_comps SET    layout_component_content = ?,    layout_component_pos_x = ?,    layout_component_pos_y = ? ,      layout_component_size_w = ? ,        layout_component_size_h = ?   WHERE campaign_id = ? AND layout_component_id = ?",
+    "UPDATE layout_comps SET    layout_component_content = ?, layout_component_options = ?,   layout_component_pos_x = ?,    layout_component_pos_y = ? ,      layout_component_size_w = ? ,        layout_component_size_h = ?   WHERE campaign_id = ? AND layout_component_id = ?",
     [
       layout.content,
-      layout.pos_x,
-      layout.pos_y,
-      layout.size_w,
-      layout.size_h,
+      layout.options,
+      layout.x,
+      layout.y,
+      layout.w,
+      layout.h,
       id,
-      layout.layout_id
+      layout.id,
     ],
     (err, res) => {
       if (err) {
@@ -71,7 +73,7 @@ We need both the id of layout we wanna change but also the id of the campaign th
         // not found layout with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -80,11 +82,47 @@ We need both the id of layout we wanna change but also the id of the campaign th
 
       console.log("updated layout: ", {
         campaignId: id,
-        ...layout
+        ...layout,
       });
       result(null, {
         campaignId: id,
-        ...layout
+        ...layout,
+      });
+    }
+  );
+};
+
+Layout.create = (newWidget, campaignId, result) => {
+  console.log("🚀 ~ file: layout.model.js ~ line 96 ~ newWidget", newWidget);
+  sql.query(
+    "INSERT INTO layout_comps SET campaign_id = ?,layout_component_content = ?,layout_component_pos_x = ?,layout_component_pos_y = ?,layout_component_size_w = ?,layout_component_size_h = ?,layout_component_options = ?",
+    [
+      campaignId,
+      newWidget.content,
+      newWidget.x,
+      newWidget.y,
+      newWidget.w,
+      newWidget.h,
+      newWidget.options,
+    ],
+    (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err",
+          err
+        );
+        result(err, null);
+        return;
+      }
+
+      console.log("created widget: ", {
+        id: res.insertId,
+        ...newWidget,
+      });
+
+      result(null, {
+        id: res.insertId,
+        ...newWidget,
       });
     }
   );
