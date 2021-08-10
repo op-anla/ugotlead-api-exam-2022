@@ -12,6 +12,7 @@ const Layout = function (layout) {
 };
 
 Layout.findLayoutForCampaign = (campaignId, result) => {
+  console.log("🚀 ~ file: layout.model.js ~ line 15 ~ campaignId", campaignId);
   sql.query(
     `SELECT * FROM layout_comps WHERE campaign_id = ${campaignId}`,
     (err, res) => {

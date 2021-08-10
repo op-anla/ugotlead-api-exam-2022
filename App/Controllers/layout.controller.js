@@ -9,13 +9,20 @@ LAYOUT
 exports.findLayoutForSpecificCampaign = (req, res) => {
   console.log("find all layout for this campaign");
   Layout.findLayoutForCampaign(req.params.campaignId, (err, data) => {
+    console.log(
+      "🚀 ~ file: layout.controller.js ~ line 12 ~ Layout.findLayoutForCampaign ~ err",
+      err
+    );
     if (err)
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving the layouts for that specific campaign.",
-      });
-    else res.send(data);
+      if (err.kind === "not_found")
+        res.status(404).send("Can't find layout for this specific campaign");
+      else
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving the layouts for that specific campaign.",
+        });
+    else res.status(200).send(data);
   });
 };
 exports.updateLayoutForSpecificCampaign = (req, res) => {

@@ -4,7 +4,7 @@ exports.create = (req, res) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Content can not be empty!",
     });
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
@@ -19,7 +19,7 @@ exports.create = (req, res) => {
     campaign_owner_id: req.body.campaign_owner_id,
     mailchimp_info: req.body.mailchimp_info,
     mailchimp_list: req.body.mailchimp_list,
-    campaign_leads: req.body.campaign_leads
+    campaign_leads: req.body.campaign_leads,
   });
 
   // Save Customer in the database
@@ -27,9 +27,9 @@ exports.create = (req, res) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the campaign."
+          err.message || "Some error occurred while creating the campaign.",
       });
-    else res.send(data);
+    else res.status(201).send(data);
   });
 };
 // Retrieve all campaigns from the database.
@@ -39,7 +39,7 @@ exports.findAll = (req, res) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving campaigns."
+          err.message || "Some error occurred while retrieving campaigns.",
       });
     else res.send(data);
   });
@@ -49,12 +49,12 @@ exports.findStatsForCampaign = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found campaignstats with id ${req.params.campaignId}.`
+          message: `Not found campaignstats with id ${req.params.campaignId}.`,
         });
       } else {
         res.status(500).send({
           message:
-            "Error retrieving campaignstats with id " + req.params.campaignId
+            "Error retrieving campaignstats with id " + req.params.campaignId,
         });
       }
     } else res.send(data);
@@ -66,11 +66,11 @@ exports.findOne = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found campaign with id ${req.params.campaignId}.`
+          message: `Not found campaign with id ${req.params.campaignId}.`,
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving campaign with id " + req.params.campaignId
+          message: "Error retrieving campaign with id " + req.params.campaignId,
         });
       }
     } else res.send(data);
@@ -81,7 +81,7 @@ exports.update = (req, res) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Content can not be empty!",
     });
   }
   console.log(req.body);
@@ -95,11 +95,11 @@ exports.update = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found campaign with id ${req.params.campaignId}.`
+            message: `Not found campaign with id ${req.params.campaignId}.`,
           });
         } else {
           res.status(500).send({
-            message: "Error updating campaign with id " + req.params.campaignId
+            message: "Error updating campaign with id " + req.params.campaignId,
           });
         }
       } else res.send(data);
@@ -112,16 +112,16 @@ exports.delete = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found campaign with id ${req.params.campaignId}.`
+          message: `Not found campaign with id ${req.params.campaignId}.`,
         });
       } else {
         res.status(500).send({
-          message: "Could not delete campaign with id " + req.params.campaignId
+          message: "Could not delete campaign with id " + req.params.campaignId,
         });
       }
     } else
       res.send({
-        message: `Campaign was deleted successfully!`
+        message: `Campaign was deleted successfully!`,
       });
   });
 };
