@@ -10,11 +10,11 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
 
       if (err.kind === "not_found") {
         res.status(200).send({
-          empty: true
+          empty: true,
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving rewards with id " + req.params.campaignId
+          message: "Error retrieving rewards with id " + req.params.campaignId,
         });
       }
     } else {
@@ -34,12 +34,12 @@ exports.findRewardsByCampaignId = (req, res) => {
       );
 
       if (err.kind === "not_found") {
-        res.status(200).send({
-          empty: true
+        res.status(404).send({
+          empty: true,
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving rewards with id " + req.params.campaignId
+          message: "Error retrieving rewards with id " + req.params.campaignId,
         });
       }
     } else {
@@ -54,11 +54,11 @@ exports.deleteById = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Reward with id ${req.params.reward_id}.`
+          message: `Not found Reward with id ${req.params.reward_id}.`,
         });
       } else {
         res.status(500).send({
-          message: "Could not delete Reward with id " + req.params.reward_id
+          message: "Could not delete Reward with id " + req.params.reward_id,
         });
       }
     } else res.status(200).send("Deleted reward and reward meta");
@@ -69,7 +69,7 @@ exports.create = (req, res, next) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Content can not be empty!",
     });
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs", req.body);
@@ -82,14 +82,15 @@ exports.create = (req, res, next) => {
     reward_description: req.body.reward.reward_description,
     reward_value_type: req.body.reward.reward_value_type,
     reward_value: req.body.reward.reward_value,
-    reward_type: req.body.reward.reward_type
+    reward_type: req.body.reward.reward_type,
   });
 
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the reward."
+        message:
+          err.message || "Some error occurred while creating the reward.",
       });
     else {
       console.log("DATA", data);
@@ -116,7 +117,7 @@ exports.updateById = (req, res, next) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
-      message: "Content can not be empty!"
+      message: "Content can not be empty!",
     });
   }
   Rewards.updateById(
@@ -126,11 +127,11 @@ exports.updateById = (req, res, next) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found reward with id ${req.params.reward_id}.`
+            message: `Not found reward with id ${req.params.reward_id}.`,
           });
         } else {
           res.status(500).send({
-            message: "Error updating reward with id " + req.params.reward_id
+            message: "Error updating reward with id " + req.params.reward_id,
           });
         }
       } else return next();

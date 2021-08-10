@@ -10,7 +10,7 @@ exports.findLogForUser = (req, res) => {
   console.log("FIND USER IN LOGGING", req.headers["user-agent"]);
   const user_agent = req.headers["user-agent"];
   const log = {
-    user_agent: user_agent
+    user_agent: user_agent,
   };
   Logging.findLog(req.params.campaignId, log, (err, data) => {
     console.log(
@@ -21,7 +21,7 @@ exports.findLogForUser = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: err.kind
+          message: err.kind,
         });
       }
     } else res.status(200).send(data);
@@ -42,7 +42,7 @@ exports.createLogForUser = (req, res) => {
     device: "",
     browser: "",
     user_agent: user_agent,
-    timestamp: today
+    timestamp: today,
   });
 
   // Save reward in the database
@@ -50,12 +50,12 @@ exports.createLogForUser = (req, res) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the campaign."
+          err.message || "Some error occurred while creating the campaign.",
       });
     else {
       console.log("DATA IN LOG", data);
-      res.status(200).send({
-        data: data
+      res.status(201).send({
+        data: data,
       });
     }
   });
