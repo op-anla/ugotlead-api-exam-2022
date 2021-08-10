@@ -112,6 +112,14 @@ router.get(`/${apiUrl}/companies`, [
   ValidationMiddleware.validJWTNeeded,
   companies.findAll,
 ]);
+router.put(`/${apiUrl}/update-company/:companyId`, [
+  ValidationMiddleware.validJWTNeeded,
+  companies.update,
+]);
+router.delete(`/${apiUrl}/company/:companyId`, [
+  ValidationMiddleware.validJWTNeeded,
+  companies.delete,
+]);
 /* 
 -----------------------------------------------
 USERS

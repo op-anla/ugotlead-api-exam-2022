@@ -39,3 +39,50 @@ exports.findAll = (req, res) => {
     else res.send(data);
   });
 };
+
+// Update a company
+exports.update = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  console.log("BODY IN COMPANY", req.body);
+  Company.updateById(
+    req.params.companyId,
+    new Company(req.body),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found company with id ${req.params.companyId}.`,
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating company with id " + req.params.companyId,
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
+// Delete Company
+exports.delete = (req, res) => {
+  Company.remove(req.params.companyId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Company with id ${req.params.companyId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Company with id " + req.params.companyId,
+        });
+      }
+    } else
+      res.send({
+        message: `Company was deleted successfully!`,
+      });
+  });
+};
