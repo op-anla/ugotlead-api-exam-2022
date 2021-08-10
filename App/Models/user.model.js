@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 // constructor
-const User = function(user) {
+const User = function (user) {
   this.username = user.username;
   this.password = user.password;
 };
@@ -15,15 +15,15 @@ User.create = (newUser, result) => {
 
     console.log("created  user: ", {
       id: res.insertId,
-      ...newUser
+      ...newUser,
     });
     result(null, {
       id: res.insertId,
-      ...newUser
+      ...newUser,
     });
   });
 };
-User.findByUsername = username => {
+User.findByUsername = (username) => {
   /* 
   This functions is being called from verify.user.middleware and will find the specific user with that username
   It will return the whole user response which will contain the password
@@ -73,8 +73,8 @@ User.findById = (userId, result) => {
     const validatedUser = {
       user: {
         iduser: res[0].iduser,
-        username: res[0].username
-      }
+        username: res[0].username,
+      },
     };
     if (res.length) {
       console.log("found user: ", validatedUser);
@@ -85,7 +85,7 @@ User.findById = (userId, result) => {
     // not found User with the id
     result(
       {
-        kind: "not_found"
+        kind: "not_found",
       },
       null
     );
@@ -97,16 +97,27 @@ User.updateById = (id, user, result) => {
     [user.username, user.password, id],
     (err, res) => {
       if (err) {
-        console.log("🚀 ~ file: user.model.js ~ line 82 ~ err", err);
-        result(null, err);
-        return;
+        console.log("🚀 ~ file: user.model.js ~ line 82 ~ err", err.code);
+        if (err.code === "ER_DUP_ENTRY") {
+          result(
+            {
+              kind: "duplicate_entry",
+              message: err.sqlMessage,
+            },
+            null
+          );
+          return;
+        } else {
+          result(null, err);
+          return;
+        }
       }
 
       if (res.affectedRows == 0) {
         // not found user with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -117,21 +128,21 @@ User.updateById = (id, user, result) => {
       We will remove the password from the response
       */
       const validatedUser = {
-        username: user.username
+        username: user.username,
       };
       console.log("updated user: ", {
         id: id,
-        ...validatedUser
+        ...validatedUser,
       });
       result(null, {
         id: id,
-        ...validatedUser
+        ...validatedUser,
       });
     }
   );
 };
 // Get all
-User.getAll = result => {
+User.getAll = (result) => {
   sql.query("SELECT * FROM user", async (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 116 ~ sql.query ~ err", err);
@@ -156,7 +167,7 @@ User.remove = (id, result) => {
       // not found User with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
