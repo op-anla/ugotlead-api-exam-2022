@@ -28,7 +28,7 @@ Campaign.create = (newCampaign, result) => {
     console.log("created campaign: ", {
       id: res.insertId,
       // Spread operator to extend the object with data
-      ...newCampaign
+      ...newCampaign,
     });
     let createdCampaignId = res.insertId;
     let newURL = `/embed/campaign/${createdCampaignId}`;
@@ -47,7 +47,7 @@ Campaign.create = (newCampaign, result) => {
           // not found campaign with the id
           result(
             {
-              kind: "not_found"
+              kind: "not_found",
             },
             null
           );
@@ -56,7 +56,7 @@ Campaign.create = (newCampaign, result) => {
 
         console.log("updated campaign: ", {
           id: createdCampaignId,
-          campaign_url: newURL
+          campaign_url: newURL,
         });
         return newURL;
       }
@@ -64,7 +64,7 @@ Campaign.create = (newCampaign, result) => {
 
     result(null, {
       id: res.insertId,
-      ...newCampaign
+      ...newCampaign,
     });
   });
 };
@@ -97,7 +97,7 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     );
   });
   // .then - Successfull
-  logs.then(res => {
+  logs.then((res) => {
     // Set our empty object with first variable (logs)
     campaignStats.logs = res;
     console.log("STATS", campaignStats);
@@ -122,12 +122,12 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
         }
       );
     });
-    entries.then(res => {
+    entries.then((res) => {
       // Set another variable in our campaignstats object
       campaignStats.entries = res;
       // Create ROI variable as well with logs and entries
       let roi = (campaignStats.entries * 100) / campaignStats.logs;
-      console.log("🚀 ~ file: campaign.model.js ~ line 130 ~ roi", roi)
+      console.log("🚀 ~ file: campaign.model.js ~ line 130 ~ roi", roi);
       campaignStats.roi = roi.toFixed(1);
       if (
         campaignStats.roi === null ||
@@ -164,7 +164,7 @@ Campaign.findById = (campaignId, result) => {
       // not found Customer with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
@@ -186,7 +186,7 @@ Campaign.remove = (id, result) => {
       // not found Customer with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
@@ -213,7 +213,7 @@ Campaign.updateById = (id, campaign, result) => {
       campaign.campaign_startdate,
       campaign.campaign_enddate,
       campaign.campaign_leads,
-      id
+      id,
     ],
     (err, res) => {
       if (err) {
@@ -226,7 +226,7 @@ Campaign.updateById = (id, campaign, result) => {
         // not found campaign with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -235,11 +235,11 @@ Campaign.updateById = (id, campaign, result) => {
 
       console.log("updated campaign: ", {
         id: id,
-        ...campaign
+        ...campaign,
       });
       result(null, {
         id: id,
-        ...campaign
+        ...campaign,
       });
     }
   );
@@ -266,7 +266,7 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
         // not found campaign with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -275,11 +275,11 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
 
       console.log("updated campaign: ", {
         id: id,
-        mailchimpInfo: mailchimpInfo
+        mailchimpInfo: mailchimpInfo,
       });
       result(null, {
         id: id,
-        mailchimpInfo: mailchimpInfo
+        mailchimpInfo: mailchimpInfo,
       });
     }
   );
@@ -305,7 +305,7 @@ Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
         // not found campaign with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -314,17 +314,17 @@ Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
 
       console.log("updated campaign: ", {
         id: id,
-        mailchimpLists: mailchimpLists
+        mailchimpLists: mailchimpLists,
       });
       result(null, {
         id: id,
-        mailchimpLists: mailchimpLists
+        mailchimpLists: mailchimpLists,
       });
     }
   );
 };
-Campaign.getAll = result => {
-  sql.query("SELECT * FROM campaigns", async (err, res) => {
+Campaign.getAll = (result) => {
+  sql.query("SELECT * FROM campaigns LIMIT 10", async (err, res) => {
     if (err) {
       console.log(
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
@@ -358,7 +358,7 @@ Campaign.findLayoutForCampaign = (campaignId, result) => {
       // not found Customer with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
