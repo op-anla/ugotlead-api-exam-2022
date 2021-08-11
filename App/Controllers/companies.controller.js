@@ -15,6 +15,8 @@ exports.create = (req, res) => {
     company_email: req.body.company_email,
     company_address: req.body.company_address,
     company_zipcode: req.body.company_zipcode,
+    company_city: req.body.company_city,
+    company_cvr: req.body.company_cvr,
   });
 
   // Save company in the database

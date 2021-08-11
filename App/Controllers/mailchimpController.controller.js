@@ -155,10 +155,13 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
   */
-  if (!req.body.currentUser)
-    res.status(400).send("Please provide a user object in body");
+  //  We start with basic validation of the request
+  if (!req.body.currentUser.navn || !req.body.currentUser.email)
+    return res
+      .status(400)
+      .send("Please provide the correct userInfo in the body");
   if (!req.headers.mailchimplistid || !req.headers.mailchimpinfo)
-    res.status(400).send("Please provide the correct mailchimp info");
+    return res.status(400).send("Please provide the correct mailchimp info");
   const mailchimpInfo = req.body.currentUser;
   console.log(
     "🚀 ~ file: server.js ~ line 274 ~ router.post ~ mailchimpInfo",
@@ -167,12 +170,12 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   const mailchimpListId = req.headers.mailchimplistid;
   console.log(
     "🚀 ~ file: server.js ~ line 275 ~ router.post ~ mailchimpListId",
-    mailchimpListId
+    typeof mailchimpListId
   );
   const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
   console.log(
     "🚀 ~ file: server.js ~ line 277 ~ router.post ~ mailchimpAccessInfo",
-    mailchimpAccessInfo
+    typeof mailchimpAccessInfo
   );
   mailchimp.setConfig({
     accessToken: mailchimpAccessInfo.access_token,
@@ -183,22 +186,25 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   };
 
   try {
-    const response = await mailchimp.lists.addListMember(mailchimpListId, {
-      email_address: mailchimpInfo.email,
-      merge_fields: mergeFields,
-      status: "subscribed",
-    });
-    // console.log("🚀 ~ file: server.js ~ line 311 ~ router.post ~ response", response)
+    const response = await mailchimp.lists.addListMember(
+      parseInt(mailchimpListId),
+      {
+        email_address: mailchimpInfo.email,
+        merge_fields: mergeFields,
+        status: "subscribed",
+      }
+    );
+    console.log(
+      "🚀 ~ file: server.js ~ line 311 ~ router.post ~ response",
+      response
+    );
     /* 
     Now we will create the player in our DB
     */
     player.createPlayer(req, res);
     // res.status(200).send("Added member");
   } catch (error) {
-    console.log(
-      "🚀 ~ file: server.js ~ line 293 ~ router.post ~ error",
-      error.response.text
-    );
-    res.status(400).send(error.response.text);
+    console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error);
+    res.status(400).send(error);
   }
 };

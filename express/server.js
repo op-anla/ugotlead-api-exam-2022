@@ -178,10 +178,7 @@ router.get(`/${apiUrl}/getlists`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.getAudienceLists,
 ]);
-router.post(`/${apiUrl}/addmember`, [
-  ValidationMiddleware.validJWTNeeded,
-  mailchimpController.addMemberToMailchimp,
-]);
+router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
 /* 
 -----------------------------------------------
 REWARDS 
