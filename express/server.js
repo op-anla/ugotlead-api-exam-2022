@@ -61,10 +61,7 @@ router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findAll,
 ]);
-router.get(`/${apiUrl}/campaigns/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
-  campaigns.findOne,
-]);
+router.get(`/${apiUrl}/campaigns/:campaignId`, [campaigns.findOne]);
 router.get(`/${apiUrl}/campaign-stats/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findStatsForCampaign,

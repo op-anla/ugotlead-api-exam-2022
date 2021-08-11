@@ -163,20 +163,8 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   if (!req.headers.mailchimplistid || !req.headers.mailchimpinfo)
     return res.status(400).send("Please provide the correct mailchimp info");
   const mailchimpInfo = req.body.currentUser;
-  console.log(
-    "🚀 ~ file: server.js ~ line 274 ~ router.post ~ mailchimpInfo",
-    mailchimpInfo
-  );
   const mailchimpListId = req.headers.mailchimplistid;
-  console.log(
-    "🚀 ~ file: server.js ~ line 275 ~ router.post ~ mailchimpListId",
-    typeof mailchimpListId
-  );
   const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
-  console.log(
-    "🚀 ~ file: server.js ~ line 277 ~ router.post ~ mailchimpAccessInfo",
-    typeof mailchimpAccessInfo
-  );
   mailchimp.setConfig({
     accessToken: mailchimpAccessInfo.access_token,
     server: mailchimpAccessInfo.dc,
@@ -186,25 +174,29 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   };
 
   try {
-    const response = await mailchimp.lists.addListMember(
-      parseInt(mailchimpListId),
-      {
-        email_address: mailchimpInfo.email,
-        merge_fields: mergeFields,
-        status: "subscribed",
-      }
-    );
+    const response = await mailchimp.lists.addListMember(mailchimpListId, {
+      email_address: mailchimpInfo.email,
+      merge_fields: mergeFields,
+      status: "subscribed",
+    });
     console.log(
       "🚀 ~ file: server.js ~ line 311 ~ router.post ~ response",
-      response
+      response.response
     );
     /* 
     Now we will create the player in our DB
     */
     player.createPlayer(req, res);
-    // res.status(200).send("Added member");
   } catch (error) {
     console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error);
-    res.status(400).send(error);
+    let responseCode = error.status;
+    console.log(
+      "🚀 ~ file: mailchimpController.controller.js ~ line 211 ~ exports.addMemberToMailchimp= ~ responseCode",
+      responseCode
+    );
+    if (responseCode === undefined) {
+      responseCode = 404;
+    }
+    res.status(responseCode).send(error);
   }
 };
