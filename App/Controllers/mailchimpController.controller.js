@@ -5,6 +5,7 @@ const mailchimp = require("@mailchimp/mailchimp_marketing");
 const fetch = require("node-fetch");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
+const { encrypt, decrypt } = require("../common/middleware/crypto");
 /* 
 Version: 1.0
 */
@@ -98,9 +99,15 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
    First we encrypt the accesstoken and send that to the DB
    The campaign the user is updating will be the mailchimp integration for that specific campaign
    */
+  // Encrypt the access_token
+  const hashAccess_token = encrypt(access_token);
+  console.log(
+    "🚀 ~ file: mailchimpController.controller.js ~ line 104 ~ exports.updateCampaignWithMailchimpInfo= ~ hashAccess_token",
+    hashAccess_token
+  );
   const campaignMailchimp = {
     dc: dc,
-    access_token: access_token,
+    access_token: hashAccess_token,
   };
   const stringifyInfo = JSON.stringify(campaignMailchimp);
   console.log(
@@ -141,7 +148,7 @@ exports.getAudienceLists = async (req, res, next) => {
     res.status(400).send("You didn't include any Mailchimp Info in the header");
   }
   mailchimp.setConfig({
-    accessToken: mailchimpInfo.access_token,
+    accessToken: decrypt(mailchimpInfo.access_token),
     server: mailchimpInfo.dc,
   });
   const response = await mailchimp.lists.getAllLists();
@@ -166,7 +173,7 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   const mailchimpListId = req.headers.mailchimplistid;
   const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
   mailchimp.setConfig({
-    accessToken: mailchimpAccessInfo.access_token,
+    accessToken: decrypt(mailchimpAccessInfo.access_token),
     server: mailchimpAccessInfo.dc,
   });
   const mergeFields = {

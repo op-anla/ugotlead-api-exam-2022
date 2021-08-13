@@ -133,6 +133,9 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
     campaignId,
     mailchimpInfo
   );
+  /* 
+  We need to encrypt the mailchimp info before sending it to the database
+  */
   Campaign.updateMailchimpInfo(campaignId, mailchimpInfo, (err, data) => {
     if (err) {
       return err;
