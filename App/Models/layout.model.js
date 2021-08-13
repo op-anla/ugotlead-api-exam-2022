@@ -2,13 +2,12 @@ const sql = require("./db.js");
 
 // constructor
 const Layout = function (layout) {
-  this.id = layout.id;
-  this.content = layout.content;
-  this.options = layout.options;
-  this.x = layout.x;
-  this.y = layout.y;
-  this.w = layout.w;
-  this.h = layout.h;
+  this.layout_component_content = layout.layout_component_content;
+  this.layout_component_options = layout.layout_component_options;
+  this.layout_component_pos_x = layout.layout_component_pos_x;
+  this.layout_component_pos_y = layout.layout_component_pos_y;
+  this.layout_component_size_w = layout.layout_component_size_w;
+  this.layout_component_size_h = layout.layout_component_size_h;
 };
 
 Layout.findLayoutForCampaign = (campaignId, result) => {
@@ -53,7 +52,7 @@ We need both the id of layout we wanna change but also the id of the campaign th
 */
   sql.query(
     "UPDATE layout_comps SET    ?   WHERE campaign_id = ? AND layout_component_id = ?",
-    [layout, id, layout.id],
+    [layout, id, layout.layout_component_id],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
@@ -85,18 +84,14 @@ We need both the id of layout we wanna change but also the id of the campaign th
 };
 
 Layout.create = (newWidget, campaignId, result) => {
-  console.log("🚀 ~ file: layout.model.js ~ line 96 ~ newWidget", newWidget);
+  console.log(
+    "🚀 ~ file: layout.model.js ~ line 96 ~ newWidget",
+    newWidget,
+    campaignId
+  );
   sql.query(
-    "INSERT INTO layout_comps SET campaign_id = ?,layout_component_content = ?,layout_component_pos_x = ?,layout_component_pos_y = ?,layout_component_size_w = ?,layout_component_size_h = ?,layout_component_options = ?",
-    [
-      campaignId,
-      newWidget.content,
-      newWidget.x,
-      newWidget.y,
-      newWidget.w,
-      newWidget.h,
-      newWidget.options,
-    ],
+    "INSERT INTO layout_comps SET campaign_id = ?  AND ?",
+    [campaignId, newWidget],
     (err, res) => {
       if (err) {
         console.log(

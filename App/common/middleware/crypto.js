@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 require("dotenv").config();
 const algorithm = "aes-256-ctr";
-const secretKey = process.env.jwt_secret;
+const secretKey = process.env.jwt_secret_aes_256_ctr;
 const iv = crypto.randomBytes(16);
 
 const encrypt = (text) => {

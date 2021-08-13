@@ -1,4 +1,5 @@
 const Campaign = require("../Models/campaign.model");
+const { encrypt, decrypt } = require("../common/middleware/crypto");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -14,7 +15,7 @@ exports.create = (req, res) => {
     company_id: req.body.company_id,
     campaign_active: req.body.campaign_active,
     campaign_name: req.body.campaign_name,
-    description: req.body.campaign_description,
+    campaign_description: req.body.campaign_description,
     campaign_owner_id: req.body.campaign_owner_id,
     mailchimp_info: req.body.mailchimp_info,
     mailchimp_list: req.body.mailchimp_list,
