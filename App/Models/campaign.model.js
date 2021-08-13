@@ -5,7 +5,6 @@ const Campaign = function (campaign) {
   this.company_id = campaign.company_id;
   this.campaign_active = campaign.campaign_active;
   this.campaign_name = campaign.campaign_name;
-  this.campaign_url = campaign.campaign_url;
   this.campaign_owner_id = campaign.campaign_owner_id;
   this.mailchimp_info = campaign.mailchimp_info;
   this.mailchimp_list = campaign.mailchimp_list;
@@ -32,37 +31,6 @@ Campaign.create = (newCampaign, result) => {
       // Spread operator to extend the object with data
       ...newCampaign,
     });
-    let createdCampaignId = res.insertId;
-    let newURL = `/embed/campaign/${createdCampaignId}`;
-
-    sql.query(
-      "UPDATE campaigns SET campaign_url = ? WHERE campaign_id = ?",
-      [newURL, createdCampaignId],
-      (err, res) => {
-        if (err) {
-          console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-          result(null, err);
-          return;
-        }
-
-        if (res.affectedRows == 0) {
-          // not found campaign with the id
-          result(
-            {
-              kind: "not_found",
-            },
-            null
-          );
-          return;
-        }
-
-        console.log("updated campaign: ", {
-          id: createdCampaignId,
-          campaign_url: newURL,
-        });
-        return newURL;
-      }
-    );
 
     result(null, {
       id: res.insertId,
