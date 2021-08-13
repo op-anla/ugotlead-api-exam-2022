@@ -293,34 +293,4 @@ Campaign.getAll = (result) => {
     result(null, res);
   });
 };
-Campaign.findLayoutForCampaign = (campaignId, result) => {
-  sql.query(
-    `SELECT * FROM layout_comps WHERE campaign_id = ${campaignId}`,
-    (err, res) => {
-      if (err) {
-        console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-          err
-        );
-        result(err, null);
-        return;
-      }
-
-      if (res.length) {
-        console.log("found layouts: ", res);
-        result(null, res);
-        return;
-      }
-
-      // not found Customer with the id
-      result(
-        {
-          kind: "not_found",
-        },
-        null
-      );
-    }
-  );
-};
-
 module.exports = Campaign;
