@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 // constructor
-const RewardMeta = function(rewardMeta) {
+const RewardMeta = function (rewardMeta) {
   this.reward_id = rewardMeta.reward_id;
   this.reward_redeem_info = rewardMeta.reward_redeem_info;
   this.reward_chance_info = rewardMeta.reward_chance_info;
@@ -13,14 +13,8 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
   console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", rewardMeta);
 
   sql.query(
-    "UPDATE reward_meta_data SET    reward_id = ?,    reward_redeem_info = ? ,      reward_chance_info = ? ,        reward_email_notification_info = ? WHERE reward_meta_data_id = ?",
-    [
-      rewardMeta.reward_id,
-      rewardMeta.reward_redeem_info,
-      rewardMeta.reward_chance_info,
-      rewardMeta.reward_email_notification_info,
-      id
-    ],
+    "UPDATE reward_meta_data SET  ? WHERE reward_meta_data_id = ?",
+    [rewardMeta, id],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err);
@@ -32,7 +26,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
         // not found reward meta with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -41,11 +35,11 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
 
       console.log("updated reward meta: ", {
         id: id,
-        ...rewardMeta
+        ...rewardMeta,
       });
       result(null, {
         id: id,
-        ...rewardMeta
+        ...rewardMeta,
       });
     }
   );
@@ -68,7 +62,7 @@ RewardMeta.remove = (id, result) => {
         // not found Customer with the id
         result(
           {
-            kind: "not_found"
+            kind: "not_found",
           },
           null
         );
@@ -107,7 +101,7 @@ RewardMeta.findByRewardId = (rewardId, result) => {
       // not found rewards with the id
       result(
         {
-          kind: "not_found"
+          kind: "not_found",
         },
         null
       );
@@ -131,12 +125,12 @@ RewardMeta.create = (newRewardMeta, result) => {
 
     console.log("created reward meta: ", {
       id: res.insertId,
-      ...newRewardMeta
+      ...newRewardMeta,
     });
 
     result(null, {
       id: res.insertId,
-      ...newRewardMeta
+      ...newRewardMeta,
     });
   });
 };

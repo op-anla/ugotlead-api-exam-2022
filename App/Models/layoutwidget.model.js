@@ -54,17 +54,8 @@ LayoutWidgetModel.updateById = (id, widget, result) => {
   console.log("🚀 ~ file: layoutwidget.model.js ~ line 35 ~ widget", widget);
 
   sql.query(
-    "UPDATE template_layout_components SET    template_layout_name = ?,    template_layout_content = ? ,      template_layout_options = ? ,        template_layout_pos_x = ? ,          template_layout_pos_y = ? ,            template_layout_size_h = ? ,            template_layout_size_w = ?  WHERE template_layout_id = ?",
-    [
-      widget.template_layout_name,
-      widget.template_layout_content,
-      widget.template_layout_options,
-      widget.template_layout_pos_x,
-      widget.template_layout_pos_y,
-      widget.template_layout_size_h,
-      widget.template_layout_size_w,
-      id,
-    ],
+    "UPDATE template_layout_components SET   ?  WHERE template_layout_id = ?",
+    [widget, id],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: layoutwidget.model.js ~ line 51 ~ err", err);

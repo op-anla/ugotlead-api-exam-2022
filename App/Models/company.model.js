@@ -47,16 +47,8 @@ Company.getAll = (result) => {
 Company.updateById = (id, company, result) => {
   console.log("Update this company with: ", company);
   sql.query(
-    "UPDATE companies SET   company_name = ?,    company_email = ? , company_address = ? ,     company_zipcode = ? ,        company_city = ? ,          company_cvr = ?  WHERE company_id = ?",
-    [
-      company.company_name,
-      company.company_email,
-      company.company_address,
-      company.company_zipcode,
-      company.company_city,
-      company.company_cvr,
-      id,
-    ],
+    "UPDATE companies SET   ?  WHERE company_id = ?",
+    [company, id],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
