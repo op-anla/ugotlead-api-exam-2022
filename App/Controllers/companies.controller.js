@@ -1,5 +1,22 @@
 const Company = require("../Models/company.model");
 
+// Find one specific company
+exports.findOneCompany = (req, res) => {
+  Company.findById(req.params.companyId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found company with id ${req.params.companyId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving company with id " + req.params.companyId,
+        });
+      }
+    } else res.send(data);
+  });
+};
+
 // Create and Save a new company
 exports.create = (req, res) => {
   // Validate request

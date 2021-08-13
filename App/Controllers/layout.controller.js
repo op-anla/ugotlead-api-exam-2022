@@ -73,7 +73,7 @@ exports.createNewComponentForCampaign = (req, res) => {
       });
     else {
       console.log("DATA IN LOG", data);
-      res.status(200).send({
+      res.status(201).send({
         message: "Added widget",
         data: data,
       });

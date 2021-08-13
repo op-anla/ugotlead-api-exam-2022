@@ -9,6 +9,7 @@ const Company = function (company) {
   this.company_city = company.company_city;
   this.company_cvr = company.company_cvr;
 };
+
 Company.create = (newCompany, result) => {
   sql.query("INSERT INTO companies SET ?", newCompany, (err, res) => {
     if (err) {
@@ -29,6 +30,33 @@ Company.create = (newCompany, result) => {
       ...newCompany,
     });
   });
+};
+Company.findById = (companyId, result) => {
+  sql.query(
+    `SELECT * FROM companies WHERE company_id = ${companyId}`,
+    (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: company.model.js ~ line 39 ~ err", err);
+
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        console.log("found company: ", res[0]);
+        result(null, res[0]);
+        return;
+      }
+
+      // not found Company with the id
+      result(
+        {
+          kind: "not_found",
+        },
+        null
+      );
+    }
+  );
 };
 Company.getAll = (result) => {
   sql.query("SELECT * FROM companies", async (err, res) => {

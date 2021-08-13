@@ -131,7 +131,7 @@ Campaign.findById = (campaignId, result) => {
         return;
       }
 
-      // not found Customer with the id
+      // not found Campaign with the id
       result(
         {
           kind: "not_found",
