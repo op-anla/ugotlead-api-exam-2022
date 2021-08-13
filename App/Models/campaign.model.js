@@ -12,7 +12,7 @@ const Campaign = function (campaign) {
   this.campaign_startdate = campaign.campaign_startdate;
   this.campaign_enddate = campaign.campaign_enddate;
   this.campaign_leads = campaign.campaign_leads;
-  this.campaign_description = campaign.description;
+  this.campaign_description = campaign.campaign_description;
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
