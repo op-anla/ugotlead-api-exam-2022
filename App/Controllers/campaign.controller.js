@@ -1,5 +1,4 @@
 const Campaign = require("../Models/campaign.model");
-const { encrypt, decrypt } = require("../common/middleware/crypto");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
