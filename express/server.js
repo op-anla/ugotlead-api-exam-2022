@@ -126,7 +126,10 @@ router.delete(`/${apiUrl}/company/:companyId`, [
 USERS
 -----------------------------------------------
 */
-router.post(`/${apiUrl}/user`, [user.create]);
+router.post(`/${apiUrl}/user`, [
+  ValidationMiddleware.validJWTNeeded,
+  user.create,
+]);
 router.get(`/${apiUrl}/user/:userId`, [
   ValidationMiddleware.validJWTNeeded,
   user.getById,

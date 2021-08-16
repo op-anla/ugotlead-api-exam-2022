@@ -37,7 +37,7 @@ exports.createLogForUser = (req, res) => {
   const today = new Date(timeElapsed);
   // Create a reward
   const newLog = new Logging({
-    campaign_id: req.params.campaignId,
+    campaign_id: parseInt(req.params.campaignId),
     operation_system: "",
     device: "",
     browser: "",
