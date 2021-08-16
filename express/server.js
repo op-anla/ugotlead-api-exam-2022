@@ -85,7 +85,6 @@ EXTENDED CAMPAIGN
 -----------------------------------------------
 */
 router.get(`/${apiUrl}/layout/campaign/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
   layout.findLayoutForSpecificCampaign,
 ]);
 router.post(`/${apiUrl}/layout/:campaignId/create-comp`, [
