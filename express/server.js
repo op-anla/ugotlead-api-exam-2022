@@ -202,6 +202,7 @@ router.put(`/${apiUrl}/update-reward/:reward_id`, [
   rewards.updateById,
   reward_meta.updateById,
 ]);
+
 router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
   reward_meta.deleteById,
@@ -231,6 +232,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
   entry.createEntry,
+  rewards.updateClaim,
 ]);
 /* 
 -----------------------------------------------

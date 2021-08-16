@@ -125,4 +125,37 @@ Reward.updateById = (id, reward, result) => {
     }
   );
 };
+Reward.updateClaimedProp = (id, result) => {
+  console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", id);
+
+  sql.query(
+    "UPDATE rewards SET  reward_claimed = 1  WHERE reward_id = ?",
+    id,
+    (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found reward with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+        return;
+      }
+
+      console.log("updated reward: ", {
+        id: id,
+      });
+      result(null, {
+        id: id,
+      });
+    }
+  );
+};
 module.exports = Reward;

@@ -5,7 +5,7 @@ const EntryModel = require("../Models/entry.model");
 ENTRY
 -----------------------------------------------
 */
-exports.createEntry = (req, res) => {
+exports.createEntry = (req, res, next) => {
   console.log(
     "🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD",
     req.body.redeemInfo.data
@@ -24,7 +24,7 @@ exports.createEntry = (req, res) => {
     player_id: req.body.PlayerId,
     reward_id: req.body.redeemInfo.data.reward.reward_id,
     claimed_reward: 1,
-    entry_date: utcstring,
+    entry_date: now,
     has_played: 1,
   });
 
@@ -36,7 +36,9 @@ exports.createEntry = (req, res) => {
       });
     else {
       console.log("DATA IN LOG", data);
-      res.status(201).send(data);
+      req.body = data;
+      return next();
+      // res.status(201).send(data);
     }
   });
 };

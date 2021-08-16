@@ -109,6 +109,32 @@ exports.create = (req, res, next) => {
   });
 };
 // Update reward by id
+exports.updateClaim = (req, res) => {
+  console.log(
+    "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
+    req.body
+  );
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  Rewards.updateClaimedProp(req.body.reward_id, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found reward with id ${req.body.reward_id}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating reward with id " + req.body.reward_id,
+        });
+      }
+    } else res.status(201).send(data);
+  });
+};
+// Update reward by id
 exports.updateById = (req, res, next) => {
   console.log(
     "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
