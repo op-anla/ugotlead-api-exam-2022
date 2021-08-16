@@ -40,10 +40,11 @@ Layout.findLayoutForCampaign = (campaignId, result) => {
     }
   );
 };
-Layout.updateLayoutByCampaignId = (id, layout, result) => {
+Layout.updateLayoutByCampaignId = (id, layoutId, layout, result) => {
   console.log(
     "🚀 ~ file: layout.model.js ~ line 34 ~ id, campaign, result",
     id,
+    layoutId,
     layout,
     result
   );
@@ -52,7 +53,7 @@ We need both the id of layout we wanna change but also the id of the campaign th
 */
   sql.query(
     "UPDATE layout_comps SET    ?   WHERE campaign_id = ? AND layout_component_id = ?",
-    [layout, id, layout.layout_component_id],
+    [layout, id, layoutId],
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
