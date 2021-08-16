@@ -25,21 +25,18 @@ exports.createEntry = (req, res) => {
     reward_id: req.body.redeemInfo.data.reward.reward_id,
     claimed_reward: 1,
     entry_date: utcstring,
-    has_played: 1
+    has_played: 1,
   });
 
   // Save entry in db
   EntryModel.create(newEntry, (err, data) => {
     if (err)
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the entry."
+        message: err.message || "Some error occurred while creating the entry.",
       });
     else {
       console.log("DATA IN LOG", data);
-      res.status(200).send({
-        message: "Added entry",
-        data: data
-      });
+      res.status(201).send(data);
     }
   });
 };

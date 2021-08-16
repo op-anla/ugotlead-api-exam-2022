@@ -54,9 +54,7 @@ exports.createLogForUser = (req, res) => {
       });
     else {
       console.log("DATA IN LOG", data);
-      res.status(201).send({
-        data: data,
-      });
+      res.status(201).send(data);
     }
   });
 };
