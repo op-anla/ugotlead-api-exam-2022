@@ -5,6 +5,28 @@ const EntryModel = require("../Models/entry.model");
 ENTRY
 -----------------------------------------------
 */
+exports.findEntryFromLog = (req, res, next) => {
+  console.log("Find entry from log id", req.body);
+
+  EntryModel.findEntry(req.body.log_id, (err, data) => {
+    if (err) {
+      /* 
+      If the entry is not found we will return 404 with a level of entry
+      */
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: err.kind,
+          level: "entry",
+        });
+      }
+      /* 
+      If the user however is in the entry we will refuse the user from playing
+      */
+    } else {
+      res.status(200).send(data);
+    }
+  });
+};
 exports.createEntry = (req, res, next) => {
   console.log(
     "🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD",

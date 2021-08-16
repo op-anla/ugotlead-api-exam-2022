@@ -6,7 +6,7 @@ LOGGING
 -----------------------------------------------
 */
 
-exports.findLogForUser = (req, res) => {
+exports.findLogForUser = (req, res, next) => {
   console.log("FIND USER IN LOGGING", req.headers["user-agent"]);
   const user_agent = req.headers["user-agent"];
   const log = {
@@ -19,12 +19,26 @@ exports.findLogForUser = (req, res) => {
       data
     );
     if (err) {
+      /* 
+      If the user is not in the logs they will be created later.
+      We will send back 404 with level of log
+      */
       if (err.kind === "not_found") {
         res.status(404).send({
           message: err.kind,
+          level: "log",
         });
       }
-    } else res.status(200).send(data);
+      /* 
+      If the user however is in the logging we want to make sure the user has not yet made any entries
+      */
+    } else {
+      req.body = data;
+      // If the data is an array we just take the first one and send that
+      if (data.length) req.body = data[0];
+
+      return next();
+    }
   });
 };
 exports.createLogForUser = (req, res) => {

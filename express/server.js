@@ -217,6 +217,7 @@ LOGGGING
 router.get(`/${apiUrl}/checklogging/:campaignId`, [
   RequestValidation.validateDomain,
   logging.findLogForUser,
+  entry.findEntryFromLog,
 ]);
 router.post(`/${apiUrl}/create-logging/:campaignId`, [
   RequestValidation.validateDomain,
