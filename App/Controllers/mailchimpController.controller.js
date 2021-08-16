@@ -169,11 +169,19 @@ exports.addMemberToMailchimp = async (req, res, next) => {
       .send("Please provide the correct userInfo in the body");
   if (!req.headers.mailchimplistid || !req.headers.mailchimpinfo)
     return res.status(400).send("Please provide the correct mailchimp info");
+
   const mailchimpInfo = req.body.currentUser;
   const mailchimpListId = req.headers.mailchimplistid;
   const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
+  console.log(
+    "We now continue after validation with current variables: ",
+    mailchimpInfo,
+    mailchimpListId,
+    mailchimpAccessInfo
+  );
+  // Remember to DECRYPT WHEN FIXED
   mailchimp.setConfig({
-    accessToken: decrypt(mailchimpAccessInfo.access_token),
+    accessToken: mailchimpAccessInfo.access_token,
     server: mailchimpAccessInfo.dc,
   });
   const mergeFields = {
@@ -195,12 +203,8 @@ exports.addMemberToMailchimp = async (req, res, next) => {
     */
     player.createPlayer(req, res);
   } catch (error) {
-    console.log("🚀 ~ file: server.js ~ line 293 ~ router.post ~ error", error);
     let responseCode = error.status;
-    console.log(
-      "🚀 ~ file: mailchimpController.controller.js ~ line 211 ~ exports.addMemberToMailchimp= ~ responseCode",
-      responseCode
-    );
+
     if (responseCode === undefined) {
       responseCode = 404;
     }

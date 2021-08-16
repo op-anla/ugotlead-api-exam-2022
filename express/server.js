@@ -187,10 +187,7 @@ router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
 REWARDS 
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/rewards/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
-  rewards.findRewardsByCampaignId,
-]);
+router.get(`/${apiUrl}/rewards/:campaignId`, [rewards.findRewardsByCampaignId]);
 router.get(`/${apiUrl}/rewards-meta/:rewardId`, [
   ValidationMiddleware.validJWTNeeded,
   reward_meta.findRewardMetaForReward,

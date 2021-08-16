@@ -11,24 +11,26 @@ const EntryModel = function (entry) {
   this.has_played = entry.has_played;
 };
 EntryModel.create = (newEntry, result) => {
-  console.log("🚀 ~ file: entry.model.js ~ line 14 ~ newEntry", newEntry)
+  console.log("🚀 ~ file: entry.model.js ~ line 14 ~ newEntry", newEntry);
   sql.query("INSERT INTO entries SET ?", newEntry, (err, res) => {
     if (err) {
-      console.log("🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err", err)
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err",
+        err
+      );
       result(err, null);
       return;
     }
 
-    console.log("created player: ", {
+    console.log("created entry: ", {
       id: res.insertId,
-      ...newEntry
+      ...newEntry,
     });
 
     result(null, {
       id: res.insertId,
-      ...newEntry
+      ...newEntry,
     });
-
   });
 };
 module.exports = EntryModel;
