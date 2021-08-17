@@ -4,12 +4,14 @@ const sql = require("./db.js");
 const Reward = function (reward) {
   this.campaign_id = reward.campaign_id;
   this.reward_image_url = reward.reward_image_url;
+  this.large_reward_image_url = reward.large_reward_image_url;
   this.reward_name = reward.reward_name;
   this.reward_description = reward.reward_description;
   this.reward_value_type = reward.reward_value_type;
   this.reward_value = reward.reward_value;
   this.reward_type = reward.reward_type;
   this.reward_claimed = reward.reward_claimed;
+  this.reward_drawtime = reward.reward_drawtime;
 };
 Reward.findByCampaignId = (campaignId, result) => {
   sql.query(
