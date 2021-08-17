@@ -1,7 +1,6 @@
 "use strict";
 // Used services
 const express = require("express");
-const serverless = require("serverless-http");
 const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
@@ -268,4 +267,3 @@ router.post(`/${apiUrl}/email/sendtest`, [
 ]);
 
 module.exports = app;
-module.exports.handler = serverless(app);
