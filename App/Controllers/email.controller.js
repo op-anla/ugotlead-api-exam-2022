@@ -5,15 +5,18 @@ exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
     let transporter = nodemailer.createTransport({
-      host: "172.20.221.3",
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      host: "api.ugotlead.dk",
+      port: 465,
+      secure: true, // true for 465, false for other ports,
     });
-
+    /* 
+Inbound email is working fine with Plesk but outbound mails is not working.
+Usually it gives Relay Access Denied
+*/
     transporter.sendMail(
       {
         from: "no-reply@api.ugotlead.dk",
-        to: "anla@onlineplus.dk",
+        to: "test@api.ugotlead.dk",
         subject: "Message",
         text: "I hope this message gets delivered!",
       },
