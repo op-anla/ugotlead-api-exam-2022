@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
 var cors = require("cors");
+const http = require("http");
 
 /* 
 -----------------------------------------------
@@ -265,5 +266,10 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
-
+const server = http.createServer(app);
+const pid = process.pid;
+server.listen(process.env.PORT, () => {
+  console.log("Listening on: ", process.env.PORT);
+  console.log(`Started process ${pid}`);
+});
 module.exports = app;
