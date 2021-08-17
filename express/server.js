@@ -25,6 +25,7 @@ const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
+const email = require("../App/Controllers/email.controller.js");
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -256,5 +257,15 @@ router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.deleteSelectedWidget,
 ]);
+/* 
+-----------------------------------------------
+Emails
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/email/sendtest`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.sendTest,
+]);
+
 module.exports = app;
 module.exports.handler = serverless(app);
