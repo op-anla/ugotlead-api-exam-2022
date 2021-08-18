@@ -52,6 +52,10 @@ exports.deleteById = (req, res) => {
   console.log("ID", req.params.reward_id);
   Rewards.remove(req.params.reward_id, (err, data) => {
     if (err) {
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 55 ~ Rewards.remove ~ err",
+        err
+      );
       if (err.kind === "not_found") {
         res.status(404).send({
           message: `Not found Reward with id ${req.params.reward_id}.`,
@@ -61,7 +65,7 @@ exports.deleteById = (req, res) => {
           message: "Could not delete Reward with id " + req.params.reward_id,
         });
       }
-    } else res.status(200).send("Deleted reward and reward meta");
+    } else res.status(200);
   });
 };
 // Create and Save a new reward

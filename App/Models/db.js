@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mysql = require("mysql");
+const pid = process.pid;
 /* 
 Rather than creating and managing connections one - by - one, 
 this module also provides built - in connection pooling using mysql.createPool(config).
@@ -16,6 +17,7 @@ var pool = mysql.createPool({
 // Monitor error
 pool.on("error", function (err) {
   console.log("db error", err);
+  console.log("db error from PID", pid);
   // If the connection is disconnected, automatically reconnect
   if (err.code === "PROTOCOL_CONNECTION_LOST" && err.code === "ECONNRESET") {
     console.log("connection lost");
@@ -30,6 +32,7 @@ right before the connection is handed to the callback of the acquiring code.
 */
 pool.on("acquire", function (connection) {
   console.log("Connection %d acquired", connection.threadId);
+  console.log("Connection %d acquired with PID", pid);
 });
 /* 
 The pool will emit a connection event when a new connection is made within the pool.
@@ -52,5 +55,6 @@ so the connection will be listed as free at the time of the event.
 */
 pool.on("release", function (connection) {
   console.log("Connection %d released", connection.threadId);
+  console.log("Connection %d released with PID", pid);
 });
 module.exports = pool;

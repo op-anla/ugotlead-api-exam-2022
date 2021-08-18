@@ -47,15 +47,16 @@ Reward.remove = (id, result) => {
   sql.query("DELETE FROM rewards WHERE reward_id = ?", id, (err, res) => {
     if (err) {
       console.log(
-        "🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err",
+        "🚀 ~ file: rewards.model.js ~ line 49 ~ sql.query ~ err",
         err
       );
-      result(null, err);
+
+      result(err, null);
       return;
     }
 
     if (res.affectedRows == 0) {
-      // not found Customer with the id
+      // not found reward with the id
       result(
         {
           kind: "not_found",
@@ -65,7 +66,6 @@ Reward.remove = (id, result) => {
       return;
     }
 
-    console.log("deleted reward with reward_id: ", id);
     result(null, res);
   });
 };

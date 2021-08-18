@@ -12,11 +12,16 @@ exports.findEntryFromLog = (req, res, next) => {
     if (err) {
       /* 
       If the entry is not found we will return 404 with a level of entry
+      This is actually the correct response if the user should be able to play.
+      Since we check 2 things with this endpoint - First the log and then the entry.
+      We will return the object of level with entry which on the application will be read
+      as a "correct" response object that will be used to advance the user in the flow.
       */
       if (err.kind === "not_found") {
         res.status(404).send({
           message: err.kind,
           level: "entry",
+          log: req.body,
         });
       }
       /* 
