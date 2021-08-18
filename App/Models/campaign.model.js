@@ -112,7 +112,12 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
+let tempCache = undefined;
 Campaign.findById = (campaignId, result) => {
+  if (tempCache != undefined) {
+    result(null, tempCache);
+    return;
+  }
   sql.query(
     `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`,
     (err, res) => {
@@ -127,6 +132,7 @@ Campaign.findById = (campaignId, result) => {
 
       if (res.length) {
         console.log("found campaign: ", res[0]);
+        tempCache = res[0];
         result(null, res[0]);
         return;
       }

@@ -11,7 +11,7 @@ var pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   connectTimeout: 100000,
-  connectionLimit: 15,
+  connectionLimit: 20,
 });
 
 // Monitor error
