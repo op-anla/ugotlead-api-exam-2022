@@ -1,11 +1,11 @@
 "use strict";
 // Used services
 const express = require("express");
-const serverless = require("serverless-http");
 const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
 var cors = require("cors");
+const http = require("http");
 
 /* 
 -----------------------------------------------
@@ -25,6 +25,7 @@ const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
+const email = require("../App/Controllers/email.controller.js");
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -256,5 +257,19 @@ router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.deleteSelectedWidget,
 ]);
+/* 
+-----------------------------------------------
+Emails
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/email/sendtest`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.sendTest,
+]);
+const server = http.createServer(app);
+const pid = process.pid;
+server.listen(process.env.PORT, () => {
+  console.log("Listening on: ", process.env.PORT);
+  console.log(`Started process ${pid}`);
+});
 module.exports = app;
-module.exports.handler = serverless(app);
