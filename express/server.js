@@ -35,7 +35,6 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 app.use(cors());
 
 app.use(bodyParser.json());
-app.use("/.netlify/functions/server", router); // path must route to lambda
 app.use("/", router);
 // Router
 router.get("/", (req, res) => {
