@@ -5,6 +5,7 @@
   "main": "functions/server.js",
   "scripts": {
     "build": "node ./express/server.js",
+    "start": "node cluster.js",
     "start:local": "nodemon server-local.js"
   },
   "keywords": [
@@ -29,6 +30,7 @@
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.3",
+    "nodemailer-relay": "^1.0.0",
     "uuid": "^8.3.2"
   }
 }
