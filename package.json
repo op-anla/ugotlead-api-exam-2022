@@ -2,14 +2,12 @@
   "name": "UGOTLEAD-Express-API",
   "version": "0.0.1",
   "description": "This is an Express Server created for UGOTLEAD Product",
-  "main": "functions/server.js",
+  "main": "./cluster.js",
   "scripts": {
-    "build": "node ./express/server.js",
     "start": "node cluster.js",
-    "start:local": "nodemon server-local.js"
+    "dev": "nodemon server-local.js"
   },
   "keywords": [
-    "netlify",
     "express.js"
   ],
   "author": "AndreasLagoni",
@@ -17,7 +15,6 @@
   "devDependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "netlify-lambda": "^1.6.3",
     "nodemon": "^1.19.2"
   },
   "dependencies": {
