@@ -73,6 +73,12 @@ exports.findOne = (req, res) => {
         });
       }
     } else res.send(data);
+  }).then((cache) => {
+    console.log(
+      "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
+      cache
+    );
+    res.status(200).send(cache);
   });
 };
 // Update a campaign

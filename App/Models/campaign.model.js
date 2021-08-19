@@ -1,4 +1,8 @@
 const sql = require("./db.js");
+const CacheService = require("../cache/Cache");
+
+const ttl = 60 * 60 * 1; // cache for 1 Hour
+const cache = new CacheService(ttl); // Create a new cache service instance
 
 // constructor
 const Campaign = function (campaign) {
@@ -114,41 +118,72 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
-let tempCache = undefined;
+
 Campaign.findById = (campaignId, result) => {
-  if (tempCache != undefined) {
-    result(null, tempCache);
-    return;
-  }
-  sql.query(
-    `SELECT * FROM campaigns WHERE campaign_id = ?`,
-    campaignId,
-    (err, res) => {
-      if (err) {
-        console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-          err
-        );
-        result(err, null);
-        return;
-      }
+  const selectQuery = `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`;
+  const key = `findById_${campaignId}`;
+  return cache.get(key, () => {
+    return new Promise((resolve, reject) => {
+      sql.query(
+        `SELECT * FROM campaigns WHERE campaign_id = ?`,
+        campaignId,
+        (err, res) => {
+          if (err) {
+            console.log(
+              "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+              err
+            );
+            result(err, null);
+            return reject(err);
+          }
 
-      if (res.length) {
-        console.log("found campaign: ", res[0]);
-        tempCache = res[0];
-        result(null, res[0]);
-        return;
-      }
+          if (res.length) {
+            console.log("found campaign: ", res[0]);
+            result(null, res[0]);
+            return resolve(res[0]);
+          }
 
-      // not found Campaign with the id
-      result(
-        {
-          kind: "not_found",
-        },
-        null
+          // not found Campaign with the id
+          result(
+            {
+              kind: "not_found",
+            },
+            null
+          );
+        }
       );
-    }
-  );
+    });
+  });
+  return cache.get(campaignId, () => {
+    sql.query(
+      `SELECT * FROM campaigns WHERE campaign_id = ?`,
+      campaignId,
+      (err, res) => {
+        if (err) {
+          console.log(
+            "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+            err
+          );
+          result(err, null);
+          return err;
+        }
+
+        if (res.length) {
+          console.log("found campaign: ", res[0]);
+          result(null, res[0]);
+          return res[0];
+        }
+
+        // not found Campaign with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+      }
+    );
+  });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
