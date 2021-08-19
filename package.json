@@ -5,7 +5,7 @@
   "main": "./cluster.js",
   "scripts": {
     "start": "node cluster.js",
-    "dev": "nodemon server-local.js"
+    "dev": "nodemon ./express/server.js"
   },
   "keywords": [
     "express.js"
