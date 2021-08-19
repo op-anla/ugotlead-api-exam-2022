@@ -9,10 +9,6 @@ LAYOUT
 exports.findLayoutForSpecificCampaign = (req, res) => {
   console.log("find all layout for this campaign");
   Layout.findLayoutForCampaign(req.params.campaignId, (err, data) => {
-    console.log(
-      "🚀 ~ file: layout.controller.js ~ line 12 ~ Layout.findLayoutForCampaign ~ err",
-      err
-    );
     if (err)
       if (err.kind === "not_found")
         res.status(404).send("Can't find layout for this specific campaign");
