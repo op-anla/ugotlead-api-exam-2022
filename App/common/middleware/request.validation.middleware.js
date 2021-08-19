@@ -5,8 +5,8 @@ exports.validateDomain = (req, res, next) => {
   if (user_agent.includes("Postman")) return next();
   const acceptedVariables = {
     host: "127.0.0.1:3005",
-    origin: "http://127.0.0.1:3306",
-    referer: "http://127.0.0.1:3306/"
+    origin: "http://127.0.0.1:3000",
+    referer: "http://127.0.0.1:3000/",
   };
   if (req.headers.host == acceptedVariables.host) {
     console.log("Accepted host");
