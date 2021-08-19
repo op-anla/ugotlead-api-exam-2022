@@ -76,7 +76,8 @@ RewardMeta.remove = (id, result) => {
 };
 RewardMeta.findByRewardId = (rewardId, result) => {
   sql.query(
-    `SELECT * FROM reward_meta_data WHERE reward_id = ${rewardId}`,
+    `SELECT * FROM reward_meta_data WHERE reward_id = ?`,
+    rewardId,
     (err, res) => {
       console.log(
         "🚀 ~ file: rewards.model.js ~ line 19 ~ sql.query ~ err, res",

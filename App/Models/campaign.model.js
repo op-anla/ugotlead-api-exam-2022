@@ -49,7 +49,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   */
   const logs = new Promise((resolve, reject) => {
     sql.query(
-      `SELECT COUNT(*) FROM logs WHERE campaign_id = ${campaignId}`,
+      `SELECT COUNT(*) FROM logs WHERE campaign_id = ?`,
+      [campaignId],
       (err, res) => {
         if (err) {
           console.log(
@@ -75,7 +76,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     // Again we use promise based variables so we can resolve and reject the response
     const entries = new Promise((resolve, reject) => {
       sql.query(
-        `SELECT COUNT(*) FROM entries WHERE campaign_id = ${campaignId}`,
+        `SELECT COUNT(*) FROM entries WHERE campaign_id = ?`,
+        campaignId,
         (err, res) => {
           if (err) {
             console.log(
@@ -119,7 +121,8 @@ Campaign.findById = (campaignId, result) => {
     return;
   }
   sql.query(
-    `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`,
+    `SELECT * FROM campaigns WHERE campaign_id = ?`,
+    campaignId,
     (err, res) => {
       if (err) {
         console.log(

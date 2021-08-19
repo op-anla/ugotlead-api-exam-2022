@@ -13,7 +13,8 @@ const Logging = function (logging) {
 Logging.findLog = (campaignId, log, result) => {
   console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", log);
   sql.query(
-    `SELECT * FROM logs WHERE (campaign_id = ${campaignId} AND HTTP_USER_AGENT = '${log.user_agent}')`,
+    `SELECT * FROM logs WHERE (campaign_id = ? AND HTTP_USER_AGENT = '?')`,
+    [campaignId, log.user_agent],
     (err, res) => {
       if (err) {
         console.log(

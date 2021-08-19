@@ -31,7 +31,8 @@ User.findByUsername = (username) => {
   return new Promise((resolve, reject) => {
     console.log("Inside promise in findbyusername");
     sql.query(
-      `SELECT * FROM user WHERE username = "${username}"`,
+      `SELECT * FROM user WHERE username = "?"`,
+      username,
       (err, res) => {
         console.log("Query", err, res);
         if (err) {
@@ -59,7 +60,7 @@ User.findByUsername = (username) => {
 };
 
 User.findById = (userId, result) => {
-  sql.query(`SELECT * FROM user WHERE iduser = ${userId}`, (err, res) => {
+  sql.query(`SELECT * FROM user WHERE iduser = ?`, userId, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 48 ~ sql.query ~ err", err);
       result(err, null);
