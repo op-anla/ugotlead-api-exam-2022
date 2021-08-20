@@ -124,9 +124,15 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
-
+const process = require("process");
 Campaign.findById = (campaignId, result) => {
+  console.log("Testing some process", process.pid);
   const key = `findById_${campaignId}`;
+  console.log("this find is executed by PID: ", process.pid);
+  setTimeout(() => {
+    console.log("Kill this process", process.pid);
+    process.exit(0);
+  }, 1000);
   return cache.get(key, () => {
     return new Promise((resolve, reject) => {
       sql.query(

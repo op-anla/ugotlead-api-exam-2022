@@ -12,7 +12,11 @@ class Cache {
   get(key, storeFunction) {
     const value = this.cache.get(key);
     if (value) {
-      console.log("We found a cached respons!");
+      console.log(
+        "We found a cached respons! This cached respons is being executed on PID: ",
+        process.pid
+      );
+
       return Promise.resolve(value);
     }
 
@@ -42,6 +46,7 @@ class Cache {
 
   flush() {
     console.log("Flush it all", this.cache.keys(), this.cache.getStats());
+    console.log("Flushing on PID: ", process.pid);
     this.cache.flushAll();
   }
 }
