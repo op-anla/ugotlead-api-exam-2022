@@ -19,6 +19,12 @@ const Campaign = function (campaign) {
   this.restrict_access_interval = campaign.restrict_access_interval;
   this.campaign_leads = campaign.campaign_leads;
 };
+Campaign.flushCache = () => {
+  return new Promise((resolve, reject) => {
+    cache.flush();
+    resolve(200);
+  });
+};
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
     if (err) {
@@ -132,56 +138,16 @@ Campaign.findById = (campaignId, result) => {
               "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
               err
             );
-            result(err, null);
             return reject(err);
           }
 
           if (res.length) {
             console.log("found campaign: ", res[0]);
-            result(null, res[0]);
             return resolve(res[0]);
           }
-
-          // not found Campaign with the id
-          result(
-            {
-              kind: "not_found",
-            },
-            null
-          );
         }
       );
     });
-  });
-  return cache.get(campaignId, () => {
-    sql.query(
-      `SELECT * FROM campaigns WHERE campaign_id = ?`,
-      campaignId,
-      (err, res) => {
-        if (err) {
-          console.log(
-            "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-            err
-          );
-          result(err, null);
-          return err;
-        }
-
-        if (res.length) {
-          console.log("found campaign: ", res[0]);
-          result(null, res[0]);
-          return res[0];
-        }
-
-        // not found Campaign with the id
-        result(
-          {
-            kind: "not_found",
-          },
-          null
-        );
-      }
-    );
   });
 };
 Campaign.remove = (id, result) => {

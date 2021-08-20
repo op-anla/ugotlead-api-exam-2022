@@ -81,6 +81,15 @@ exports.findOne = (req, res) => {
     res.status(200).send(cache);
   });
 };
+exports.flushAllCache = (req, res) => {
+  Campaign.flushCache().then((resCode) => {
+    console.log(
+      "🚀 ~ file: campaign.controller.js ~ line 86 ~ Campaign.flushCache.then ~ resCode",
+      resCode
+    );
+    return res.status(resCode).send("Flushed all campaign cache");
+  });
+};
 // Update a campaign
 exports.update = (req, res) => {
   // Validate Request

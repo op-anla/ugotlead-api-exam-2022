@@ -5,23 +5,19 @@ class Cache {
     this.cache = new NodeCache({
       stdTTL: ttlSeconds,
       checkperiod: ttlSeconds * 0.2,
-      useClones: false,
+      useClones: true,
     });
   }
 
   get(key, storeFunction) {
-    console.log("🚀 ~ file: Cache.js ~ line 13 ~ Cache ~ get ~ key", key);
     const value = this.cache.get(key);
     if (value) {
-      console.log("🚀 ~ file: Cache.js ~ line 16 ~ Cache ~ get ~ value", value);
+      console.log("We found a cached respons!");
       return Promise.resolve(value);
     }
 
     return storeFunction().then((result) => {
-      console.log(
-        "🚀 ~ file: Cache.js ~ line 20 ~ Cache ~ returnstoreFunction ~ result",
-        result
-      );
+      console.log("Didnt find any cached version");
       this.cache.set(key, result);
       return result;
     });
@@ -45,6 +41,7 @@ class Cache {
   }
 
   flush() {
+    console.log("Flush it all", this.cache.keys(), this.cache.getStats());
     this.cache.flushAll();
   }
 }

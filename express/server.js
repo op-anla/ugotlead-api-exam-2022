@@ -18,8 +18,7 @@ const rewards = require("../App/Controllers/rewards.controller.js");
 const reward_meta = require("../App/Controllers/reward_meta.controller.js");
 const layout = require("../App/Controllers/layout.controller.js");
 const logging = require("../App/Controllers/logging.controller.js");
-const player = require("../App/Controllers/player.controller.js");
-
+const caching = require("../App/Controllers/cache.controller.js");
 const layoutWidgets = require("../App/Controllers/layout-widgets.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
@@ -265,6 +264,20 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
+/* 
+-----------------------------------------------
+Cache
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/cache/flushall`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaigns.flushAllCache,
+]);
+/* 
+-----------------------------------------------
+Create the server and export the app 
+-----------------------------------------------
+*/
 const server = http.createServer(app);
 const pid = process.pid;
 server.listen(process.env.PORT, () => {
