@@ -19,7 +19,7 @@ const Campaign = function (campaign) {
 };
 Campaign.flushCache = () => {
   return new Promise((resolve, reject) => {
-    cache.flush();
+    myCache.flushAll();
     resolve(200);
   });
 };
@@ -127,32 +127,46 @@ Campaign.findById = (campaignId, result) => {
   console.log("Testing some process", process.pid);
   const key = `findById_${campaignId}`;
   console.log("this find is executed by PID: ", process.pid);
-  setTimeout(() => {
-    console.log("Kill this process", process.pid);
-    process.exit(0);
-  }, 1000);
-  let testResponse = [
-    {
-      name: "test",
-    },
-  ];
+
   return myCache.get(`findById_${campaignId}`).then(function (results) {
     console.log("🚀 ~ file: campaign.model.js ~ line 140 ~ results", results);
     if (results.err) {
       console.log("ERR", results.err);
+      return;
     } else {
       let key = `findById_${campaignId}`;
-      console.log("Found cache", results.value[key]);
-      myCache
-        .set(`findById_${campaignId}`, testResponse)
-        .then(function (result) {
-          console.log("result err: ", result.err);
-          console.log("Result success: ", result.success);
-        });
+
       if (results.value[key]) {
-        return testResponse;
+        console.log("We found a cache");
+        return results.value[key];
       } else {
-        return testResponse;
+        console.log("No cache found so just normal query");
+        return new Promise((resolve, reject) => {
+          sql.query(
+            `SELECT * FROM campaigns WHERE campaign_id = ?`,
+            campaignId,
+            (err, res) => {
+              if (err) {
+                console.log(
+                  "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+                  err
+                );
+                return reject(err);
+              }
+
+              if (res.length) {
+                console.log("found campaign: ", res[0]);
+                myCache
+                  .set(`findById_${campaignId}`, res[0])
+                  .then(function (result) {
+                    console.log("result err: ", result.err);
+                    console.log("Result success: ", result.success);
+                  });
+                return resolve(res[0]);
+              }
+            }
+          );
+        });
       }
     }
   });
