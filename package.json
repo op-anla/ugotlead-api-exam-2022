@@ -5,7 +5,7 @@
   "main": "./cluster.js",
   "scripts": {
     "start": "node cluster.js",
-    "dev": "nodemon ./express/server.js"
+    "dev": "nodemon cluster.js"
   },
   "keywords": [
     "express.js"
@@ -19,13 +19,13 @@
   },
   "dependencies": {
     "@mailchimp/mailchimp_marketing": "^3.0.47",
+    "cluster-node-cache": "^0.1.5",
     "cors": "^2.8.5",
     "dotenv": "^8.5.1",
     "encoding": "^0.1.13",
     "glob-parent": "^6.0.1",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
-    "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.3",
     "nodemailer-relay": "^1.0.0",

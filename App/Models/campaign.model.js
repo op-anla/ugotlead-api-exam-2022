@@ -1,8 +1,6 @@
 const sql = require("./db.js");
-const CacheService = require("../cache/Cache");
-
-const ttl = 60 * 60 * 1; // cache for 1 Hour
-const cache = new CacheService(ttl); // Create a new cache service instance
+var cluster = require("cluster");
+var myCache = require("cluster-node-cache")(cluster);
 
 // constructor
 const Campaign = function (campaign) {
@@ -21,7 +19,7 @@ const Campaign = function (campaign) {
 };
 Campaign.flushCache = () => {
   return new Promise((resolve, reject) => {
-    cache.flush();
+    myCache.flushAll();
     resolve(200);
   });
 };
@@ -129,32 +127,71 @@ Campaign.findById = (campaignId, result) => {
   console.log("Testing some process", process.pid);
   const key = `findById_${campaignId}`;
   console.log("this find is executed by PID: ", process.pid);
-  setTimeout(() => {
-    console.log("Kill this process", process.pid);
-    process.exit(0);
-  }, 1000);
-  return cache.get(key, () => {
-    return new Promise((resolve, reject) => {
-      sql.query(
-        `SELECT * FROM campaigns WHERE campaign_id = ?`,
-        campaignId,
-        (err, res) => {
-          if (err) {
-            console.log(
-              "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-              err
-            );
-            return reject(err);
-          }
 
-          if (res.length) {
-            console.log("found campaign: ", res[0]);
-            return resolve(res[0]);
-          }
-        }
-      );
-    });
+  return myCache.get(`findById_${campaignId}`).then(function (results) {
+    console.log("🚀 ~ file: campaign.model.js ~ line 140 ~ results", results);
+    if (results.err) {
+      console.log("ERR", results.err);
+      return;
+    } else {
+      let key = `findById_${campaignId}`;
+
+      if (results.value[key]) {
+        console.log("We found a cache");
+        return results.value[key];
+      } else {
+        console.log("No cache found so just normal query");
+        return new Promise((resolve, reject) => {
+          sql.query(
+            `SELECT * FROM campaigns WHERE campaign_id = ?`,
+            campaignId,
+            (err, res) => {
+              if (err) {
+                console.log(
+                  "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+                  err
+                );
+                return reject(err);
+              }
+
+              if (res.length) {
+                console.log("found campaign: ", res[0]);
+                myCache
+                  .set(`findById_${campaignId}`, res[0])
+                  .then(function (result) {
+                    console.log("result err: ", result.err);
+                    console.log("Result success: ", result.success);
+                  });
+                return resolve(res[0]);
+              }
+            }
+          );
+        });
+      }
+    }
   });
+  // return myCache.get(key, () => {
+  //   return new Promise((resolve, reject) => {
+  //     sql.query(
+  //       `SELECT * FROM campaigns WHERE campaign_id = ?`,
+  //       campaignId,
+  //       (err, res) => {
+  //         if (err) {
+  //           console.log(
+  //             "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+  //             err
+  //           );
+  //           return reject(err);
+  //         }
+
+  //         if (res.length) {
+  //           console.log("found campaign: ", res[0]);
+  //           return resolve(res[0]);
+  //         }
+  //       }
+  //     );
+  //   });
+  // });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
