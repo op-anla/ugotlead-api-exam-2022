@@ -120,7 +120,6 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
 };
 
 Campaign.findById = (campaignId, result) => {
-  const selectQuery = `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`;
   const key = `findById_${campaignId}`;
   return cache.get(key, () => {
     return new Promise((resolve, reject) => {
