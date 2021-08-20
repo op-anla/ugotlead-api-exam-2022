@@ -1,5 +1,6 @@
 // cluster.js
 const cluster = require("cluster");
+var myCache = require("cluster-node-cache")(cluster);
 const os = require("os");
 
 if (cluster.isMaster) {
@@ -11,5 +12,10 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 } else {
+  obj = { my: "Special", variable: 42 };
+  myCache.set("myKey", obj).then(function (result) {
+    console.log("err", result.err);
+    console.log("success", result.success);
+  });
   require("./express/server");
 }
