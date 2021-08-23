@@ -34,7 +34,7 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
     req.body.id,
     new Layout({
       layout_component_content: req.body.content,
-      layout_component_options: JSON.stringify(req.body.options),
+      layout_component_options: req.body.options,
       layout_component_pos_x: req.body.x,
       layout_component_pos_y: req.body.y,
       layout_component_size_w: req.body.w,
