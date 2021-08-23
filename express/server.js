@@ -93,6 +93,10 @@ router.put(`/${apiUrl}/update-layout/campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   layout.updateLayoutForSpecificCampaign,
 ]);
+router.delete(`/${apiUrl}/delete-layout/campaign/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  layout.removeWidgetFromCampaign,
+]);
 /* 
 -----------------------------------------------
 COMPANIES

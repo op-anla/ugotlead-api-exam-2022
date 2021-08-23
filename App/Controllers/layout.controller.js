@@ -56,6 +56,25 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
     }
   );
 };
+// Delete widget from campaign
+exports.removeWidgetFromCampaign = (req, res) => {
+  Layout.remove(req.params.campaignId, req.body.widgetid, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Layout with id ${req.params.campaignId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Layout with id " + req.params.campaignId,
+        });
+      }
+    } else
+      res.send({
+        message: `Layout was deleted successfully!`,
+      });
+  });
+};
 // Create new component in layout
 exports.createNewComponentForCampaign = (req, res) => {
   console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);

@@ -9,7 +9,38 @@ const Layout = function (layout) {
   this.layout_component_size_w = layout.layout_component_size_w;
   this.layout_component_size_h = layout.layout_component_size_h;
 };
+Layout.remove = (campaignId, widgetId, result) => {
+  console.log("🚀 ~ file: layout.model.js ~ line 13 ~ widgetId", widgetId);
+  console.log("🚀 ~ file: layout.model.js ~ line 13 ~ campaignId", campaignId);
+  sql.query(
+    "DELETE FROM layout_comps WHERE campaign_id = ? AND layout_component_id = ?",
+    [campaignId, widgetId],
+    (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: company.model.js ~ line 51 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
 
+      if (res.affectedRows == 0) {
+        // not found layout with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+        return;
+      }
+
+      console.log("deleted layout with layout_id: ", widgetId);
+      result(null, res);
+    }
+  );
+};
 Layout.findLayoutForCampaign = (campaignId, result) => {
   console.log("🚀 ~ file: layout.model.js ~ line 15 ~ campaignId", campaignId);
   sql.query(
