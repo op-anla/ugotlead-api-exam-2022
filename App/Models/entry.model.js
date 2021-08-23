@@ -12,7 +12,7 @@ const EntryModel = function (entry) {
 };
 EntryModel.findEntry = (log, result) => {
   console.log("🚀 ~ file: entry.model.js ~ line 14 ~ log", log);
-  sql.query(`SELECT * FROM entries WHERE log_id = ${log}`, (err, res) => {
+  sql.query(`SELECT * FROM entries WHERE log_id = ?`, log, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: entry.model.js ~ line 17 ~ sql.query ~ err", err);
       result(err, null);

@@ -73,6 +73,21 @@ exports.findOne = (req, res) => {
         });
       }
     } else res.send(data);
+  }).then((cache) => {
+    console.log(
+      "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
+      cache
+    );
+    res.status(200).send(cache);
+  });
+};
+exports.flushAllCache = (req, res) => {
+  Campaign.flushCache().then((resCode) => {
+    console.log(
+      "🚀 ~ file: campaign.controller.js ~ line 86 ~ Campaign.flushCache.then ~ resCode",
+      resCode
+    );
+    return res.status(resCode).send("Flushed all campaign cache");
   });
 };
 // Update a campaign

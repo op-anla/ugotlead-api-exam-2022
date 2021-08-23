@@ -21,22 +21,22 @@ exports.redirectToLogin = (req, res, next) => {
   We redirect the user to the official Mailchimp oauth page where the user has to verify our App
   After they verify the application they will be redirected to another API Endpoint we have
   */
-  // res.redirect(
-  //   `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
-  //     response_type: "code",
-  //     client_id: MAILCHIMP_CLIENT_ID,
-  //     redirect_uri: OAUTH_CALLBACK
-  //   })}`
-  // );
-  let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify(
-    {
+  res.redirect(
+    `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify({
       response_type: "code",
       client_id: MAILCHIMP_CLIENT_ID,
       redirect_uri: OAUTH_CALLBACK,
-    }
-  )}`;
-  res.status(200).send(url);
-  return next();
+    })}`
+  );
+  // let url = `https://login.mailchimp.com/oauth2/authorize?${querystring.stringify(
+  //   {
+  //     response_type: "code",
+  //     client_id: MAILCHIMP_CLIENT_ID,
+  //     redirect_uri: OAUTH_CALLBACK,
+  //   }
+  // )}`;
+  // res.status(200).send(url);
+  // return next();
 };
 
 exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
@@ -77,8 +77,15 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
       }),
     }
   );
-
+  console.log(
+    "🚀 ~ file: mailchimpController.controller.js ~ line 80 ~ exports.updateCampaignWithMailchimpInfo= ~ tokenResponse",
+    tokenResponse
+  );
   const { access_token } = await tokenResponse.json();
+  console.log(
+    "🚀 ~ file: mailchimpController.controller.js ~ line 83 ~ exports.updateCampaignWithMailchimpInfo= ~ access_token",
+    access_token
+  );
 
   // Now we're using the access token to get information about the user.
   // Specifically, we want to get the user's server prefix, which we'll use to
@@ -95,6 +102,10 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
   );
 
   const { dc } = await metadataResponse.json();
+  console.log(
+    "🚀 ~ file: mailchimpController.controller.js ~ line 112 ~ exports.updateCampaignWithMailchimpInfo= ~ dc",
+    dc
+  );
   /* 
    First we encrypt the accesstoken and send that to the DB
    The campaign the user is updating will be the mailchimp integration for that specific campaign
@@ -124,9 +135,6 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
     server: dc,
   });
 
-  const response = await mailchimp.lists.getAllLists();
-  const stringifyList = JSON.stringify(response.lists);
-  campaigns.updateMailchimpList(campaignId, stringifyList);
   // We redirect the user back to our application with the campaign ID they were updating.
   res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}`);
 };

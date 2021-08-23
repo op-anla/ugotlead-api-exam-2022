@@ -15,7 +15,8 @@ const Reward = function (reward) {
 };
 Reward.findByCampaignId = (campaignId, result) => {
   sql.query(
-    `SELECT * FROM rewards WHERE campaign_id = ${campaignId}`,
+    `SELECT * FROM rewards WHERE campaign_id = ?`,
+    campaignId,
     (err, res) => {
       if (err) {
         console.log(

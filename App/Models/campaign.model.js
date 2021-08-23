@@ -1,4 +1,6 @@
 const sql = require("./db.js");
+var cluster = require("cluster");
+var myCache = require("cluster-node-cache")(cluster);
 
 // constructor
 const Campaign = function (campaign) {
@@ -10,10 +12,14 @@ const Campaign = function (campaign) {
   this.mailchimp_list = campaign.mailchimp_list;
   this.campaign_startdate = campaign.campaign_startdate;
   this.campaign_enddate = campaign.campaign_enddate;
-  this.campaign_leads = campaign.campaign_leads;
   this.campaign_description = campaign.campaign_description;
   this.restrict_access_interval = campaign.restrict_access_interval;
-  this.campaign_leads = campaign.campaign_leads;
+};
+Campaign.flushCache = () => {
+  return new Promise((resolve, reject) => {
+    myCache.flushAll();
+    resolve(200);
+  });
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -49,7 +55,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   */
   const logs = new Promise((resolve, reject) => {
     sql.query(
-      `SELECT COUNT(*) FROM logs WHERE campaign_id = ${campaignId}`,
+      `SELECT COUNT(*) FROM logs WHERE campaign_id = ?`,
+      [campaignId],
       (err, res) => {
         if (err) {
           console.log(
@@ -75,7 +82,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     // Again we use promise based variables so we can resolve and reject the response
     const entries = new Promise((resolve, reject) => {
       sql.query(
-        `SELECT COUNT(*) FROM entries WHERE campaign_id = ${campaignId}`,
+        `SELECT COUNT(*) FROM entries WHERE campaign_id = ?`,
+        campaignId,
         (err, res) => {
           if (err) {
             console.log(
@@ -112,40 +120,76 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
-let tempCache = undefined;
+const process = require("process");
 Campaign.findById = (campaignId, result) => {
-  if (tempCache != undefined) {
-    result(null, tempCache);
-    return;
-  }
-  sql.query(
-    `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`,
-    (err, res) => {
-      if (err) {
-        console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-          err
-        );
-        result(err, null);
-        return;
-      }
+  console.log("Testing some process", process.pid);
+  const key = `findById_${campaignId}`;
+  console.log("this find is executed by PID: ", process.pid);
 
-      if (res.length) {
-        console.log("found campaign: ", res[0]);
-        tempCache = res[0];
-        result(null, res[0]);
-        return;
-      }
+  return myCache.get(`findById_${campaignId}`).then(function (results) {
+    console.log("🚀 ~ file: campaign.model.js ~ line 140 ~ results", results);
+    if (results.err) {
+      console.log("ERR", results.err);
+      return;
+    } else {
+      let key = `findById_${campaignId}`;
 
-      // not found Campaign with the id
-      result(
-        {
-          kind: "not_found",
-        },
-        null
-      );
+      if (results.value[key]) {
+        console.log("We found a cache");
+        return results.value[key];
+      } else {
+        console.log("No cache found so just normal query");
+        return new Promise((resolve, reject) => {
+          sql.query(
+            `SELECT * FROM campaigns WHERE campaign_id = ?`,
+            campaignId,
+            (err, res) => {
+              if (err) {
+                console.log(
+                  "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+                  err
+                );
+                return reject(err);
+              }
+
+              if (res.length) {
+                console.log("found campaign: ", res[0]);
+                myCache
+                  .set(`findById_${campaignId}`, res[0])
+                  .then(function (result) {
+                    console.log("result err: ", result.err);
+                    console.log("Result success: ", result.success);
+                  });
+                return resolve(res[0]);
+              }
+            }
+          );
+        });
+      }
     }
-  );
+  });
+  // return myCache.get(key, () => {
+  //   return new Promise((resolve, reject) => {
+  //     sql.query(
+  //       `SELECT * FROM campaigns WHERE campaign_id = ?`,
+  //       campaignId,
+  //       (err, res) => {
+  //         if (err) {
+  //           console.log(
+  //             "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+  //             err
+  //           );
+  //           return reject(err);
+  //         }
+
+  //         if (res.length) {
+  //           console.log("found campaign: ", res[0]);
+  //           return resolve(res[0]);
+  //         }
+  //       }
+  //     );
+  //   });
+  // });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {

@@ -33,7 +33,8 @@ Company.create = (newCompany, result) => {
 };
 Company.findById = (companyId, result) => {
   sql.query(
-    `SELECT * FROM companies WHERE company_id = ${companyId}`,
+    `SELECT * FROM companies WHERE company_id = ?`,
+    companyId,
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: company.model.js ~ line 39 ~ err", err);
