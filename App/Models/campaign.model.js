@@ -12,10 +12,8 @@ const Campaign = function (campaign) {
   this.mailchimp_list = campaign.mailchimp_list;
   this.campaign_startdate = campaign.campaign_startdate;
   this.campaign_enddate = campaign.campaign_enddate;
-  this.campaign_leads = campaign.campaign_leads;
   this.campaign_description = campaign.campaign_description;
   this.restrict_access_interval = campaign.restrict_access_interval;
-  this.campaign_leads = campaign.campaign_leads;
 };
 Campaign.flushCache = () => {
   return new Promise((resolve, reject) => {

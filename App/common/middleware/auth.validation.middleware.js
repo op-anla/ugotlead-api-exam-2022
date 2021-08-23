@@ -43,6 +43,24 @@ exports.validJWTNeeded = (req, res, next) => {
     If the request doesn't have authorization header we assume the person is not logged in and therefore not authorized
     */
     console.log("Else in validation middleware");
+    /* 
+    There might be a chance that the auth is set in cookies, so we just double check
+    */
+    console.log("Cookies?", req.headers.cookie);
+    if (req.headers.cookie.includes("auth._token.local")) {
+      console.log("There is actually token here");
+      let split = req.headers.cookie.split("auth._token.local=");
+      let split2 = split[1].split(";");
+      let split3 = split2[0].split("Bearer%20");
+      let bearer = split3[1];
+      console.log("My bearer", bearer);
+      req.headers = {
+        authorization: "Bearer " + bearer,
+        ...req.headers,
+      };
+      console.log("new header?", req.headers);
+      return next();
+    }
     return res.status(401).send("You are not authorized");
   }
 };

@@ -166,10 +166,7 @@ The Maillchimp info will also be saved for that specific campaign and not on the
 -----------------------------------------------
 */
 
-router.get(`/${apiUrl}/auth/mailchimp`, [
-  ValidationMiddleware.validJWTNeeded,
-  mailchimpController.redirectToLogin,
-]);
+router.get(`/${apiUrl}/auth/mailchimp`, [mailchimpController.redirectToLogin]);
 
 router.get(`/${apiUrl}/auth/mailchimp/login`, [
   ValidationMiddleware.validJWTNeeded,
