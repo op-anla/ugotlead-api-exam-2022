@@ -9,7 +9,7 @@ exports.create = (req, res) => {
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
 
-  // Create a Customer
+  // Create a Campaign
   const campaign = new Campaign({
     company_id: req.body.company_id,
     campaign_active: req.body.campaign_active,
@@ -20,7 +20,7 @@ exports.create = (req, res) => {
     mailchimp_list: req.body.mailchimp_list,
   });
 
-  // Save Customer in the database
+  // Save Campaign in the database
   Campaign.create(campaign, (err, data) => {
     if (err)
       res.status(500).send({
