@@ -9,7 +9,7 @@ exports.create = (req, res) => {
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
 
-  // Create a Customer
+  // Create a Campaign
   const campaign = new Campaign({
     company_id: req.body.company_id,
     campaign_active: req.body.campaign_active,
@@ -18,15 +18,13 @@ exports.create = (req, res) => {
     campaign_owner_id: req.body.campaign_owner_id,
     mailchimp_info: req.body.mailchimp_info,
     mailchimp_list: req.body.mailchimp_list,
-    campaign_leads: req.body.campaign_leads,
   });
 
-  // Save Customer in the database
+  // Save Campaign in the database
   Campaign.create(campaign, (err, data) => {
     if (err)
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the campaign.",
+        message: err.message || "Some error occurred while creating the campaign.",
       });
     else res.status(201).send(data);
   });
@@ -37,8 +35,7 @@ exports.findAll = (req, res) => {
   Campaign.getAll((err, data) => {
     if (err)
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving campaigns.",
+        message: err.message || "Some error occurred while retrieving campaigns.",
       });
     else res.send(data);
   });
@@ -52,8 +49,7 @@ exports.findStatsForCampaign = (req, res) => {
         });
       } else {
         res.status(500).send({
-          message:
-            "Error retrieving campaignstats with id " + req.params.campaignId,
+          message: "Error retrieving campaignstats with id " + req.params.campaignId,
         });
       }
     } else res.send(data);
