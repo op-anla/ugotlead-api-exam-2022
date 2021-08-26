@@ -4,7 +4,8 @@ var myCache = require("cluster-node-cache")(cluster);
 const os = require("os");
 
 if (cluster.isMaster) {
-  const cpus = os.cpus().length / 2;
+  var cpus = os.cpus().length / 2; //Change to const when prod
+  cpus = 2; //Testing
 
   console.log(`Primary ${process.pid} is running`);
   console.log(`Forking for ${cpus} CPUs`);

@@ -168,28 +168,6 @@ Campaign.findById = (campaignId, result) => {
       }
     }
   });
-  // return myCache.get(key, () => {
-  //   return new Promise((resolve, reject) => {
-  //     sql.query(
-  //       `SELECT * FROM campaigns WHERE campaign_id = ?`,
-  //       campaignId,
-  //       (err, res) => {
-  //         if (err) {
-  //           console.log(
-  //             "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-  //             err
-  //           );
-  //           return reject(err);
-  //         }
-
-  //         if (res.length) {
-  //           console.log("found campaign: ", res[0]);
-  //           return resolve(res[0]);
-  //         }
-  //       }
-  //     );
-  //   });
-  // });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
