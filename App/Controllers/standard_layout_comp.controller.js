@@ -52,3 +52,45 @@ exports.getAllStandardLayoutComponentsFromLayoutId = (req, res) => {
     }
   );
 };
+/* 
+Update layout comps
+*/
+exports.updateStandardLayoutComponent = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  console.log("req body from updateStandardLayoutComponent", req.body);
+  // Create a standard layout comp
+  const newStandardLayoutComp = new StandardLayoutCompModel({
+    standard_layout_id: req.body.standard_layout_id,
+    standard_layout_comp_options: req.body.options,
+    standard_layout_comp_content: req.body.content,
+    standard_layout_comp_pos_x: req.body.x,
+    standard_layout_comp_pos_y: req.body.y,
+    standard_layout_comp_size_w: req.body.w,
+    standard_layout_comp_size_h: req.body.h,
+  });
+
+  StandardLayoutCompModel.updateById(
+    newStandardLayoutComp,
+    req.params.standardLayoutCompId,
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found campaign with id ${req.params.standardLayoutCompId}.`,
+          });
+        } else {
+          res.status(500).send({
+            message:
+              "Error updating campaign with id " +
+              req.params.standardLayoutCompId,
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};

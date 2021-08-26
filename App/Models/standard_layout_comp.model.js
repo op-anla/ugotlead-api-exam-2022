@@ -50,6 +50,40 @@ StandardLayoutCompModel.create = (newStandardLayoutComp, result) => {
     }
   );
 };
+StandardLayoutCompModel.updateById = (layoutComp, layoutCompId, result) => {
+  console.log("layoutcomp in model", layoutComp);
+  sql.query(
+    "UPDATE standard_layouts_comps SET  ?   WHERE standard_layout_comp_id = ?",
+    [layoutComp, layoutCompId],
+    (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found standard layout component with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+        return;
+      }
+
+      console.log("updated standard layout component: ", {
+        id: layoutCompId,
+        ...layoutComp,
+      });
+      result(null, {
+        id: layoutCompId,
+        ...layoutComp,
+      });
+    }
+  );
+};
 StandardLayoutCompModel.getAllFromLayoutId = (layoutId, result) => {
   sql.query(
     "SELECT * FROM standard_layouts_comps WHERE standard_layout_id = ? LIMIT 10 ",

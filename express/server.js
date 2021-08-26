@@ -288,6 +288,13 @@ router.get(`/${apiUrl}/standard-layout-comps/getcomps/:standardLayoutId`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout_comp.getAllStandardLayoutComponentsFromLayoutId,
 ]);
+router.put(
+  `/${apiUrl}/standard-layout-comps/update-layout-comp/:standardLayoutCompId`,
+  [
+    ValidationMiddleware.validJWTNeeded,
+    standard_layout_comp.updateStandardLayoutComponent,
+  ]
+);
 /* 
 -----------------------------------------------
 Emails
