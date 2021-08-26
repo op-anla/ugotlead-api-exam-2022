@@ -284,6 +284,10 @@ router.post(`/${apiUrl}/standard-layout-comps/create-comp/:standardLayoutId`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout_comp.createStandardLayoutComponent,
 ]);
+router.get(`/${apiUrl}/standard-layout-comps/getcomps/:standardLayoutId`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout_comp.getAllStandardLayoutComponentsFromLayoutId,
+]);
 /* 
 -----------------------------------------------
 Emails

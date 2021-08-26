@@ -50,4 +50,21 @@ StandardLayoutCompModel.create = (newStandardLayoutComp, result) => {
     }
   );
 };
+StandardLayoutCompModel.getAllFromLayoutId = (layoutId, result) => {
+  sql.query(
+    "SELECT * FROM standard_layouts_comps WHERE standard_layout_id = ? LIMIT 10 ",
+    layoutId,
+    async (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
+          err
+        );
+        result(err, null);
+        return;
+      }
+      result(null, res);
+    }
+  );
+};
 module.exports = StandardLayoutCompModel;

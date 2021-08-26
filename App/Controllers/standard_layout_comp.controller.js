@@ -33,3 +33,22 @@ exports.createStandardLayoutComponent = (req, res) => {
     else res.status(201).send(data);
   });
 };
+// Retrieve all standard layouts comp from the database.
+exports.getAllStandardLayoutComponentsFromLayoutId = (req, res) => {
+  console.log(
+    "find all standard layouts comp from ",
+    req.params.standardLayoutId
+  );
+  StandardLayoutCompModel.getAllFromLayoutId(
+    req.params.standardLayoutId,
+    (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving standard layouts.",
+        });
+      else res.send(data);
+    }
+  );
+};
