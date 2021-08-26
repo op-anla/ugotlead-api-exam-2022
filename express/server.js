@@ -25,6 +25,8 @@ const mailchimpController = require("../App/Controllers/mailchimpController.cont
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
+const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
+
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -265,10 +267,22 @@ router.post(`/${apiUrl}/standard-layout/create-layout`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout.createStandardLayout,
 ]);
-
 router.get(`/${apiUrl}/standard-layout/getall`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout.getAllStandardLayouts,
+]);
+router.put(`/${apiUrl}/update-layout/:standard_layout_id`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout.updateStandardLayout,
+]);
+/* 
+-----------------------------------------------
+STANDARD LAYOUT COMPS
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/standard-layout-comps/create-comp/:standardLayoutId`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout_comp.createStandardLayoutComponent,
 ]);
 /* 
 -----------------------------------------------

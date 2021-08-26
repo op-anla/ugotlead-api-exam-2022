@@ -28,6 +28,36 @@ exports.getAllStandardLayouts = (req, res) => {
     else res.send(data);
   });
 };
+// Update a standard layout
+exports.updateStandardLayout = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  console.log(req.body);
+  if (req.body.campaignInfo) {
+    req.body = req.body.campaignInfo;
+  }
+  Campaign.updateById(
+    req.params.campaignId,
+    new Campaign(req.body),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found campaign with id ${req.params.campaignId}.`,
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating campaign with id " + req.params.campaignId,
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
 // Create new component in layout
 exports.createStandardLayout = (req, res) => {
   console.log(
