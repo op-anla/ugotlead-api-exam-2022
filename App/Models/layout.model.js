@@ -122,6 +122,7 @@ Layout.create = (newWidget, campaignId, result) => {
     newWidget,
     campaignId
   );
+
   sql.query(
     "INSERT INTO layout_comps SET campaign_id = ?  AND ?",
     [parseInt(campaignId), newWidget],

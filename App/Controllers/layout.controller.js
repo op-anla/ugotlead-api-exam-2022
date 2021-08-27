@@ -80,7 +80,7 @@ exports.createNewComponentForCampaign = (req, res) => {
   console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);
   const newWidget = new Layout({
     layout_component_content: req.body.content,
-    layout_component_options: JSON.stringify(req.body.options),
+    layout_component_options: req.body.options,
     layout_component_pos_x: req.body.x,
     layout_component_pos_y: req.body.y,
     layout_component_size_h: req.body.h,

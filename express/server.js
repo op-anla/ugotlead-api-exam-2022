@@ -271,6 +271,7 @@ router.get(`/${apiUrl}/standard-layout/getall`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout.getAllStandardLayouts,
 ]);
+
 router.put(`/${apiUrl}/update-layout/:standard_layout_id`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout.updateStandardLayout,
