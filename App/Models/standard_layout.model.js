@@ -96,4 +96,5 @@ StandardLayoutModel.create = (newStandardLayout, result) => {
     }
   );
 };
+
 module.exports = StandardLayoutModel;

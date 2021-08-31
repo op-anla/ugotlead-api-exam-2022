@@ -101,4 +101,35 @@ StandardLayoutCompModel.getAllFromLayoutId = (layoutId, result) => {
     }
   );
 };
+StandardLayoutCompModel.remove = (id, result) => {
+  sql.query(
+    "DELETE FROM standard_layouts_comps WHERE standard_layout_comp_id = ?",
+    id,
+    (err, res) => {
+      if (err) {
+        console.log("err", err);
+
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found StandardLayoutModel with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+        return;
+      }
+
+      console.log(
+        "deleted StandardLayoutModel with StandardLayoutModel_id: ",
+        id
+      );
+      result(null, res);
+    }
+  );
+};
 module.exports = StandardLayoutCompModel;

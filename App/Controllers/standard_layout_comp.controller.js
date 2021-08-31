@@ -94,3 +94,26 @@ exports.updateStandardLayoutComponent = (req, res) => {
     }
   );
 };
+exports.deleteStandardLayoutWidget = (req, res) => {
+  StandardLayoutCompModel.remove(
+    req.params.standardLayoutCompId,
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found StandardLayoutCompModel with id ${req.params.standardLayoutCompId}.`,
+          });
+        } else {
+          res.status(500).send({
+            message:
+              "Could not delete StandardLayoutCompModel with id " +
+              req.params.standardLayoutCompId,
+          });
+        }
+      } else
+        res.send({
+          message: `StandardLayoutCompModel was deleted successfully!`,
+        });
+    }
+  );
+};

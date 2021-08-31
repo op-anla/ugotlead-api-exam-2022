@@ -276,6 +276,7 @@ router.put(`/${apiUrl}/update-layout/:standard_layout_id`, [
   ValidationMiddleware.validJWTNeeded,
   standard_layout.updateStandardLayout,
 ]);
+
 /* 
 -----------------------------------------------
 STANDARD LAYOUT COMPS
@@ -294,6 +295,13 @@ router.put(
   [
     ValidationMiddleware.validJWTNeeded,
     standard_layout_comp.updateStandardLayoutComponent,
+  ]
+);
+router.delete(
+  `/${apiUrl}/standard-layout-comps/delete-layout-comp/:standardLayoutCompId`,
+  [
+    ValidationMiddleware.validJWTNeeded,
+    standard_layout_comp.deleteStandardLayoutWidget,
   ]
 );
 /* 
