@@ -26,6 +26,7 @@ const AuthorizationController = require("../App/auth/controllers/authorization.c
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
+const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
@@ -165,6 +166,7 @@ router.post(`/${apiUrl}/auth`, [
   VerifyUserMiddleware.isPasswordAndUserMatch,
   AuthorizationController.login,
 ]);
+router.get(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
 /* 
 -----------------------------------------------
 MAILCHIMP 

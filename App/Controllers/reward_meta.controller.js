@@ -105,9 +105,7 @@ exports.findRewardMetaForReward = (req, res) => {
       );
 
       if (err.kind === "not_found") {
-        res.status(200).send({
-          empty: true,
-        });
+        res.status(404).send();
       } else {
         res.status(500).send({
           message:
