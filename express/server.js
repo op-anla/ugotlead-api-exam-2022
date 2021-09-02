@@ -36,7 +36,7 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 // App uses
 
 app.use(cors());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", router);
 // Router
@@ -166,7 +166,7 @@ router.post(`/${apiUrl}/auth`, [
   VerifyUserMiddleware.isPasswordAndUserMatch,
   AuthorizationController.login,
 ]);
-router.get(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
+router.post(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
 /* 
 -----------------------------------------------
 MAILCHIMP 
