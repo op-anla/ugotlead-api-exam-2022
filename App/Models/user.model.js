@@ -77,8 +77,7 @@ User.findByUsernameAndEmail = (username, email) => {
           );
           return resolve(res[0]);
         } else {
-          console.log("No error but user is not found", res);
-          return reject();
+          return resolve({});
         }
       }
     );

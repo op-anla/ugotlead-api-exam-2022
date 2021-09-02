@@ -167,6 +167,7 @@ router.post(`/${apiUrl}/auth`, [
   AuthorizationController.login,
 ]);
 router.post(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
+router.get(`/${apiUrl}/google/user`, [GoogleAuth.checkUser]);
 /* 
 -----------------------------------------------
 MAILCHIMP 
