@@ -85,7 +85,7 @@ exports.login = async (req, res) => {
   const OAUTH_CALLBACK = "http://127.0.0.1:3000/";
   const code = req.body.code;
   console.log("We got the authorization code", code);
-
+  if (code == undefined) return res.status(500);
   const token = async () => {
     try {
       return await fetch("https://oauth2.googleapis.com/token", {
