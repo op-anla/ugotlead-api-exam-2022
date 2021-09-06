@@ -3,6 +3,8 @@ const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
 const User = require("../Models/user.model");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENTID);
 
 exports.checkUser = async (req, res) => {
   /* 
@@ -115,6 +117,23 @@ exports.login = async (req, res) => {
   };
   const tokenResponse = await token();
   console.log("exports.login= ~ tokenResponse", tokenResponse);
-
-  res.send(tokenResponse);
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+      idToken: tokenResponse.id_token,
+      audience: process.env.GOOGLE_CLIENTID, // Specify the CLIENT_ID of the app that accesses the backend
+      // Or, if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    });
+    const payload = ticket.getPayload();
+    console.log("verify ~ payload", payload);
+    const userid = payload["sub"];
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+  }
+  verify()
+    .then(() => {
+      /* User is verified from Google */
+      res.send(tokenResponse);
+    })
+    .catch(console.error);
 };
