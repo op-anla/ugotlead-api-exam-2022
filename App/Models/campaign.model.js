@@ -11,6 +11,7 @@ const Campaign = function (campaign) {
   this.campaign_enddate = campaign.campaign_enddate;
   this.campaign_description = campaign.campaign_description;
   this.restrict_access_interval = campaign.restrict_access_interval;
+  this.campaign_integrations = campaign.campaign_integrations;
 };
 Campaign.flushCache = () => {
   return new Promise((resolve, reject) => {
