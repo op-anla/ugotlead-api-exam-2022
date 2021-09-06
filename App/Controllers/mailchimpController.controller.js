@@ -6,6 +6,7 @@ const fetch = require("node-fetch");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
+const checkJson = require("../common/helpers/checkmyjson");
 /* 
 Version: 1.0
 */
@@ -171,16 +172,22 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   fullname and email. 
   */
   //  We start with basic validation of the request
-  if (!req.body.currentUser.navn || !req.body.currentUser.email)
+  console.log("checking body", req.body);
+  console.log("checking headers", req.headers);
+  if (!req.body.navn || !req.body.email)
     return res
       .status(400)
       .send("Please provide the correct userInfo in the body");
   if (!req.headers.mailchimplistid || !req.headers.mailchimpinfo)
     return res.status(400).send("Please provide the correct mailchimp info");
 
-  const mailchimpInfo = req.body.currentUser;
+  const mailchimpInfo = req.body;
   const mailchimpListId = req.headers.mailchimplistid;
-  const mailchimpAccessInfo = JSON.parse(req.headers.mailchimpinfo);
+  const mailchimpAccessInfo = checkJson.checkMyJson(req.headers.mailchimpinfo)
+    ? JSON.parse(req.headers.mailchimpinfo)
+    : undefined;
+  if (mailchimpAccessInfo === undefined)
+    return res.status(400).send("Something went wrong with mailchimp");
   console.log(
     "We now continue after validation with current variables: ",
     mailchimpInfo,
@@ -204,7 +211,7 @@ exports.addMemberToMailchimp = async (req, res, next) => {
     });
     console.log(
       "🚀 ~ file: server.js ~ line 311 ~ router.post ~ response",
-      response.response
+      response
     );
     /* 
     Now we will create the player in our DB
@@ -212,6 +219,7 @@ exports.addMemberToMailchimp = async (req, res, next) => {
     player.createPlayer(req, res);
   } catch (error) {
     let responseCode = error.status;
+    console.log("exports.addMemberToMailchimp= ~ error", error.status);
 
     if (responseCode === undefined) {
       responseCode = 404;
