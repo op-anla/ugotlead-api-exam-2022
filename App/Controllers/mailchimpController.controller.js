@@ -15,7 +15,7 @@ const apiUrl = `${version}/api`;
 // You should always store your client id and secret in environment variables for security
 const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
 const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
-const BASE_URL = `http://127.0.0.1:3005/${apiUrl}`;
+const BASE_URL = `http://127.0.0.1:3008/${apiUrl}`;
 const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
 exports.redirectToLogin = (req, res, next) => {
   /* 
@@ -126,8 +126,9 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
     "🚀 ~ file: server.js ~ line 192 ~ router.get ~ stringifyInfo",
     stringifyInfo
   );
+  // Waiting to update
+  // campaigns.updateMailchimp(campaignId, stringifyInfo);
 
-  campaigns.updateMailchimp(campaignId, stringifyInfo);
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.
 
