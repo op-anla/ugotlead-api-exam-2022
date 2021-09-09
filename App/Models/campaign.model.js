@@ -293,6 +293,7 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
           return;
         }
 
+        myCache.flushAll();
         console.log("updated campaign: ", {
           id: id,
           mailchimpInfo: mailchimpInfo,

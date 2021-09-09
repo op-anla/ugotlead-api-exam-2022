@@ -154,6 +154,7 @@ exports.getAudienceLists = async (req, res, next) => {
     console.log("Didn't include mailchimp info");
     res.status(400).send("You didn't include any Mailchimp Info in the header");
   }
+  console.log("exports.getAudienceLists= ~ mailchimpInfo", mailchimpInfo);
   mailchimp.setConfig({
     accessToken: decrypt(mailchimpInfo.access_token),
     server: mailchimpInfo.dc,
