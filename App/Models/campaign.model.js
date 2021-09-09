@@ -15,6 +15,7 @@ const Campaign = function (campaign) {
   this.campaign_integrations = campaign.campaign_integrations;
 };
 Campaign.flushCache = () => {
+  console.log("FLUSHING ");
   return new Promise((resolve, reject) => {
     myCache.flushAll();
     resolve(200);
@@ -37,6 +38,7 @@ Campaign.create = (newCampaign, result) => {
       ...newCampaign,
     });
 
+    myCache.flushAll();
     result(null, {
       id: res.insertId,
       ...newCampaign,
@@ -189,7 +191,10 @@ Campaign.remove = (id, result) => {
       );
       return;
     }
-
+    console.log("trying to flush cache");
+    myCache.flushAll().then((results) => {
+      console.log("myCache.flushAll ~ results", results);
+    });
     console.log("deleted campaign with campaign_id: ", id);
     result(null, res);
   });
@@ -216,7 +221,10 @@ Campaign.updateById = (id, campaign, result) => {
         );
         return;
       }
-
+      console.log("trying to flush cache");
+      myCache.flushAll().then((results) => {
+        console.log("myCache.flushAll ~ results", results);
+      });
       console.log("updated campaign: ", {
         id: id,
         ...campaign,
@@ -292,8 +300,10 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
           );
           return;
         }
-
-        myCache.flushAll();
+        console.log("trying to flush cache");
+        myCache.flushAll().then((results) => {
+          console.log("myCache.flushAll ~ results", results);
+        });
         console.log("updated campaign: ", {
           id: id,
           mailchimpInfo: mailchimpInfo,
