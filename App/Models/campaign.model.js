@@ -2,6 +2,7 @@ const sql = require("./db.js");
 var cluster = require("cluster");
 var myCache = require("cluster-node-cache")(cluster);
 
+const checkJson = require("../common/helpers/checkmyjson");
 // constructor
 const Campaign = function (campaign) {
   this.company_id = campaign.company_id;
@@ -234,38 +235,75 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
     id,
     mailchimpInfo
   );
-
   sql.query(
-    "UPDATE campaigns SET mailchimp_info = ? WHERE campaign_id = ?",
-    [mailchimpInfo, id],
+    "SELECT campaign_integrations FROM campaigns WHERE campaign_id = ?",
+    id,
     (err, res) => {
       if (err) {
-        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(null, err);
-        return;
+        console.log("err", err);
+        return result(null, err);
       }
-
-      if (res.affectedRows == 0) {
-        // not found campaign with the id
-        result(
-          {
-            kind: "not_found",
-          },
-          null
-        );
-        return;
+      console.log("got campaign_integrations", res[0].campaign_integrations);
+      /* 
+      Checking if the response is an empty string ie. empty integrations
+      If it is we just let us iterate an empty array and populate it later
+      */
+      let jsonCheck = checkJson.checkMyJson(res[0].campaign_integrations);
+      let iterableIntegration = [];
+      if (jsonCheck) {
+        iterableIntegration = JSON.parse(res[0].campaign_integrations);
       }
+      console.log("iterableIntegration", iterableIntegration);
+      let integrations = [];
+      iterableIntegration.forEach((integration) => {
+        let jsonCheck = checkJson.checkMyJson(integration);
+        if (jsonCheck) integration = JSON.parse(integration);
 
-      console.log("updated campaign: ", {
-        id: id,
-        mailchimpInfo: mailchimpInfo,
+        console.log("res.forEach ~ integration", integration);
+        if (integration === "") return;
+        integrations.push(integration);
       });
-      result(null, {
-        id: id,
-        mailchimpInfo: mailchimpInfo,
-      });
+      updateCampaign(integrations, id, mailchimpInfo);
     }
   );
+  function updateCampaign(arrayIntegrations, campaignId, mailchimpInfo) {
+    let myArray = arrayIntegrations;
+    myArray.push(mailchimpInfo);
+    console.log("updateCampaign ~ myArray", myArray);
+    let string = JSON.stringify(myArray);
+    console.log("updateCampaign ~ string", string);
+    sql.query(
+      "UPDATE campaigns SET campaign_integrations = ? WHERE campaign_id = ?",
+      [string, campaignId],
+      (err, res) => {
+        if (err) {
+          console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
+          result(null, err);
+          return;
+        }
+
+        if (res.affectedRows == 0) {
+          // not found campaign with the id
+          result(
+            {
+              kind: "not_found",
+            },
+            null
+          );
+          return;
+        }
+
+        console.log("updated campaign: ", {
+          id: id,
+          mailchimpInfo: mailchimpInfo,
+        });
+        result(null, {
+          id: id,
+          mailchimpInfo: mailchimpInfo,
+        });
+      }
+    );
+  }
 };
 Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
   console.log(

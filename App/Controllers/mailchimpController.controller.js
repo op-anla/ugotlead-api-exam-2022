@@ -56,8 +56,16 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
       campaignId = splitCookie[1].replace(/[^\d].*/, "");
     }
   }
-
-  console.log("checking campaign id outside loop", campaignId);
+  console.log(
+    "exports.updateCampaignWithMailchimpInfo= ~ campaignId",
+    campaignId
+  );
+  if (campaignId === null) {
+    // We redirect the user back to our application with the campaign ID they were updating.
+    return res.redirect(
+      `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=fail`
+    );
+  }
   const {
     query: { code },
   } = req;
@@ -78,15 +86,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
       }),
     }
   );
-  console.log(
-    "🚀 ~ file: mailchimpController.controller.js ~ line 80 ~ exports.updateCampaignWithMailchimpInfo= ~ tokenResponse",
-    tokenResponse
-  );
   const { access_token } = await tokenResponse.json();
-  console.log(
-    "🚀 ~ file: mailchimpController.controller.js ~ line 83 ~ exports.updateCampaignWithMailchimpInfo= ~ access_token",
-    access_token
-  );
 
   // Now we're using the access token to get information about the user.
   // Specifically, we want to get the user's server prefix, which we'll use to
@@ -103,23 +103,17 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
   );
 
   const { dc } = await metadataResponse.json();
-  console.log(
-    "🚀 ~ file: mailchimpController.controller.js ~ line 112 ~ exports.updateCampaignWithMailchimpInfo= ~ dc",
-    dc
-  );
   /* 
    First we encrypt the accesstoken and send that to the DB
    The campaign the user is updating will be the mailchimp integration for that specific campaign
    */
   // Encrypt the access_token
   const hashAccess_token = encrypt(access_token);
-  console.log(
-    "🚀 ~ file: mailchimpController.controller.js ~ line 104 ~ exports.updateCampaignWithMailchimpInfo= ~ hashAccess_token",
-    hashAccess_token
-  );
   const campaignMailchimp = {
-    dc: dc,
-    access_token: hashAccess_token,
+    mailchimp: {
+      dc: dc,
+      access_token: hashAccess_token,
+    },
   };
   const stringifyInfo = JSON.stringify(campaignMailchimp);
   console.log(
@@ -127,7 +121,8 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
     stringifyInfo
   );
   // Waiting to update
-  // campaigns.updateMailchimp(campaignId, stringifyInfo);
+
+  campaigns.updateMailchimp(campaignId, campaignMailchimp);
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.
@@ -138,7 +133,9 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
   });
 
   // We redirect the user back to our application with the campaign ID they were updating.
-  res.redirect(`http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}`);
+  res.redirect(
+    `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=success`
+  );
 };
 
 exports.getAudienceLists = async (req, res, next) => {
