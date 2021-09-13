@@ -177,34 +177,30 @@ exports.addMemberToMailchimp = async (req, res, next) => {
     return res
       .status(400)
       .send("Please provide the correct userInfo in the body");
-  if (!req.headers.mailchimplistid || !req.headers.mailchimpinfo)
+  if (!req.headers.mailchimpinfo)
     return res.status(400).send("Please provide the correct mailchimp info");
 
-  const mailchimpInfo = req.body;
-  const mailchimpListId = req.headers.mailchimplistid;
-  const mailchimpAccessInfo = checkJson.checkMyJson(req.headers.mailchimpinfo)
-    ? JSON.parse(req.headers.mailchimpinfo)
-    : undefined;
-  if (mailchimpAccessInfo === undefined)
-    return res.status(400).send("Something went wrong with mailchimp");
+  const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
+
   console.log(
     "We now continue after validation with current variables: ",
     mailchimpInfo,
-    mailchimpListId,
-    mailchimpAccessInfo
+    req.body
   );
+  mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
+  console.log("exports.addMemberToMailchimp= ~ access_token", mailchimpInfo);
   // Remember to DECRYPT WHEN FIXED
   mailchimp.setConfig({
-    accessToken: mailchimpAccessInfo.access_token,
-    server: mailchimpAccessInfo.dc,
+    accessToken: mailchimpInfo.access_token,
+    server: mailchimpInfo.dc,
   });
   const mergeFields = {
-    FNAME: mailchimpInfo.navn,
+    FNAME: req.body.navn,
   };
 
   try {
     const response = await mailchimp.lists.addListMember(mailchimpListId, {
-      email_address: mailchimpInfo.email,
+      email_address: req.body.email,
       merge_fields: mergeFields,
       status: "subscribed",
     });
