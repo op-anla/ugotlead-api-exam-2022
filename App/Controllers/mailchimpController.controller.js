@@ -199,15 +199,12 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   };
 
   try {
-    const response = await mailchimp.lists.addListMember(mailchimpListId, {
+    await mailchimp.lists.addListMember(mailchimpInfo.selectedListId, {
       email_address: req.body.email,
       merge_fields: mergeFields,
       status: "subscribed",
     });
-    console.log(
-      "🚀 ~ file: server.js ~ line 311 ~ router.post ~ response",
-      response
-    );
+
     /* 
     Now we will create the player in our DB
     */

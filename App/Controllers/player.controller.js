@@ -13,8 +13,8 @@ exports.createPlayer = (req, res) => {
   );
   // Create a player
   const newPlayer = new Player({
-    player_name: req.body.currentUser.navn,
-    player_email: req.body.currentUser.email,
+    player_name: req.body.navn,
+    player_email: req.body.email,
   });
 
   // Save player in the database

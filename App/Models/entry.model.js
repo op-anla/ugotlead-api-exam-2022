@@ -6,7 +6,6 @@ const EntryModel = function (entry) {
   this.log_id = entry.log_id;
   this.player_id = entry.player_id;
   this.reward_id = entry.reward_id;
-  this.claimed_reward = entry.claimed_reward;
   this.entry_date = entry.entry_date;
   this.has_played = entry.has_played;
 };

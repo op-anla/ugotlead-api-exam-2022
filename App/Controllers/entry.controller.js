@@ -50,7 +50,6 @@ exports.createEntry = (req, res, next) => {
     log_id: req.body.LogId,
     player_id: req.body.PlayerId,
     reward_id: req.body.redeemInfo.data.reward.reward_id,
-    claimed_reward: 1,
     entry_date: now,
     has_played: 1,
   });
