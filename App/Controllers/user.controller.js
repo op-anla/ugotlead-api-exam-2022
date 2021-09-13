@@ -65,10 +65,12 @@ exports.getByToken = (req, res) => {
     decoded;
   try {
     decoded = jwt.verify(authorization, jwtSecret);
+    console.log("decoded", decoded);
   } catch (e) {
     return res.status(401).send("unauthorized");
   }
   var userId = decoded.userId;
+  console.log("userId", userId);
 
   User.findById(userId, (err, data) => {
     if (err) {

@@ -49,7 +49,7 @@ We first check if the user exists in our database
         /* We found a user */
         let userResponseObject = {
           name: userInfo.name,
-          id: response.iduser,
+          id: response.user_id,
           email: userInfo.email,
         };
         return res.status(200).send(userResponseObject);

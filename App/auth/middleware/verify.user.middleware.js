@@ -20,7 +20,7 @@ exports.hasAuthValidFields = (req, res, next) => {
     console.log("Is there any errors?", errors);
     if (errors.length) {
       return res.status(400).send({
-        errors: errors.join(",")
+        errors: errors.join(","),
       });
     } else {
       /* 
@@ -31,7 +31,7 @@ exports.hasAuthValidFields = (req, res, next) => {
     }
   } else {
     return res.status(400).send({
-      errors: "Missing username and password fields"
+      errors: "Missing username and password fields",
     });
   }
 };
@@ -42,7 +42,7 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
   */
   console.log("Is password and user match");
   UserModel.findByUsername(req.body.username)
-    .then(user => {
+    .then((user) => {
       console.log("User", req.body);
       if (!user) {
         res.status(404).send({});
@@ -61,19 +61,19 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
         if (hash === passwordFields[1]) {
           console.log("SUCCESS");
           req.body = {
-            userId: user.iduser,
-            userName: user.username
+            userId: user.user_id,
+            userName: user.username,
           };
           // Go next function
           return next();
         } else {
           return res.status(400).send({
-            errors: ["Invalid password"]
+            errors: ["Invalid password"],
           });
         }
       }
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(
         "🚀 ~ file: verify.user.middleware.js ~ line 75 ~ UserModel.findByUsername ~ e",
         e
