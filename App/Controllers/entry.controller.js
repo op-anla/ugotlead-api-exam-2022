@@ -35,7 +35,7 @@ exports.findEntryFromLog = (req, res, next) => {
 exports.createEntry = (req, res, next) => {
   console.log(
     "🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD",
-    req.body.redeemInfo.data
+    res.locals.redeemInfo
   );
   const datenow = Date.now();
   const now = new Date(datenow);
@@ -49,7 +49,7 @@ exports.createEntry = (req, res, next) => {
     campaign_id: req.body.campaign.campaign_id,
     log_id: req.body.LogId,
     player_id: req.body.PlayerId,
-    reward_id: req.body.redeemInfo.data.reward.reward_id,
+    reward_id: res.locals.redeemInfo.data.reward.reward_id,
     entry_date: now,
     has_played: 1,
   });
@@ -62,7 +62,7 @@ exports.createEntry = (req, res, next) => {
       });
     else {
       console.log("DATA IN LOG", data);
-      req.body = data;
+      res.locals.entryData = data;
       return next();
       // res.status(201).send(data);
     }

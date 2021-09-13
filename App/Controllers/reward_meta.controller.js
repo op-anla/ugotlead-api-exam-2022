@@ -76,6 +76,7 @@ exports.updateById = (req, res) => {
 };
 // Delete reward meta
 exports.deleteById = (req, res, next) => {
+  if (!req.headers.reward_meta_id) return next();
   RewardMeta.remove(req.headers.reward_meta_id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {

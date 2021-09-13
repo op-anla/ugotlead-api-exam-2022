@@ -65,7 +65,7 @@ exports.deleteById = (req, res) => {
           message: "Could not delete Reward with id " + req.params.reward_id,
         });
       }
-    } else res.status(200);
+    } else res.status(200).send(data);
   });
 };
 // Create and Save a new reward
@@ -118,6 +118,7 @@ exports.updateClaim = (req, res) => {
     "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
     req.body
   );
+  console.log("Let's see what we have in locals", res.locals);
   // Validate Request
   if (!req.body) {
     res.status(400).send({
