@@ -122,25 +122,40 @@ exports.updateClaim = (req, res) => {
     req.body
   );
   console.log("Let's see what we have in locals", res.locals);
+  /* 
+  If the user hasn't won anything we wont update the claim prop!
+  IMPORTANT
+  */
+  if (res.locals.redeemInfo.won === false) {
+    //  User did not win
+    let responseData = {
+      won: res.locals.redeemInfo.won,
+      reward: res.locals.redeemInfo.data,
+    };
+    return res.status(200).send(responseData);
+  }
   // Validate Request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
   }
-  Rewards.updateClaimedProp(req.body.reward_id, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found reward with id ${req.body.reward_id}.`,
-        });
-      } else {
-        res.status(500).send({
-          message: "Error updating reward with id " + req.body.reward_id,
-        });
-      }
-    } else res.status(201).send(data);
-  });
+  Rewards.updateClaimedProp(
+    res.locals.redeemInfo.data.reward.reward_id,
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found reward with id ${req.body.reward_id}.`,
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating reward with id " + req.body.reward_id,
+          });
+        }
+      } else res.status(200).send(data);
+    }
+  );
 };
 // Update reward by id
 exports.updateById = (req, res, next) => {
