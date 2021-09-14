@@ -4,7 +4,6 @@ const sql = require("./db.js");
 const RewardMeta = function (rewardMeta) {
   this.reward_id = rewardMeta.reward_id;
   this.reward_redeem_info = rewardMeta.reward_redeem_info;
-  this.reward_chance_info = rewardMeta.reward_chance_info;
   this.reward_email_notification_info =
     rewardMeta.reward_email_notification_info;
 };

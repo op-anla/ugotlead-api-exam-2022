@@ -82,11 +82,14 @@ exports.create = (req, res, next) => {
   const rewardVar = new Rewards({
     campaign_id: req.body.reward.campaign_id,
     reward_image_url: req.body.reward.reward_image_url,
+    large_reward_image_url: req.body.reward.large_reward_image_url,
     reward_name: req.body.reward.reward_name,
     reward_description: req.body.reward.reward_description,
     reward_value_type: req.body.reward.reward_value_type,
     reward_value: req.body.reward.reward_value,
     reward_type: req.body.reward.reward_type,
+    reward_claimed: req.body.reward.reward_claimed,
+    reward_drawtime: req.body.reward.reward_drawtime,
   });
 
   // Save reward in the database

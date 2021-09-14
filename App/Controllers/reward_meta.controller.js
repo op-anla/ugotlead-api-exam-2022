@@ -16,7 +16,6 @@ exports.create = (req, res) => {
   const newRewardMeta = new RewardMeta({
     reward_id: req.body.reward_meta.reward_id,
     reward_redeem_info: req.body.reward_meta.reward_redeem_info,
-    reward_chance_info: req.body.reward_meta.reward_chance_info,
     reward_email_notification_info:
       req.body.reward_meta.reward_email_notification_info,
   });
