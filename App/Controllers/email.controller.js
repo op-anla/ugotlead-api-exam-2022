@@ -1,16 +1,16 @@
 "use strict";
 const nodemailer = require("nodemailer");
-
+require("dotenv").config();
 exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
     let transporter = nodemailer.createTransport({
-      host: "vm0349.enterprisecloud.nu",
-      port: 465,
-      secure: true, // true for 465, false for other ports,
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: false, // true for 465, false for other ports,
       auth: {
-        user: "no-reply@ugotlead.dk",
-        pass: "Xav62115?",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
     /* 
