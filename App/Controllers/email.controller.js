@@ -1,18 +1,8 @@
 "use strict";
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+const mailSetup = require("../Models/email.model");
 exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
-    let transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      secure: false, // true for 465, false for other ports,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
     console.log("Do we have any inputs to take care of?", req.body);
     let toMail = "anla@onlineplus.dk";
     let content = `
@@ -31,7 +21,7 @@ exports.sendTest = (req, res) => {
     if (req.body.mailInfo.content !== "") content = req.body.mailInfo.content;
     if (req.body.mailInfo.subject !== "") subject = req.body.mailInfo.subject;
     console.log("Lets send the mail with these params", toMail, content);
-    transporter.sendMail(
+    mailSetup.sendMail(
       {
         from: "no-reply@ugotlead.dk",
         to: toMail,
