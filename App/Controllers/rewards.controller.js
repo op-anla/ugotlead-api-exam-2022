@@ -153,7 +153,13 @@ exports.updateClaim = (req, res) => {
             message: "Error updating reward with id " + req.body.reward_id,
           });
         }
-      } else res.status(200).send(data);
+      } else {
+        let responseData = {
+          won: res.locals.redeemInfo.won,
+          reward: res.locals.redeemInfo.data,
+        };
+        return res.status(200).send(responseData);
+      }
     }
   );
 };
