@@ -13,15 +13,30 @@ exports.sendTest = (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
-    /* 
-    Inbound email is working fine with Plesk but outbound mails is not working.
-    */
+    console.log("Do we have any inputs to take care of?", req.body);
+    let toMail = "anla@onlineplus.dk";
+    let content = `
+    <p  style="font-size: 14px">Hej ${toMail}, <br><br>
+    Skal du i gang med e-mail marketing, 
+    eller trænger din nyhedsbrevsliste til et 
+    friskt pust? Med en U GOT LEAD-kampagne kan 
+    du hurtigt indsamle en masse nye læsere til 
+    dit nyhedsbrev på en sjov og effektiv måde.</p>
+    <br>
+    <a href="https://ugotlead.dk/" target="_blank">Se vores hjemmeside her.</a>
+    `;
+    let subject = "UGOTLEAD - Gamification Product - Mail";
+    // Setting the values to the req.body values if they exists
+    if (req.body.mailInfo.to !== "") toMail = req.body.mailInfo.to;
+    if (req.body.mailInfo.content !== "") content = req.body.mailInfo.content;
+    if (req.body.mailInfo.subject !== "") subject = req.body.mailInfo.subject;
+    console.log("Lets send the mail with these params", toMail, content);
     transporter.sendMail(
       {
         from: "no-reply@ugotlead.dk",
-        to: "anla@onlineplus.dk",
-        subject: "Message",
-        text: "I hope this message gets delivered!",
+        to: toMail,
+        subject: subject,
+        html: content,
       },
       (err, info) => {
         console.log(info);
