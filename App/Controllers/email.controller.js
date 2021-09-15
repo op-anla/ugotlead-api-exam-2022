@@ -6,7 +6,7 @@ exports.sendTest = (req, res) => {
     console.log("Do we have any inputs to take care of?", req.body);
     let toMail = "anla@onlineplus.dk";
     let content = `
-    <p  style="font-size: 14px">Hej ${toMail}, <br><br>
+    <p>Hej ${toMail}, <br><br>
     Skal du i gang med e-mail marketing, 
     eller trænger din nyhedsbrevsliste til et 
     friskt pust? Med en U GOT LEAD-kampagne kan 
