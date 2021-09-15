@@ -238,6 +238,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
   entry.createEntry,
+  reward_meta.findRewardMetaForRewardInRedeemFlow,
   rewards.updateClaim,
 ]);
 /* 

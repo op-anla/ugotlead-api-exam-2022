@@ -94,7 +94,7 @@ exports.deleteById = (req, res, next) => {
     } else return next();
   });
 };
-// Find the specific rewards meta for one campaign
+// Find the specific rewards meta for one reward
 exports.findRewardMetaForReward = (req, res) => {
   console.log("GOT BODY", req.body, req.params.rewardId);
   RewardMeta.findByRewardId(req.params.rewardId, (err, data) => {
@@ -114,6 +114,35 @@ exports.findRewardMetaForReward = (req, res) => {
       }
     } else {
       res.status(200).send(data);
+    }
+  });
+};
+
+// Find the specific rewards meta for one reward - USED FOR REDEEM WORKFLOW
+exports.findRewardMetaForRewardInRedeemFlow = (req, res, next) => {
+  console.log(
+    "From what reward do we need to get reward meta?",
+    res.locals.redeemInfo.data.reward.reward_id
+  );
+  let reward_id = res.locals.redeemInfo.data.reward.reward_id;
+  RewardMeta.findByRewardId(reward_id, (err, data) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
+        err
+      );
+
+      if (err.kind === "not_found") {
+        res.status(404).send();
+      } else {
+        res.status(500).send({
+          message:
+            "Error retrieving reward_meta with id " + req.params.rewardId,
+        });
+      }
+    } else {
+      res.locals.redeemInfo.data.rewardMeta = data[0];
+      return next();
     }
   });
 };
