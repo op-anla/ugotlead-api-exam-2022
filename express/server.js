@@ -317,6 +317,10 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
+router.post(`/${apiUrl}/email/send`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.sendUserEmailForPlaying,
+]);
 /* 
 -----------------------------------------------
 Cache

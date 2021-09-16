@@ -128,11 +128,11 @@ exports.updateClaim = (req, res) => {
   */
   if (res.locals.redeemInfo.won === false) {
     //  User did not win
-    let responseData = {
+    res.locals.redeemInfo = {
       won: res.locals.redeemInfo.won,
       reward: res.locals.redeemInfo.data,
     };
-    return res.status(200).send(responseData);
+    return res.status(200).send(res.locals.redeemInfo);
   }
   // Validate Request
   if (!req.body) {
@@ -154,11 +154,11 @@ exports.updateClaim = (req, res) => {
           });
         }
       } else {
-        let responseData = {
+        res.locals.redeemInfo = {
           won: res.locals.redeemInfo.won,
           reward: res.locals.redeemInfo.data,
         };
-        return res.status(200).send(responseData);
+        return res.status(200).send(res.locals.redeemInfo);
       }
     }
   );
