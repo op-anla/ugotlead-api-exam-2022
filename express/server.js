@@ -317,8 +317,7 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
-router.post(`/${apiUrl}/email/send`, [
-  ValidationMiddleware.validJWTNeeded,
+router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   email.sendUserEmailForPlaying,
 ]);
 /* 
