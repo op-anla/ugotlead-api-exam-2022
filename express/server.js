@@ -320,6 +320,14 @@ router.post(`/${apiUrl}/email/sendtest`, [
 router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   email.sendUserEmailForPlaying,
 ]);
+router.post(`/${apiUrl}/email/create-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.createMail,
+]);
+router.post(`/${apiUrl}/email/update-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.updateMail,
+]);
 /* 
 -----------------------------------------------
 Cache

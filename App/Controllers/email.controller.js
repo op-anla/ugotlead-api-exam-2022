@@ -1,5 +1,76 @@
 "use strict";
-const mailSetup = require("../Models/email.model");
+const mailSetup = require("../Models/emailsetup");
+const EmailModel = require("../Models/emails.model");
+
+exports.createMail = (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  console.log("req.body", req.body);
+
+  // Create a Campaign
+  const email = new EmailModel({
+    campaign_id: req.body.campaignid,
+    email_logo_url: req.body.email_logo_url ? req.body.email_logo_url : "",
+    email_win_text: req.body.emails.winner_email.content
+      ? req.body.emails.winner_email.content
+      : "",
+    email_consolation_text: req.body.emails.consolation_email
+      ? req.body.emails.consolation_email.content
+      : "",
+    email_custom_css: req.body.email_custom_css
+      ? req.body.email_custom_css
+      : "",
+  });
+
+  // Save Campaign in the database
+  EmailModel.create(email, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the email.",
+      });
+    else res.status(201).send(data);
+  });
+};
+exports.updateMail = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  console.log("body in updateMail", req.body);
+  const email = new EmailModel({
+    campaign_id: req.body.campaignid,
+    email_logo_url: req.body.email_logo_url ? req.body.email_logo_url : "",
+    email_win_text: req.body.emails.winner_email.content
+      ? req.body.emails.winner_email.content
+      : "",
+    email_consolation_text: req.body.emails.consolation_email
+      ? req.body.emails.consolation_email.content
+      : "",
+    email_custom_css: req.body.email_custom_css
+      ? req.body.email_custom_css
+      : "",
+  });
+  EmailModel.updateById(email.campaign_id, email, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found email with campaign id ${email.campaign_id}.`,
+        });
+      } else {
+        res.status(500).send({
+          message:
+            "Error updating  email with campaign id " + email.campaign_id,
+        });
+      }
+    } else res.send(data);
+  });
+};
 exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
