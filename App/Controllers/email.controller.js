@@ -130,67 +130,124 @@ exports.sendTest = (req, res) => {
     });
 };
 exports.sendUserEmailForPlaying = (req, res) => {
-  // async..await is not allowed in global scope, must use a wrapper
+  /* 
+  We will first get the email information from the database.
+  We use this to generate the different emails.
+  */
   console.log("The user has played, so let's see the data", req.body.payload);
-  let toUserMail = req.body.payload.currentUser.email;
-  let toUserName = req.body.payload.currentUser.navn;
-  let reward = req.body.payload.redeemInfo.reward;
-  let didUserWin = req.body.payload.redeemInfo.won;
-  console.log(
-    "Lets just check the data we send to the email. Did the user win? ",
-    didUserWin,
-    "What is the mail?",
-    toUserMail,
-    "What is the name?",
-    toUserName,
-    "what is the reward?",
-    reward
-  );
-  // if (didUserWin) {
-  //   sendWinnerMail()
-  //     .then((data) => {
-  //       return res.status(200).send("working");
-  //     })
-  //     .catch((e) => {
-  //       return res.status(400).send("Didn't work");
-  //     });
-  // } else {
-  //   sendLoserMail()
-  //     .then((data) => {
-  //       return res.status(200).send("working");
-  //     })
-  //     .catch((e) => {
-  //       return res.status(400).send("Didn't work");
-  //     });
-  // }
-  async function sendWinnerMail() {
-    // We send a winner mail here
-    // mailSetup.sendMail(
-    //   {
-    //     from: "no-reply@ugotlead.dk",
-    //     to: toMail,
-    //     subject: subject,
-    //     html: content,
-    //   },
-    //   (err, info) => {
-    //     console.log(info);
-    //     console.log(err);
-    //   }
-    // );
+  let campaignId = req.body.payload.redeemInfo.reward.reward.campaign_id;
+  console.log("campaignId", campaignId);
+  EmailModel.findById(campaignId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found email with campaign_id id ${campaignId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving email with campaign_id id " + campaignId,
+        });
+      }
+    } else {
+      res.locals.emailInfo = data;
+      sendEmail();
+    }
+  });
+  /* 
+  Now we have campaignid and emailinfo
+  */
+  function sendEmail() {
+    console.log("let's see emailinfo ", res.locals.emailInfo);
+    let emailInfo = res.locals.emailInfo;
+    let toUserMail = req.body.payload.currentUser.email;
+    let toUserName = req.body.payload.currentUser.navn;
+    let reward = req.body.payload.redeemInfo.reward;
+    let didUserWin = req.body.payload.redeemInfo.won;
+    console.log(
+      "Lets just check the data we send to the email. Did the user win? ",
+      didUserWin,
+      "What is the mail?",
+      toUserMail,
+      "What is the name?",
+      toUserName,
+      "what is the reward?",
+      reward
+    );
+    if (didUserWin) {
+      sendWinnerMail(toUserMail, toUserName, reward, emailInfo)
+        .then((data) => {
+          return res.status(200).send("working");
+        })
+        .catch((e) => {
+          return res.status(400).send("Didn't work");
+        });
+    } else {
+      sendLoserMail(toUserMail, toUserName, reward, emailInfo)
+        .then((data) => {
+          return res.status(200).send("working");
+        })
+        .catch((e) => {
+          return res.status(400).send("Didn't work");
+        });
+    }
   }
-  async function sendLoserMail() {
+
+  async function sendWinnerMail(userEmail, userName, reward, emailInfo) {
+    console.log(
+      "sendWinnerMail ~ userEmail, userName, reward, emailInfo",
+      userEmail,
+      userName,
+      reward,
+      emailInfo
+    );
     // We send a winner mail here
-    // mailSetup.sendMail(
-    //   {
-    //     from: "no-reply@ugotlead.dk",
-    //     to: toMail,
-    //     subject: subject,
-    //     html: content,
-    //   },
-    //   (err, info) => {
-    //     console.log(info);
-    //     console.log(err);
-    //   }
-    // );
+    let subject = "Tillykke ! - Du har vundet !";
+    /* 
+    We need to validate the emailinfo since we need some logo and other stuff
+    */
+
+    validateContent(emailInfo)
+      .then(() => {
+        // mailSetup.sendMail(
+        //   {
+        //     from: "no-reply@ugotlead.dk",
+        //     to: userEmail,
+        //     subject: subject,
+        //     html: content,
+        //   },
+        //   (err, info) => {
+        //     console.log(info);
+        //     console.log(err);
+        //   }
+        // );
+      })
+      .catch(() => {});
+  }
+  async function sendLoserMail(userEmail, userName, reward, emailInfo) {
+    console.log(
+      "sendLoserMail ~ userEmail, userName, reward, emailInfo",
+      userEmail,
+      userName,
+      reward,
+      emailInfo
+    );
+    // We send a winner mail here
+    mailSetup.sendMail(
+      {
+        from: "no-reply@ugotlead.dk",
+        to: toMail,
+        subject: subject,
+        html: content,
+      },
+      (err, info) => {
+        console.log(info);
+        console.log(err);
+      }
+    );
+  }
+  function validateContent(emailInfo) {
+    return new Promise((resolve, reject) => {
+      console.log("We will validate this", emailInfo);
+    });
   }
 };
