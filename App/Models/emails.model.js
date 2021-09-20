@@ -34,6 +34,34 @@ EmailModel.create = (newEmail, result) => {
     });
   });
 };
+EmailModel.findById = (campaignId, result) => {
+  sql.query(
+    `SELECT * FROM campaign_emails WHERE campaign_id = ?`,
+    campaignId,
+    (err, res) => {
+      if (err) {
+        console.log("err", err);
+
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        console.log("found email: ", res[0]);
+        result(null, res[0]);
+        return;
+      }
+
+      // not found layout with the id
+      result(
+        {
+          kind: "not_found",
+        },
+        null
+      );
+    }
+  );
+};
 EmailModel.updateById = (id, email, result) => {
   console.log("id, email", id, email);
   sql.query(

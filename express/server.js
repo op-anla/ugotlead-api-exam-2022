@@ -313,6 +313,10 @@ router.delete(
 Emails
 -----------------------------------------------
 */
+router.get(`/${apiUrl}/email/get-email-for-campaign/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.getEmailInfoForCampaign,
+]);
 router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,

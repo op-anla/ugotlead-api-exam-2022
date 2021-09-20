@@ -71,6 +71,21 @@ exports.updateMail = (req, res) => {
     } else res.send(data);
   });
 };
+exports.getEmailInfoForCampaign = (req, res) => {
+  EmailModel.findById(req.params.campaignId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found campaign with id ${req.params.campaignId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving campaign with id " + req.params.campaignId,
+        });
+      }
+    } else res.send(data);
+  });
+};
 exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
