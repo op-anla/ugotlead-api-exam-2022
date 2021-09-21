@@ -1,10 +1,10 @@
 // cluster.js
 const cluster = require("cluster");
-var myCache = require("cluster-node-cache")(cluster);
+// const myCache = require("cluster-node-cache")(cluster);
 const os = require("os");
 
 if (cluster.isMaster) {
-  var cpus = os.cpus().length / 2; //Change to const when prod
+  let cpus = os.cpus().length / 2; //Change to const when prod
   cpus = 2; //Testing
 
   console.log(`Primary ${process.pid} is running`);

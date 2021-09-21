@@ -1,6 +1,6 @@
 const sql = require("./db.js");
-var cluster = require("cluster");
-var myCache = require("cluster-node-cache")(cluster);
+const cluster = require("cluster");
+const myCache = require("cluster-node-cache")(cluster);
 
 const checkJson = require("../common/helpers/checkmyjson");
 // constructor
@@ -16,7 +16,7 @@ const Campaign = function (campaign) {
 };
 Campaign.flushCache = () => {
   console.log("FLUSHING ");
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     myCache.flushAll();
     resolve(200);
   });
@@ -122,9 +122,9 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   });
 };
 const process = require("process");
-Campaign.findById = (campaignId, result) => {
+Campaign.findById = (campaignId) => {
   console.log("Testing some process", process.pid);
-  const key = `findById_${campaignId}`;
+  // const key = `findById_${campaignId}`;
   console.log("this find is executed by PID: ", process.pid);
 
   return myCache.get(`findById_${campaignId}`).then(function (results) {
@@ -265,10 +265,14 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
       let integrations = [];
       iterableIntegration.forEach((integration) => {
         let jsonCheck = checkJson.checkMyJson(integration);
-        if (jsonCheck) integration = JSON.parse(integration);
+        if (jsonCheck) {
+          integration = JSON.parse(integration);
+        }
 
         console.log("res.forEach ~ integration", integration);
-        if (integration === "") return;
+        if (integration === "") {
+          return;
+        }
         integrations.push(integration);
       });
       updateCampaign(integrations, id, mailchimpInfo);

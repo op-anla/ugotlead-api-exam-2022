@@ -29,11 +29,13 @@ exports.create = (req, res) => {
 
   // Save USER in the database
   User.create(user, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || "Some error occurred while creating the user.",
       });
-    else res.status(201).send(data);
+    } else {
+      res.status(201).send(data);
+    }
   });
 };
 // Find one specific user
@@ -54,7 +56,9 @@ exports.getById = (req, res) => {
           message: "Error retrieving user with id " + req.params.userId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 // Find one specific user by token
@@ -69,7 +73,7 @@ exports.getByToken = (req, res) => {
   } catch (e) {
     return res.status(401).send("unauthorized");
   }
-  var userId = decoded.userId;
+  let userId = decoded.userId;
   console.log("userId", userId);
 
   User.findById(userId, (err, data) => {
@@ -83,7 +87,9 @@ exports.getByToken = (req, res) => {
           message: "Error retrieving user with id " + userId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 // Update a user
@@ -107,10 +113,11 @@ exports.putById = (req, res) => {
   }
   User.updateById(req.params.userId, new User(req.body), (err, data) => {
     if (err) {
-      if (err.kind === "duplicate_entry")
+      if (err.kind === "duplicate_entry") {
         res.status(403).send({
           message: `Duplicate entry! `,
         });
+      }
       if (err.kind === "not_found") {
         res.status(404).send({
           message: `Not found User with id ${req.params.userId}.`,
@@ -120,23 +127,27 @@ exports.putById = (req, res) => {
           message: "Error updating User with id " + req.params.userId,
         });
       }
-    } else res.status(200).send(data);
+    } else {
+      res.status(200).send(data);
+    }
   });
 };
 
 // Retrieve all users from the database.
-exports.getAll = (req, res) => {
+exports.getAll = (res) => {
   User.getAll((err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving users.",
       });
-    else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 // Delete user
 exports.deleteUser = (req, res) => {
-  User.remove(req.params.userId, (err, data) => {
+  User.remove(req.params.userId, (err) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -147,9 +158,10 @@ exports.deleteUser = (req, res) => {
           message: "Could not delete User with id " + req.params.userId,
         });
       }
-    } else
+    } else {
       res.send({
         message: `User was deleted successfully!`,
       });
+    }
   });
 };

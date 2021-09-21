@@ -35,7 +35,9 @@ exports.findLogForUser = (req, res, next) => {
     } else {
       req.body = data;
       // If the data is an array we just take the first one and send that
-      if (data.length) req.body = data[0];
+      if (data.length) {
+        req.body = data[0];
+      }
 
       return next();
     }
@@ -61,12 +63,12 @@ exports.createLogForUser = (req, res) => {
 
   // Save reward in the database
   Logging.create(newLog, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the campaign.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.status(201).send(data);
     }

@@ -44,7 +44,9 @@ exports.validJWTNeeded = (req, res, next) => {
     There might be a chance that the auth is set in cookies, so we just double check
     */
     console.log("Cookies?", req.headers.cookie);
-    if (req.headers.cookie === undefined) return res.status(401).send();
+    if (req.headers.cookie === undefined) {
+      return res.status(401).send();
+    }
     if (req.headers.cookie.includes("auth._token.local")) {
       console.log("There is actually token here");
       let split = req.headers.cookie.split("auth._token.local=");

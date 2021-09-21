@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
-const checkJson = require("../common/helpers/checkmyjson");
+// const checkJson = require("../common/helpers/checkmyjson");
 /* 
 Version: 1.0
 */
@@ -17,7 +17,7 @@ const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
 const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
 const BASE_URL = `http://127.0.0.1:3008/${apiUrl}`;
 const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
-exports.redirectToLogin = (req, res, next) => {
+exports.redirectToLogin = (res) => {
   /* 
   We redirect the user to the official Mailchimp oauth page where the user has to verify our App
   After they verify the application they will be redirected to another API Endpoint we have
@@ -40,7 +40,7 @@ exports.redirectToLogin = (req, res, next) => {
   // return next();
 };
 
-exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
+exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   /* 
   The user will be coming from the official Mailchimp oauth2 page with a code. 
   */
@@ -49,7 +49,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
   We send the campaign id cookie from the Nuxt application so our API knows which campaign to update with access token og DC.
   */
   const cookies = req.headers.cookie;
-  var campaignId = null;
+  let campaignId = null;
   if (cookies) {
     if (cookies.includes("auth.campaignid")) {
       const splitCookie = cookies.split("auth.campaignid=");
@@ -138,7 +138,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res, next) => {
   );
 };
 
-exports.getAudienceLists = async (req, res, next) => {
+exports.getAudienceLists = async (req, res) => {
   /* 
   Here we get lists available from Mailchimp with the access token og DC.
   */
@@ -146,7 +146,7 @@ exports.getAudienceLists = async (req, res, next) => {
     "🚀 ~ file: server.js ~ line 257 ~ router.get ~ req",
     req.headers
   );
-  var mailchimpInfo = "";
+  let mailchimpInfo = "";
   if (req.headers.mailchimpinfo) {
     console.log("Included mailchimpinfo");
     mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
@@ -165,7 +165,7 @@ exports.getAudienceLists = async (req, res, next) => {
     lists,
   });
 };
-exports.addMemberToMailchimp = async (req, res, next) => {
+exports.addMemberToMailchimp = async (req, res) => {
   /* 
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
@@ -173,12 +173,14 @@ exports.addMemberToMailchimp = async (req, res, next) => {
   //  We start with basic validation of the request
   console.log("checking body", req.body);
   console.log("checking headers", req.headers);
-  if (!req.body.navn || !req.body.email)
+  if (!req.body.navn || !req.body.email) {
     return res
       .status(400)
       .send("Please provide the correct userInfo in the body");
-  if (!req.headers.mailchimpinfo)
+  }
+  if (!req.headers.mailchimpinfo) {
     return res.status(400).send("Please provide the correct mailchimp info");
+  }
 
   const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
 
