@@ -313,9 +313,24 @@ router.delete(
 Emails
 -----------------------------------------------
 */
+router.get(`/${apiUrl}/email/get-email-for-campaign/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.getEmailInfoForCampaign,
+]);
 router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
+]);
+router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
+  email.sendUserEmailForPlaying,
+]);
+router.post(`/${apiUrl}/email/create-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.createMail,
+]);
+router.post(`/${apiUrl}/email/update-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.updateMail,
 ]);
 /* 
 -----------------------------------------------
