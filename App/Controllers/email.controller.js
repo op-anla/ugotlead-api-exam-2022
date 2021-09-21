@@ -213,19 +213,24 @@ exports.sendUserEmailForPlaying = (req, res) => {
     */
 
     validateContent(userEmail, userName, reward, emailInfo, didUserWin)
-      .then(() => {
-        // mailSetup.sendMail(
-        //   {
-        //     from: "no-reply@ugotlead.dk",
-        //     to: userEmail,
-        //     subject: subject,
-        //     html: content,
-        //   },
-        //   (err, info) => {
-        //     console.log(info);
-        //     console.log(err);
-        //   }
-        // );
+      .then((formattedContent) => {
+        mailSetup.sendMail(
+          {
+            from: "no-reply@ugotlead.dk",
+            to: userEmail,
+            subject: subject,
+            html: formattedContent,
+          },
+          (err, info) => {
+            if (err) {
+              console.log(err);
+              // Error
+            } else {
+              console.log(info);
+              return res.status(200).send();
+            }
+          }
+        );
       })
       .catch(() => {});
   }
@@ -250,13 +255,18 @@ exports.sendUserEmailForPlaying = (req, res) => {
         mailSetup.sendMail(
           {
             from: "no-reply@ugotlead.dk",
-            to: toMail,
+            to: userEmail,
             subject: subject,
-            html: content,
+            html: formattedContent,
           },
           (err, info) => {
-            console.log(info);
-            console.log(err);
+            if (err) {
+              console.log(err);
+              // Error
+            } else {
+              console.log(info);
+              return res.status(200).send();
+            }
           }
         );
       })
@@ -285,6 +295,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
       */
       const tags = {
         tag_username: "user_name",
+        tag_reward: "reward",
       };
       /* 
     -------------
@@ -293,16 +304,30 @@ exports.sendUserEmailForPlaying = (req, res) => {
         // We actually found some tags
         let formattedContent = content;
         foundTags.forEach((tag) => {
-          // Username check
           if (tag.includes(tags.tag_username)) {
+            // Username check
             console.log("We found username tag", `{{${tags.tag_username}}}`);
             formattedContent = formattedContent.replace(
               `{{${tags.tag_username}}}`,
               userName
             );
           }
+          if (tag.includes(tags.tag_reward)) {
+            // Reward check
+            console.log("We found reward tag", `{{${tags.tag_reward}}}`);
+            let rewardContent = `
+              <h3>Gevinst detaljer:<h3><br>
+              <strong>Gevinst navn: ${reward.reward.reward_name}</strong>
+              `;
+
+            formattedContent = formattedContent.replace(
+              `{{${tags.tag_reward}}}`,
+              rewardContent
+            );
+          }
         });
         console.log("returnnewPromise ~ formattedContent", formattedContent);
+        resolve(formattedContent);
       } else {
         // Didn't find any tags so just return it
         resolve(content);
