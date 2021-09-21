@@ -306,7 +306,6 @@ exports.sendUserEmailForPlaying = (req, res) => {
         foundTags.forEach((tag) => {
           if (tag.includes(tags.tag_username)) {
             // Username check
-            console.log("We found username tag", `{{${tags.tag_username}}}`);
             formattedContent = formattedContent.replace(
               `{{${tags.tag_username}}}`,
               userName
@@ -314,7 +313,6 @@ exports.sendUserEmailForPlaying = (req, res) => {
           }
           if (tag.includes(tags.tag_reward)) {
             // Reward check
-            console.log("We found reward tag", `{{${tags.tag_reward}}}`);
             let rewardContent = `
               <h3>Gevinst detaljer:<h3><br>
               <strong>Gevinst navn: ${reward.reward.reward_name}</strong>
@@ -325,6 +323,8 @@ exports.sendUserEmailForPlaying = (req, res) => {
               rewardContent
             );
           }
+          // We also need to change data that is not correctly aligned with the syntax we use
+          formattedContent = formattedContent.replace(tag, "undefined");
         });
         console.log("returnnewPromise ~ formattedContent", formattedContent);
         resolve(formattedContent);
