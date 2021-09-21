@@ -30,7 +30,7 @@ exports.create = (req, res) => {
   });
 };
 // Retrieve all campaigns from the database.
-exports.findAll = (res) => {
+exports.findAll = (req, res) => {
   console.log("find all");
   Campaign.getAll((err, data) => {
     if (err) {

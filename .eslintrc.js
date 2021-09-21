@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: 12,
   },
   rules: {
-    "no-unused-vars": ["error", { args: "all" }],
+    "no-unused-vars": "warn",
     "no-empty-pattern": "off",
     curly: "error",
     "no-var": "error",

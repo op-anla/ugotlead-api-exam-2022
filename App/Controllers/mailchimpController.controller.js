@@ -17,7 +17,7 @@ const MAILCHIMP_CLIENT_ID = process.env.MAILCHIMP_CLIENT_ID;
 const MAILCHIMP_CLIENT_SECRET = process.env.MAILCHIMP_CLIENT_SECRET;
 const BASE_URL = `http://127.0.0.1:3008/${apiUrl}`;
 const OAUTH_CALLBACK = `${BASE_URL}/auth/mailchimp/login`;
-exports.redirectToLogin = (res) => {
+exports.redirectToLogin = (req, res) => {
   /* 
   We redirect the user to the official Mailchimp oauth page where the user has to verify our App
   After they verify the application they will be redirected to another API Endpoint we have

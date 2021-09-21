@@ -6,7 +6,7 @@ LAYOUTWIDGET
 -----------------------------------------------
 */
 // Retrieve all widgets from the database.
-exports.findAllWidgets = (res) => {
+exports.findAllWidgets = (req, res) => {
   console.log("find all");
   LayoutWidgetModel.getAll((err, data) => {
     if (err) {

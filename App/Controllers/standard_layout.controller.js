@@ -16,7 +16,7 @@ exports.updateStandardLayoutInfo = (req, res) => {
   console.log("TRYING TO UPDATE LAYOUT", req.body, req.params.campaignId);
 };
 // Retrieve all standard layouts from the database.
-exports.getAllStandardLayouts = (res) => {
+exports.getAllStandardLayouts = (req, res) => {
   console.log("find all standard layouts");
   StandardLayoutModel.getAll((err, data) => {
     if (err) {

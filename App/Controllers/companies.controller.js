@@ -51,7 +51,7 @@ exports.create = (req, res) => {
   });
 };
 
-exports.findAll = (res) => {
+exports.findAll = (req, res) => {
   console.log("find all companies");
   Company.getAll((err, data) => {
     if (err) {

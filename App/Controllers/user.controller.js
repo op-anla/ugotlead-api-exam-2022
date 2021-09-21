@@ -134,7 +134,7 @@ exports.putById = (req, res) => {
 };
 
 // Retrieve all users from the database.
-exports.getAll = (res) => {
+exports.getAll = (req, res) => {
   User.getAll((err, data) => {
     if (err) {
       res.status(500).send({
