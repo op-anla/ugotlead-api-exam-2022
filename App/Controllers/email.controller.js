@@ -174,7 +174,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
       reward
     );
     if (didUserWin) {
-      sendWinnerMail(toUserMail, toUserName, reward, emailInfo)
+      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
         .then((data) => {
           return res.status(200).send("working");
         })
@@ -182,7 +182,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
           return res.status(400).send("Didn't work");
         });
     } else {
-      sendLoserMail(toUserMail, toUserName, reward, emailInfo)
+      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
         .then((data) => {
           return res.status(200).send("working");
         })
@@ -192,7 +192,13 @@ exports.sendUserEmailForPlaying = (req, res) => {
     }
   }
 
-  async function sendWinnerMail(userEmail, userName, reward, emailInfo) {
+  async function sendWinnerMail(
+    userEmail,
+    userName,
+    reward,
+    emailInfo,
+    didUserWin
+  ) {
     console.log(
       "sendWinnerMail ~ userEmail, userName, reward, emailInfo",
       userEmail,
@@ -206,7 +212,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
     We need to validate the emailinfo since we need some logo and other stuff
     */
 
-    validateContent(emailInfo)
+    validateContent(userEmail, userName, reward, emailInfo, didUserWin)
       .then(() => {
         // mailSetup.sendMail(
         //   {
@@ -223,7 +229,13 @@ exports.sendUserEmailForPlaying = (req, res) => {
       })
       .catch(() => {});
   }
-  async function sendLoserMail(userEmail, userName, reward, emailInfo) {
+  async function sendLoserMail(
+    userEmail,
+    userName,
+    reward,
+    emailInfo,
+    didUserWin
+  ) {
     console.log(
       "sendLoserMail ~ userEmail, userName, reward, emailInfo",
       userEmail,
@@ -231,23 +243,70 @@ exports.sendUserEmailForPlaying = (req, res) => {
       reward,
       emailInfo
     );
+    let subject = "Du vandt desværre ikke...";
+    validateContent(userEmail, userName, reward, emailInfo, didUserWin)
+      .then((formattedContent) => {
+        console.log(".then ~ formattedContent", formattedContent);
+        mailSetup.sendMail(
+          {
+            from: "no-reply@ugotlead.dk",
+            to: toMail,
+            subject: subject,
+            html: content,
+          },
+          (err, info) => {
+            console.log(info);
+            console.log(err);
+          }
+        );
+      })
+      .catch(() => {});
     // We send a winner mail here
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: toMail,
-        subject: subject,
-        html: content,
-      },
-      (err, info) => {
-        console.log(info);
-        console.log(err);
-      }
-    );
   }
-  function validateContent(emailInfo) {
+  function validateContent(userEmail, userName, reward, emailInfo, didUserWin) {
     return new Promise((resolve, reject) => {
       console.log("We will validate this", emailInfo);
+
+      if (didUserWin) {
+        // We know the function was called from "Sendwinnermail"
+        var content = emailInfo.email_win_text;
+      } else {
+        // We know the function was called from SendLoserMail
+        var content = emailInfo.email_consolation_text;
+      }
+      // We now have the content we need
+      console.log("what is the content for this specific case", content);
+      // Validate now
+      let regex = /\{{(.*?)\}}/g;
+      let foundTags = content.match(regex);
+      console.log("returnnewPromise ~ foundTags", foundTags);
+      /* 
+      TAG BANK
+      */
+      const tags = {
+        tag_username: "user_name",
+      };
+      /* 
+    -------------
+    */
+      if (foundTags.length) {
+        // We actually found some tags
+        let formattedContent = content;
+        foundTags.forEach((tag) => {
+          // Username check
+          if (tag.includes(tags.tag_username)) {
+            console.log("We found username tag", `{{${tags.tag_username}}}`);
+            formattedContent = formattedContent.replace(
+              `{{${tags.tag_username}}}`,
+              userName
+            );
+          }
+        });
+        console.log("returnnewPromise ~ formattedContent", formattedContent);
+      } else {
+        // Didn't find any tags so just return it
+        resolve(content);
+      }
     });
   }
 };
