@@ -63,6 +63,7 @@ exports.findStatsForCampaign = (req, res) => {
 };
 // Find one specific campaign
 exports.findOne = (req, res) => {
+  console.log("Finder 1 kampagne");
   Campaign.findById(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {

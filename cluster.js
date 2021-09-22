@@ -1,6 +1,7 @@
 // cluster.js
 const cluster = require("cluster");
-// const myCache = require("cluster-node-cache")(cluster);
+// myCache is not used here but used everywhere else
+const myCache = require("cluster-node-cache")(cluster);
 const os = require("os");
 
 if (cluster.isMaster) {
