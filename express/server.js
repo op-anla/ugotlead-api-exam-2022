@@ -367,9 +367,17 @@ router.get(`/${apiUrl}/analytics/get-all-campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   analytics.getAllCampaigns,
 ]);
+router.get(`/${apiUrl}/analytics/count-campaigns`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getCountCampaigns,
+]);
 router.get(`/${apiUrl}/analytics/get-all-companies`, [
   ValidationMiddleware.validJWTNeeded,
   analytics.getAllCompanies,
+]);
+router.get(`/${apiUrl}/analytics/count-companies`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getCountCompanies,
 ]);
 /* 
 -----------------------------------------------

@@ -72,6 +72,19 @@ Company.getAll = (result) => {
     result(null, res);
   });
 };
+Company.countAll = (result) => {
+  sql.query("SELECT COUNT(*) FROM companies", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    result(null, res);
+  });
+};
 
 Company.updateById = (id, company, result) => {
   console.log("Update this company with: ", company);

@@ -16,19 +16,27 @@ const Reward = function (reward) {
 
 Reward.getAllRewards = (result) => {
   console.log("trying to get all rewards in models");
-  sql.query("SELECT * FROM rewards WHERE reward_type = 1", async (err, res) => {
-    if (err) {
+  let reward_type = 1;
+  sql.query(
+    "SELECT * FROM rewards WHERE reward_type = ?",
+    reward_type,
+    async (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: reward.model.js ~ line 21 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
+      // Here we have the correct response
+      result(null, res);
       console.log(
-        "🚀 ~ file: reward.model.js ~ line 21 ~ sql.query ~ err",
-        err
+        "🚀 ~ file: reward.model.js ~ line 27 ~ sql.query ~ res",
+        res
       );
-      result(null, err);
-      return;
     }
-    // Here we have the correct response
-    result(null, res);
-    console.log("🚀 ~ file: reward.model.js ~ line 27 ~ sql.query ~ res", res);
-  });
+  );
 };
 
 Reward.findByCampaignId = (campaignId, result) => {

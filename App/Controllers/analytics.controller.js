@@ -38,6 +38,23 @@ exports.getAllLeads = (req, res) => {
   });
 };
 
+exports.getCountPlayers = (req, res) => {
+  console.log("We are getting amount of players from DB here");
+  EntryModel.getCountEntries((err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving.",
+        });
+      }
+    } else res.send(data);
+  });
+};
+
 exports.getAllRewards = (req, res) => {
   console.log("We are getting all rewards from DB here");
   Reward.getAllRewards((err, data) => {
@@ -56,7 +73,7 @@ exports.getAllRewards = (req, res) => {
 };
 
 exports.getAllCampaigns = (req, res) => {
-  console.log("We are getting all rewards from DB here");
+  console.log("We are getting all campaigns from DB here");
   Campaign.getAllCampaigns((err, data) => {
     //Kan ændres til .getAll så snart pagination er oprettet
     if (err) {
@@ -73,8 +90,25 @@ exports.getAllCampaigns = (req, res) => {
   });
 };
 
+exports.getCountCampaigns = (req, res) => {
+  console.log("We are getting count of campaigns from DB here");
+  Campaign.countAll((err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving.",
+        });
+      }
+    } else res.send(data);
+  });
+};
+
 exports.getAllCompanies = (req, res) => {
-  console.log("We are getting all rewards from DB here");
+  console.log("We are getting all companies from DB here");
   Company.getAll((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -90,9 +124,9 @@ exports.getAllCompanies = (req, res) => {
   });
 };
 
-exports.getCountPlayers = (req, res) => {
-  console.log("We are getting amount of players from DB here");
-  EntryModel.getCountEntries((err, data) => {
+exports.getCountCompanies = (req, res) => {
+  console.log("We are getting count of companies from DB here");
+  Company.countAll((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
