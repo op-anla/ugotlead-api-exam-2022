@@ -38,6 +38,25 @@ exports.getAllLeads = (req, res) => {
   });
 };
 
+exports.getTop5 = (req, res) => {
+  console.log(
+    "We are getting all entries, sorted by playerID's with highest count and limited to 5"
+  );
+  EntryModel.findTop5Campaigns((err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving.",
+        });
+      }
+    } else res.send(data);
+  });
+};
+
 exports.getCountPlayers = (req, res) => {
   console.log("We are getting amount of players from DB here");
   EntryModel.getCountEntries((err, data) => {

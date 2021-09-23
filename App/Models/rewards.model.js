@@ -16,7 +16,7 @@ const Reward = function (reward) {
 
 Reward.getAllRewards = (result) => {
   console.log("trying to get all rewards in models");
-  let reward_type = 1;
+  let reward_type = 1; //Kun faktiske præmier og ikke nitter.
   sql.query(
     "SELECT * FROM rewards WHERE reward_type = ?",
     reward_type,

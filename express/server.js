@@ -379,6 +379,10 @@ router.get(`/${apiUrl}/analytics/count-companies`, [
   ValidationMiddleware.validJWTNeeded,
   analytics.getCountCompanies,
 ]);
+router.get(`/${apiUrl}/analytics/top5`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getTop5,
+]);
 /* 
 -----------------------------------------------
 Create the server and export the app 

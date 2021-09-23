@@ -85,4 +85,26 @@ EntryModel.create = (newEntry, result) => {
     });
   });
 };
+
+EntryModel.findTop5Campaigns = (result) => {
+  console.log("trying to get top 5 campaigns based on entries");
+
+  sql.query(
+    "SELECT campaign_id, COUNT(player_id) FROM entries GROUP BY campaign_id ORDER BY COUNT(player_id) DESC LIMIT 5",
+    async (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: entry.model.js ~ line 21 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
+      // Here we have the correct response
+      result(null, res);
+      console.log("🚀 ~ file: entry.model.js ~ line 27 ~ sql.query ~ res", res);
+    }
+  );
+};
+
 module.exports = EntryModel;
