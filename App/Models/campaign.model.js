@@ -368,4 +368,17 @@ Campaign.getAll = (result) => {
     result(null, res);
   });
 };
+Campaign.getAllCampaigns = (result) => {
+  sql.query("SELECT * FROM campaigns", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    result(null, res);
+  });
+};
 module.exports = Campaign;

@@ -363,6 +363,14 @@ router.get(`/${apiUrl}/analytics/get-all-rewards`, [
   ValidationMiddleware.validJWTNeeded,
   analytics.getAllRewards,
 ]);
+router.get(`/${apiUrl}/analytics/get-all-campaigns`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllCampaigns,
+]);
+router.get(`/${apiUrl}/analytics/get-all-companies`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllCompanies,
+]);
 /* 
 -----------------------------------------------
 Create the server and export the app 
