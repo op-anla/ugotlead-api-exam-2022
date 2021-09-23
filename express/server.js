@@ -359,6 +359,10 @@ router.get(`/${apiUrl}/analytics/count-players`, [
   ValidationMiddleware.validJWTNeeded,
   analytics.getCountPlayers,
 ]);
+router.get(`/${apiUrl}/analytics/get-all-rewards`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllRewards,
+]);
 /* 
 -----------------------------------------------
 Create the server and export the app 
