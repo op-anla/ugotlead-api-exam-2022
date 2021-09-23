@@ -9,6 +9,35 @@ const EntryModel = function (entry) {
   this.entry_date = entry.entry_date;
   this.has_played = entry.has_played;
 };
+
+EntryModel.getAllEntries = (result) => {
+  console.log("trying to get all entries in models");
+  sql.query("SELECT * FROM entries", async (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: entry.model.js ~ line 17 ~ sql.query ~ err", err);
+      result(null, err);
+      return;
+    }
+    // Here we have the correct response
+    result(null, res);
+    console.log("🚀 ~ file: entry.model.js ~ line 33 ~ sql.query ~ res", res);
+  });
+};
+
+EntryModel.getCountEntries = (result) => {
+  console.log("trying to get conut of entries in models");
+  sql.query("SELECT COUNT(*) FROM entries", async (err, res) => {
+    if (err) {
+      console.log("🚀 ~ file: entry.model.js ~ line 31 ~ sql.query ~ err", err);
+      result(null, err);
+      return;
+    }
+    // Here we have the correct response
+    result(null, res);
+    console.log("🚀 ~ file: entry.model.js ~ line 37 ~ sql.query ~ res", res);
+  });
+};
+
 EntryModel.findEntry = (log, result) => {
   console.log("🚀 ~ file: entry.model.js ~ line 14 ~ log", log);
   sql.query(`SELECT * FROM entries WHERE log_id = ?`, log, (err, res) => {

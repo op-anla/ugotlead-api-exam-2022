@@ -28,6 +28,8 @@ const standard_layout = require("../App/Controllers/standard_layout.controller.j
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
 const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
+const analytics = require("../App/Controllers/analytics.controller.js");
+
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -58,7 +60,6 @@ https://expressjs.com/en/guide/routing.html
 CAMPAIGNS
 -----------------------------------------------
 */
-
 router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findAll,
@@ -340,6 +341,23 @@ Cache
 router.get(`/${apiUrl}/cache/flushall`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.flushAllCache,
+]);
+/* 
+-----------------------------------------------
+Analytics
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/analytics/get-all-visitors`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllVisitors,
+]);
+router.get(`/${apiUrl}/analytics/get-all-leads`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllLeads,
+]);
+router.get(`/${apiUrl}/analytics/count-players`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getCountPlayers,
 ]);
 /* 
 -----------------------------------------------
