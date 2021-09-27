@@ -25,12 +25,14 @@ exports.createStandardLayoutComponent = (req, res) => {
 
   // Save Standard layout comp in the database
   StandardLayoutCompModel.create(newStandardLayoutComp, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the campaign.",
       });
-    else res.status(201).send(data);
+    } else {
+      res.status(201).send(data);
+    }
   });
 };
 // Retrieve all standard layouts comp from the database.
@@ -42,13 +44,15 @@ exports.getAllStandardLayoutComponentsFromLayoutId = (req, res) => {
   StandardLayoutCompModel.getAllFromLayoutId(
     req.params.standardLayoutId,
     (err, data) => {
-      if (err)
+      if (err) {
         res.status(500).send({
           message:
             err.message ||
             "Some error occurred while retrieving standard layouts.",
         });
-      else res.send(data);
+      } else {
+        res.send(data);
+      }
     }
   );
 };
@@ -90,30 +94,30 @@ exports.updateStandardLayoutComponent = (req, res) => {
               req.params.standardLayoutCompId,
           });
         }
-      } else res.send(data);
+      } else {
+        res.send(data);
+      }
     }
   );
 };
 exports.deleteStandardLayoutWidget = (req, res) => {
-  StandardLayoutCompModel.remove(
-    req.params.standardLayoutCompId,
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message: `Not found StandardLayoutCompModel with id ${req.params.standardLayoutCompId}.`,
-          });
-        } else {
-          res.status(500).send({
-            message:
-              "Could not delete StandardLayoutCompModel with id " +
-              req.params.standardLayoutCompId,
-          });
-        }
-      } else
-        res.send({
-          message: `StandardLayoutCompModel was deleted successfully!`,
+  StandardLayoutCompModel.remove(req.params.standardLayoutCompId, (err) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found StandardLayoutCompModel with id ${req.params.standardLayoutCompId}.`,
         });
+      } else {
+        res.status(500).send({
+          message:
+            "Could not delete StandardLayoutCompModel with id " +
+            req.params.standardLayoutCompId,
+        });
+      }
+    } else {
+      res.send({
+        message: `StandardLayoutCompModel was deleted successfully!`,
+      });
     }
-  );
+  });
 };

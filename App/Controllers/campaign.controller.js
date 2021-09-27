@@ -19,24 +19,28 @@ exports.create = (req, res) => {
 
   // Save Campaign in the database
   Campaign.create(campaign, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the campaign.",
       });
-    else res.status(201).send(data);
+    } else {
+      res.status(201).send(data);
+    }
   });
 };
 // Retrieve all campaigns from the database.
 exports.findAll = (req, res) => {
   console.log("find all");
   Campaign.getAll((err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving campaigns.",
       });
-    else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 exports.findStatsForCampaign = (req, res) => {
@@ -52,11 +56,14 @@ exports.findStatsForCampaign = (req, res) => {
             "Error retrieving campaignstats with id " + req.params.campaignId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 // Find one specific campaign
 exports.findOne = (req, res) => {
+  console.log("Finder 1 kampagne");
   Campaign.findById(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -68,7 +75,9 @@ exports.findOne = (req, res) => {
           message: "Error retrieving campaign with id " + req.params.campaignId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   }).then((cache) => {
     console.log(
       "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
@@ -77,7 +86,7 @@ exports.findOne = (req, res) => {
     res.status(200).send(cache);
   });
 };
-exports.flushAllCache = (req, res) => {
+exports.flushAllCache = (res) => {
   Campaign.flushCache().then((resCode) => {
     console.log(
       "🚀 ~ file: campaign.controller.js ~ line 86 ~ Campaign.flushCache.then ~ resCode",
@@ -112,13 +121,15 @@ exports.update = (req, res) => {
             message: "Error updating campaign with id " + req.params.campaignId,
           });
         }
-      } else res.send(data);
+      } else {
+        res.send(data);
+      }
     }
   );
 };
 // Delete campaign
 exports.delete = (req, res) => {
-  Campaign.remove(req.params.campaignId, (err, data) => {
+  Campaign.remove(req.params.campaignId, (err) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -129,10 +140,11 @@ exports.delete = (req, res) => {
           message: "Could not delete campaign with id " + req.params.campaignId,
         });
       }
-    } else
+    } else {
       res.send({
         message: `Campaign was deleted successfully!`,
       });
+    }
   });
 };
 /* 
@@ -150,7 +162,9 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
   Campaign.updateMailchimpInfo(campaignId, mailchimpInfo, (err, data) => {
     if (err) {
       return err;
-    } else return data;
+    } else {
+      return data;
+    }
   });
 };
 exports.updateMailchimpList = (campaignId, mailchimpLists) => {
@@ -162,6 +176,8 @@ exports.updateMailchimpList = (campaignId, mailchimpLists) => {
   Campaign.updateMailchimpLists(campaignId, mailchimpLists, (err, data) => {
     if (err) {
       return err;
-    } else return data;
+    } else {
+      return data;
+    }
   });
 };

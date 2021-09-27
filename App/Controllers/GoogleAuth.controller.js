@@ -1,7 +1,5 @@
 const fetch = require("node-fetch");
-const querystring = require("querystring");
 const { URLSearchParams } = require("url");
-const { encrypt, decrypt } = require("../common/middleware/crypto");
 const User = require("../Models/user.model");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENTID);
@@ -87,7 +85,9 @@ exports.login = async (req, res) => {
   const OAUTH_CALLBACK = "http://127.0.0.1:3000/";
   const code = req.body.code;
   console.log("We got the authorization code", code);
-  if (code == undefined) return res.status(500);
+  if (code == undefined) {
+    return res.status(500).send();
+  }
   const token = async () => {
     try {
       return await fetch("https://oauth2.googleapis.com/token", {
@@ -126,7 +126,7 @@ exports.login = async (req, res) => {
     });
     const payload = ticket.getPayload();
     console.log("verify ~ payload", payload);
-    const userid = payload["sub"];
+    // const userid = payload["sub"];
     // If request specified a G Suite domain:
     // const domain = payload['hd'];
   }

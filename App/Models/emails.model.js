@@ -1,8 +1,8 @@
 const sql = require("./db.js");
-var cluster = require("cluster");
-var myCache = require("cluster-node-cache")(cluster);
+// const cluster = require("cluster");
+// const myCache = require("cluster-node-cache")(cluster);
 
-const checkJson = require("../common/helpers/checkmyjson");
+// const checkJson = require("../common/helpers/checkmyjson");
 // constructor
 const EmailModel = function (email) {
   this.campaign_id = email.campaign_id;
