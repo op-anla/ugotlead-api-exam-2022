@@ -6,21 +6,18 @@ exports.validateDomain = (req, res, next) => {
     return next();
   }
   const acceptedVariables = {
-    host: "127.0.0.1:3008",
-    origin: "http://127.0.0.1:3000",
-    referer: "http://127.0.0.1:3000/",
+    host: ["127.0.0.1:3008", "app.ugotlead.dk/"],
+    origin: [
+      "http://127.0.0.1:3000",
+      "https://app.ugotlead.dk",
+      "https://app.ugotlead.dk/",
+    ],
   };
-  if (req.headers.host == acceptedVariables.host) {
+  if (acceptedVariables.host.includes(req.headers.host)) {
     console.log("Accepted host");
-    if (req.headers.origin == acceptedVariables.origin) {
+    if (acceptedVariables.origin.includes(req.headers.origin)) {
       console.log("Accepted origin");
-      if (req.headers.referer == acceptedVariables.referer) {
-        console.log("Accepted referer and now we go NEXT");
-        return next();
-      } else {
-        console.log("REJECTED REFERER");
-        res.status(401).send("Not auth from this domain");
-      }
+      return next();
     } else {
       console.log("REJECTED ORIGIN");
       res.status(401).send("Not auth from this domain");
