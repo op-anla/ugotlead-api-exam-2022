@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", router);
 // Router
-router.get("/", (req, res) => {
+router.get("/test", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>");
   res.end();
 });
