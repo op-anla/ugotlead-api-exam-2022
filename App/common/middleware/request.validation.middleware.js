@@ -1,12 +1,14 @@
 exports.validateDomain = (req, res, next) => {
   console.log("VALIDATE DOMAIN", req.headers, req.body);
   console.log("CAMPAIGN ROUTE PARAMS", req.params);
-  var user_agent = req.headers["user-agent"];
-  if (user_agent.includes("Postman")) return next();
+  const user_agent = req.headers["user-agent"];
+  if (user_agent.includes("Postman")) {
+    return next();
+  }
   const acceptedVariables = {
-    host: "127.0.0.1:3005",
-    origin: "http://127.0.0.1:3306",
-    referer: "http://127.0.0.1:3306/"
+    host: "127.0.0.1:3008",
+    origin: "http://127.0.0.1:3000",
+    referer: "http://127.0.0.1:3000/",
   };
   if (req.headers.host == acceptedVariables.host) {
     console.log("Accepted host");

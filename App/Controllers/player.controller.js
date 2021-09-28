@@ -13,18 +13,18 @@ exports.createPlayer = (req, res) => {
   );
   // Create a player
   const newPlayer = new Player({
-    player_name: req.body.currentUser.navn,
-    player_email: req.body.currentUser.email,
+    player_name: req.body.navn,
+    player_email: req.body.email,
   });
 
   // Save player in the database
   Player.create(newPlayer, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the player.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.status(201).send(data);
     }

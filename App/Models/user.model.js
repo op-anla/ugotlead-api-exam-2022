@@ -4,6 +4,7 @@ const sql = require("./db.js");
 const User = function (user) {
   this.username = user.username;
   this.password = user.password;
+  this.email = user.email;
 };
 User.create = (newUser, result) => {
   sql.query("INSERT INTO user SET ?", newUser, (err, res) => {
@@ -30,18 +31,44 @@ User.findByUsername = (username) => {
   */
   return new Promise((resolve, reject) => {
     console.log("Inside promise in findbyusername");
+    sql.query(`SELECT * FROM user WHERE username = ?`, username, (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: user.model.js ~ line 30 ~ sql.query ~ err",
+          err
+        );
+        return reject(err);
+      }
+      if (res.length) {
+        //   result(null, validatedUser);
+
+        console.log(
+          "🚀 ~ file: user.model.js ~ line 48 ~ returnnewPromise ~ res[0]",
+          res[0]
+        );
+        return resolve(res[0]);
+      } else {
+        console.log("No error but user is not found", res);
+        return reject();
+      }
+    });
+  });
+};
+User.findByUsernameAndEmail = (username, email) => {
+  /* 
+  This functions is being called from verify.user.middleware and will find the specific user with that username
+  It will return the whole user response which will contain the password
+  */
+  return new Promise((resolve, reject) => {
+    console.log("Inside promise in findbyusername", username, email);
     sql.query(
-      `SELECT * FROM user WHERE username = "${username}"`,
+      `SELECT * FROM user WHERE username = ? AND email = ?`,
+      [username, email],
       (err, res) => {
-        console.log("Query", err, res);
         if (err) {
-          console.log(
-            "🚀 ~ file: user.model.js ~ line 30 ~ sql.query ~ err",
-            err
-          );
           return reject(err);
         }
-        if (res.length) {
+        if (res.length > 0) {
           //   result(null, validatedUser);
 
           console.log(
@@ -50,16 +77,14 @@ User.findByUsername = (username) => {
           );
           return resolve(res[0]);
         } else {
-          console.log("No error but user is not found", res);
-          return reject(null);
+          return resolve({});
         }
       }
     );
   });
 };
-
 User.findById = (userId, result) => {
-  sql.query(`SELECT * FROM user WHERE iduser = ${userId}`, (err, res) => {
+  sql.query(`SELECT * FROM user WHERE user_id = ?`, userId, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 48 ~ sql.query ~ err", err);
       result(err, null);
@@ -72,7 +97,7 @@ User.findById = (userId, result) => {
     */
     const validatedUser = {
       user: {
-        iduser: res[0].iduser,
+        user_id: res[0].user_id,
         username: res[0].username,
       },
     };
@@ -93,7 +118,7 @@ User.findById = (userId, result) => {
 };
 User.updateById = (id, user, result) => {
   sql.query(
-    "UPDATE user SET username = ?,password = ? WHERE iduser = ?",
+    "UPDATE user SET username = ?,password = ? WHERE user_id = ?",
     [user.username, user.password, id],
     (err, res) => {
       if (err) {
@@ -156,7 +181,7 @@ User.getAll = (result) => {
 };
 // Delete user
 User.remove = (id, result) => {
-  sql.query("DELETE FROM user WHERE iduser = ?", id, (err, res) => {
+  sql.query("DELETE FROM user WHERE user_id = ?", id, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 129 ~ sql.query ~ err", err);
       result(null, err);

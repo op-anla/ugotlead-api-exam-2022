@@ -1,10 +1,14 @@
 // cluster.js
 const cluster = require("cluster");
+// myCache is not used here but used everywhere else
+const myCache = require("cluster-node-cache")(cluster);
 const os = require("os");
 
 if (cluster.isMaster) {
-  const cpus = os.cpus().length;
+  let cpus = os.cpus().length / 2; //Change to const when prod
+  cpus = 2; //Testing
 
+  console.log(`Primary ${process.pid} is running`);
   console.log(`Forking for ${cpus} CPUs`);
   for (let i = 0; i < cpus; i++) {
     cluster.fork();

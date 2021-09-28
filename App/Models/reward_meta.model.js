@@ -4,7 +4,6 @@ const sql = require("./db.js");
 const RewardMeta = function (rewardMeta) {
   this.reward_id = rewardMeta.reward_id;
   this.reward_redeem_info = rewardMeta.reward_redeem_info;
-  this.reward_chance_info = rewardMeta.reward_chance_info;
   this.reward_email_notification_info =
     rewardMeta.reward_email_notification_info;
 };
@@ -76,7 +75,8 @@ RewardMeta.remove = (id, result) => {
 };
 RewardMeta.findByRewardId = (rewardId, result) => {
   sql.query(
-    `SELECT * FROM reward_meta_data WHERE reward_id = ${rewardId}`,
+    `SELECT * FROM reward_meta_data WHERE reward_id = ?`,
+    rewardId,
     (err, res) => {
       console.log(
         "🚀 ~ file: rewards.model.js ~ line 19 ~ sql.query ~ err, res",

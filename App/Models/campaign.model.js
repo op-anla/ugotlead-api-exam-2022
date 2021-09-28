@@ -1,19 +1,25 @@
 const sql = require("./db.js");
+const cluster = require("cluster");
+const myCache = require("cluster-node-cache")(cluster);
 
+const checkJson = require("../common/helpers/checkmyjson");
 // constructor
 const Campaign = function (campaign) {
   this.company_id = campaign.company_id;
-  this.campaign_active = campaign.campaign_active;
   this.campaign_name = campaign.campaign_name;
   this.campaign_owner_id = campaign.campaign_owner_id;
-  this.mailchimp_info = campaign.mailchimp_info;
-  this.mailchimp_list = campaign.mailchimp_list;
   this.campaign_startdate = campaign.campaign_startdate;
   this.campaign_enddate = campaign.campaign_enddate;
-  this.campaign_leads = campaign.campaign_leads;
   this.campaign_description = campaign.campaign_description;
   this.restrict_access_interval = campaign.restrict_access_interval;
-  this.campaign_leads = campaign.campaign_leads;
+  this.campaign_integrations = campaign.campaign_integrations;
+};
+Campaign.flushCache = () => {
+  console.log("FLUSHING ");
+  return new Promise((resolve) => {
+    myCache.flushAll();
+    resolve(200);
+  });
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -32,6 +38,7 @@ Campaign.create = (newCampaign, result) => {
       ...newCampaign,
     });
 
+    myCache.flushAll();
     result(null, {
       id: res.insertId,
       ...newCampaign,
@@ -49,7 +56,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   */
   const logs = new Promise((resolve, reject) => {
     sql.query(
-      `SELECT COUNT(*) FROM logs WHERE campaign_id = ${campaignId}`,
+      `SELECT COUNT(*) FROM logs WHERE campaign_id = ?`,
+      [campaignId],
       (err, res) => {
         if (err) {
           console.log(
@@ -75,7 +83,8 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     // Again we use promise based variables so we can resolve and reject the response
     const entries = new Promise((resolve, reject) => {
       sql.query(
-        `SELECT COUNT(*) FROM entries WHERE campaign_id = ${campaignId}`,
+        `SELECT COUNT(*) FROM entries WHERE campaign_id = ?`,
+        campaignId,
         (err, res) => {
           if (err) {
             console.log(
@@ -112,34 +121,58 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
-Campaign.findById = (campaignId, result) => {
-  sql.query(
-    `SELECT * FROM campaigns WHERE campaign_id = ${campaignId}`,
-    (err, res) => {
-      if (err) {
-        console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-          err
-        );
-        result(err, null);
-        return;
-      }
+const process = require("process");
+Campaign.findById = (campaignId) => {
+  console.log("Testing some process", process.pid);
+  console.log("this find is executed by PID: ", process.pid);
 
-      if (res.length) {
-        console.log("found campaign: ", res[0]);
-        result(null, res[0]);
+  return myCache
+    .get(`findById_${campaignId}`)
+    .then(function (results) {
+      console.log("results", results);
+      if (results.err) {
+        console.log("ERR", results.err);
         return;
-      }
+      } else {
+        let key = `findById_${campaignId}`;
+        console.log("problems with finding cache");
+        if (results.value[key]) {
+          console.log("We found a cache");
+          return results.value[key];
+        } else {
+          console.log("No cache found so just normal query");
+          return new Promise((resolve, reject) => {
+            sql.query(
+              `SELECT * FROM campaigns WHERE campaign_id = ?`,
+              campaignId,
+              (err, res) => {
+                if (err) {
+                  console.log(
+                    "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+                    err
+                  );
+                  return reject(err);
+                }
 
-      // not found Campaign with the id
-      result(
-        {
-          kind: "not_found",
-        },
-        null
-      );
-    }
-  );
+                if (res.length) {
+                  console.log("found campaign: ", res[0]);
+                  myCache
+                    .set(`findById_${campaignId}`, res[0])
+                    .then(function (result) {
+                      console.log("result err: ", result.err);
+                      console.log("Result success: ", result.success);
+                    });
+                  return resolve(res[0]);
+                }
+              }
+            );
+          });
+        }
+      }
+    })
+    .catch((e) => {
+      console.log("e", e);
+    });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
@@ -162,7 +195,10 @@ Campaign.remove = (id, result) => {
       );
       return;
     }
-
+    console.log("trying to flush cache");
+    myCache.flushAll().then((results) => {
+      console.log("myCache.flushAll ~ results", results);
+    });
     console.log("deleted campaign with campaign_id: ", id);
     result(null, res);
   });
@@ -189,7 +225,10 @@ Campaign.updateById = (id, campaign, result) => {
         );
         return;
       }
-
+      console.log("trying to flush cache");
+      myCache.flushAll().then((results) => {
+        console.log("myCache.flushAll ~ results", results);
+      });
       console.log("updated campaign: ", {
         id: id,
         ...campaign,
@@ -208,38 +247,82 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
     id,
     mailchimpInfo
   );
-
   sql.query(
-    "UPDATE campaigns SET mailchimp_info = ? WHERE campaign_id = ?",
-    [mailchimpInfo, id],
+    "SELECT campaign_integrations FROM campaigns WHERE campaign_id = ?",
+    id,
     (err, res) => {
       if (err) {
-        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(null, err);
-        return;
+        console.log("err", err);
+        return result(null, err);
       }
-
-      if (res.affectedRows == 0) {
-        // not found campaign with the id
-        result(
-          {
-            kind: "not_found",
-          },
-          null
-        );
-        return;
+      console.log("got campaign_integrations", res[0].campaign_integrations);
+      /* 
+      Checking if the response is an empty string ie. empty integrations
+      If it is we just let us iterate an empty array and populate it later
+      */
+      let jsonCheck = checkJson.checkMyJson(res[0].campaign_integrations);
+      let iterableIntegration = [];
+      if (jsonCheck) {
+        iterableIntegration = JSON.parse(res[0].campaign_integrations);
       }
+      console.log("iterableIntegration", iterableIntegration);
+      let integrations = [];
+      iterableIntegration.forEach((integration) => {
+        let jsonCheck = checkJson.checkMyJson(integration);
+        if (jsonCheck) {
+          integration = JSON.parse(integration);
+        }
 
-      console.log("updated campaign: ", {
-        id: id,
-        mailchimpInfo: mailchimpInfo,
+        console.log("res.forEach ~ integration", integration);
+        if (integration === "") {
+          return;
+        }
+        integrations.push(integration);
       });
-      result(null, {
-        id: id,
-        mailchimpInfo: mailchimpInfo,
-      });
+      updateCampaign(integrations, id, mailchimpInfo);
     }
   );
+  function updateCampaign(arrayIntegrations, campaignId, mailchimpInfo) {
+    let myArray = arrayIntegrations;
+    myArray.push(mailchimpInfo);
+    console.log("updateCampaign ~ myArray", myArray);
+    let string = JSON.stringify(myArray);
+    console.log("updateCampaign ~ string", string);
+    sql.query(
+      "UPDATE campaigns SET campaign_integrations = ? WHERE campaign_id = ?",
+      [string, campaignId],
+      (err, res) => {
+        if (err) {
+          console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
+          result(null, err);
+          return;
+        }
+
+        if (res.affectedRows == 0) {
+          // not found campaign with the id
+          result(
+            {
+              kind: "not_found",
+            },
+            null
+          );
+          return;
+        }
+        console.log("trying to flush cache");
+        myCache.flushAll().then((results) => {
+          console.log("myCache.flushAll ~ results", results);
+        });
+        console.log("updated campaign: ", {
+          id: id,
+          mailchimpInfo: mailchimpInfo,
+        });
+        result(null, {
+          id: id,
+          mailchimpInfo: mailchimpInfo,
+        });
+      }
+    );
+  }
 };
 Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
   console.log(

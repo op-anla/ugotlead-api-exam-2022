@@ -52,6 +52,10 @@ exports.deleteById = (req, res) => {
   console.log("ID", req.params.reward_id);
   Rewards.remove(req.params.reward_id, (err, data) => {
     if (err) {
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 55 ~ Rewards.remove ~ err",
+        err
+      );
       if (err.kind === "not_found") {
         res.status(404).send({
           message: `Not found Reward with id ${req.params.reward_id}.`,
@@ -61,7 +65,9 @@ exports.deleteById = (req, res) => {
           message: "Could not delete Reward with id " + req.params.reward_id,
         });
       }
-    } else res.status(200).send("Deleted reward and reward meta");
+    } else {
+      res.status(200).send(data);
+    }
   });
 };
 // Create and Save a new reward
@@ -78,21 +84,24 @@ exports.create = (req, res, next) => {
   const rewardVar = new Rewards({
     campaign_id: req.body.reward.campaign_id,
     reward_image_url: req.body.reward.reward_image_url,
+    large_reward_image_url: req.body.reward.large_reward_image_url,
     reward_name: req.body.reward.reward_name,
     reward_description: req.body.reward.reward_description,
     reward_value_type: req.body.reward.reward_value_type,
     reward_value: req.body.reward.reward_value,
     reward_type: req.body.reward.reward_type,
+    reward_claimed: req.body.reward.reward_claimed,
+    reward_drawtime: req.body.reward.reward_drawtime,
   });
 
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the reward.",
       });
-    else {
+    } else {
       console.log("DATA", data);
       /* 
       We first make the reward in the database and then we create the reward meta in the database using next. 
@@ -114,25 +123,47 @@ exports.updateClaim = (req, res) => {
     "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
     req.body
   );
+  console.log("Let's see what we have in locals", res.locals);
+  /* 
+  If the user hasn't won anything we wont update the claim prop!
+  IMPORTANT
+  */
+  if (res.locals.redeemInfo.won === false) {
+    //  User did not win
+    res.locals.redeemInfo = {
+      won: res.locals.redeemInfo.won,
+      reward: res.locals.redeemInfo.data,
+    };
+    return res.status(200).send(res.locals.redeemInfo);
+  }
   // Validate Request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
   }
-  Rewards.updateClaimedProp(req.body.reward_id, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found reward with id ${req.body.reward_id}.`,
-        });
+  Rewards.updateClaimedProp(
+    res.locals.redeemInfo.data.reward.reward_id,
+    (err) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found reward with id ${req.body.reward_id}.`,
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating reward with id " + req.body.reward_id,
+          });
+        }
       } else {
-        res.status(500).send({
-          message: "Error updating reward with id " + req.body.reward_id,
-        });
+        res.locals.redeemInfo = {
+          won: res.locals.redeemInfo.won,
+          reward: res.locals.redeemInfo.data,
+        };
+        return res.status(200).send(res.locals.redeemInfo);
       }
-    } else res.status(201).send(data);
-  });
+    }
+  );
 };
 // Update reward by id
 exports.updateById = (req, res, next) => {
@@ -149,7 +180,7 @@ exports.updateById = (req, res, next) => {
   Rewards.updateById(
     req.params.reward_id,
     new Rewards(req.body.reward),
-    (err, data) => {
+    (err) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -160,7 +191,9 @@ exports.updateById = (req, res, next) => {
             message: "Error updating reward with id " + req.params.reward_id,
           });
         }
-      } else return next();
+      } else {
+        return next();
+      }
     }
   );
 };

@@ -9,20 +9,19 @@ LAYOUT
 exports.findLayoutForSpecificCampaign = (req, res) => {
   console.log("find all layout for this campaign");
   Layout.findLayoutForCampaign(req.params.campaignId, (err, data) => {
-    console.log(
-      "🚀 ~ file: layout.controller.js ~ line 12 ~ Layout.findLayoutForCampaign ~ err",
-      err
-    );
-    if (err)
-      if (err.kind === "not_found")
+    if (err) {
+      if (err.kind === "not_found") {
         res.status(404).send("Can't find layout for this specific campaign");
-      else
+      } else {
         res.status(500).send({
           message:
             err.message ||
             "Some error occurred while retrieving the layouts for that specific campaign.",
         });
-    else res.status(200).send(data);
+      }
+    } else {
+      res.status(200).send(data);
+    }
   });
 };
 exports.updateLayoutForSpecificCampaign = (req, res) => {
@@ -38,7 +37,7 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
     req.body.id,
     new Layout({
       layout_component_content: req.body.content,
-      layout_component_options: JSON.stringify(req.body.options),
+      layout_component_options: req.body.options,
       layout_component_pos_x: req.body.x,
       layout_component_pos_y: req.body.y,
       layout_component_size_w: req.body.w,
@@ -56,16 +55,39 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
             message: "Error updating layout with id " + req.body.layout_id,
           });
         }
-      } else res.send(data);
+      } else {
+        res.send(data);
+      }
     }
   );
+};
+// Delete widget from campaign
+exports.removeWidgetFromCampaign = (req, res) => {
+  Layout.remove(req.params.campaignId, req.body.widgetid, (err, data) => {
+    console.log("Layout.remove ~ data", data);
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Layout with id ${req.params.campaignId}.`,
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Layout with id " + req.params.campaignId,
+        });
+      }
+    } else {
+      res.send({
+        message: `Layout was deleted successfully!`,
+      });
+    }
+  });
 };
 // Create new component in layout
 exports.createNewComponentForCampaign = (req, res) => {
   console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);
   const newWidget = new Layout({
     layout_component_content: req.body.content,
-    layout_component_options: JSON.stringify(req.body.options),
+    layout_component_options: req.body.options,
     layout_component_pos_x: req.body.x,
     layout_component_pos_y: req.body.y,
     layout_component_size_h: req.body.h,
@@ -74,12 +96,12 @@ exports.createNewComponentForCampaign = (req, res) => {
 
   // Save layout widget in db
   Layout.create(newWidget, req.params.campaignId, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the widget.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.status(201).send({
         message: "Added widget",

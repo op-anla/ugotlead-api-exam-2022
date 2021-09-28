@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
-var cors = require("cors");
+const cors = require("cors");
 const http = require("http");
 
 /* 
@@ -18,14 +18,16 @@ const rewards = require("../App/Controllers/rewards.controller.js");
 const reward_meta = require("../App/Controllers/reward_meta.controller.js");
 const layout = require("../App/Controllers/layout.controller.js");
 const logging = require("../App/Controllers/logging.controller.js");
-const player = require("../App/Controllers/player.controller.js");
-
 const layoutWidgets = require("../App/Controllers/layout-widgets.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 const email = require("../App/Controllers/email.controller.js");
+const standard_layout = require("../App/Controllers/standard_layout.controller.js");
+const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
+// const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
+
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -34,11 +36,11 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 // App uses
 
 app.use(cors());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", router);
 // Router
-router.get("/", (req, res) => {
+router.get("/test", (req, res) => {
   res.write("<h1>Server is up and running! Make your requests</h1>");
   res.end();
 });
@@ -94,6 +96,10 @@ router.post(`/${apiUrl}/layout/:campaignId/create-comp`, [
 router.put(`/${apiUrl}/update-layout/campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   layout.updateLayoutForSpecificCampaign,
+]);
+router.delete(`/${apiUrl}/delete-layout/campaign/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  layout.removeWidgetFromCampaign,
 ]);
 /* 
 -----------------------------------------------
@@ -160,6 +166,8 @@ router.post(`/${apiUrl}/auth`, [
   VerifyUserMiddleware.isPasswordAndUserMatch,
   AuthorizationController.login,
 ]);
+// router.post(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
+// router.get(`/${apiUrl}/google/user`, [GoogleAuth.checkUser]);
 /* 
 -----------------------------------------------
 MAILCHIMP 
@@ -168,10 +176,7 @@ The Maillchimp info will also be saved for that specific campaign and not on the
 -----------------------------------------------
 */
 
-router.get(`/${apiUrl}/auth/mailchimp`, [
-  ValidationMiddleware.validJWTNeeded,
-  mailchimpController.redirectToLogin,
-]);
+router.get(`/${apiUrl}/auth/mailchimp`, [mailchimpController.redirectToLogin]);
 
 router.get(`/${apiUrl}/auth/mailchimp/login`, [
   ValidationMiddleware.validJWTNeeded,
@@ -233,6 +238,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
   entry.createEntry,
+  reward_meta.findRewardMetaForRewardInRedeemFlow,
   rewards.updateClaim,
 ]);
 /* 
@@ -258,13 +264,88 @@ router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
 ]);
 /* 
 -----------------------------------------------
+STANDARD LAYOUT
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/standard-layout/create-layout`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout.createStandardLayout,
+]);
+router.get(`/${apiUrl}/standard-layout/getall`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout.getAllStandardLayouts,
+]);
+
+router.put(`/${apiUrl}/update-layout/:standard_layout_id`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout.updateStandardLayout,
+]);
+
+/* 
+-----------------------------------------------
+STANDARD LAYOUT COMPS
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/standard-layout-comps/create-comp/:standardLayoutId`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout_comp.createStandardLayoutComponent,
+]);
+router.get(`/${apiUrl}/standard-layout-comps/getcomps/:standardLayoutId`, [
+  ValidationMiddleware.validJWTNeeded,
+  standard_layout_comp.getAllStandardLayoutComponentsFromLayoutId,
+]);
+router.put(
+  `/${apiUrl}/standard-layout-comps/update-layout-comp/:standardLayoutCompId`,
+  [
+    ValidationMiddleware.validJWTNeeded,
+    standard_layout_comp.updateStandardLayoutComponent,
+  ]
+);
+router.delete(
+  `/${apiUrl}/standard-layout-comps/delete-layout-comp/:standardLayoutCompId`,
+  [
+    ValidationMiddleware.validJWTNeeded,
+    standard_layout_comp.deleteStandardLayoutWidget,
+  ]
+);
+/* 
+-----------------------------------------------
 Emails
 -----------------------------------------------
 */
+router.get(`/${apiUrl}/email/get-email-for-campaign/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.getEmailInfoForCampaign,
+]);
 router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
+router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
+  email.sendUserEmailForPlaying,
+]);
+router.post(`/${apiUrl}/email/create-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.createMail,
+]);
+router.post(`/${apiUrl}/email/update-mail`, [
+  ValidationMiddleware.validJWTNeeded,
+  email.updateMail,
+]);
+/* 
+-----------------------------------------------
+Cache
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/cache/flushall`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaigns.flushAllCache,
+]);
+/* 
+-----------------------------------------------
+Create the server and export the app 
+-----------------------------------------------
+*/
 const server = http.createServer(app);
 const pid = process.pid;
 server.listen(process.env.PORT, () => {

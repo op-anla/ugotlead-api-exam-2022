@@ -4,13 +4,13 @@ const mysql = require("mysql");
 Rather than creating and managing connections one - by - one, 
 this module also provides built - in connection pooling using mysql.createPool(config).
 */
-var pool = mysql.createPool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   connectTimeout: 100000,
-  connectionLimit: 15,
+  connectionLimit: 6,
 });
 
 // Monitor error
@@ -35,7 +35,7 @@ pool.on("acquire", function (connection) {
 The pool will emit a connection event when a new connection is made within the pool.
 If you need to set session variables on the connection before it gets used, you can listen to the connection event.
 */
-pool.on("connection", function (connection) {
+pool.on("connection", function () {
   console.log("Connection has been made");
 });
 /* 

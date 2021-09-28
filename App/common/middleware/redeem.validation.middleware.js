@@ -1,56 +1,59 @@
 exports.didUserWin = (req, res, next) => {
   console.log("NOW WE CALCULATE WINNING FOR USER");
-  const leads = req.body.campaign.campaign_leads;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 4 ~ leads",
-    leads
-  );
-  const amountOfRewards = req.body.rewards.length;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 6 ~ amountOfRewards",
-    amountOfRewards
-  );
-  const percentOfWinning = (amountOfRewards / leads) * 100;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 8 ~ percentOfWinning",
-    percentOfWinning
-  );
-
-  var baseNum = Math.random() * 100;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
-    baseNum
-  );
-  var basePercentage = 100 - percentOfWinning;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
-    basePercentage
-  );
-
-  //   Test percentage
-  // Comment for not testing
-  var testPercentage = 10;
-  if (baseNum >= testPercentage) {
-    console.log("USER WON");
-    var random = Math.floor(Math.random() * req.body.rewards.length);
-    console.log(
-      "🚀 ~ file: redeem.validation.middleware.js ~ line 17 ~ choosenReward",
-      random
-    );
-    console.log("RANDOM REwARD CHOOSEN", req.body.rewards[random]);
-    req.body.redeemInfo = {
-      won: true,
-      data: {
-        reward: req.body.rewards[random]
-      }
-    };
-    return next();
-  } else {
-    console.log("DIDNT WIN");
-
-    req.body.redeemInfo = {
+  /* 
+  We use drawtime on each reward to calculate whether or not the user has won anything. 
+  First we get the array of rewards that's actually not claimed yet
+  */
+  let notClaimedRewards = req.body.rewards.filter((reward) => {
+    return reward.reward_claimed === 0;
+  });
+  let viableRewards = notClaimedRewards.filter((reward) => {
+    return reward.reward_drawtime !== null && reward.reward_type != 0;
+  });
+  console.log("viableRewards ~ viableRewards", viableRewards);
+  /* We go through each reward and see which is closest to now (drawtime) */
+  let lost_reward = req.body.rewards.filter((reward) => {
+    return reward.reward_type === 0;
+  });
+  const now = new Date();
+  if (!viableRewards.length) {
+    // No available rewards left so the user lose.
+    res.locals.redeemInfo = {
       won: false,
-      data: {}
+      data: {
+        reward: lost_reward[0],
+      },
+    };
+  }
+  // Use this variable to keep track of the user losing
+  let didUserWin = false;
+  viableRewards.forEach((reward) => {
+    let drawTime = new Date(reward.reward_drawtime);
+    console.log("viableRewards.forEach ~ drawTime", drawTime, now);
+    console.log(
+      "comparing - If true then user has won (meaning date now is later than drawtime == win)",
+      now >= drawTime
+    );
+    if (now >= drawTime) {
+      // User won
+      didUserWin = true;
+      res.locals.redeemInfo = {
+        won: true,
+        data: {
+          reward: reward,
+        },
+      };
+      return next();
+    }
+  });
+  // Since there is no async code inside foreach it will be syncronous - meaning code after here runs after foreach
+  if (!didUserWin) {
+    // User lost
+    res.locals.redeemInfo = {
+      won: false,
+      data: {
+        reward: lost_reward[0],
+      },
     };
     return next();
   }

@@ -6,13 +6,12 @@ const EntryModel = function (entry) {
   this.log_id = entry.log_id;
   this.player_id = entry.player_id;
   this.reward_id = entry.reward_id;
-  this.claimed_reward = entry.claimed_reward;
   this.entry_date = entry.entry_date;
   this.has_played = entry.has_played;
 };
 EntryModel.findEntry = (log, result) => {
   console.log("🚀 ~ file: entry.model.js ~ line 14 ~ log", log);
-  sql.query(`SELECT * FROM entries WHERE log_id = ${log}`, (err, res) => {
+  sql.query(`SELECT * FROM entries WHERE log_id = ?`, log, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: entry.model.js ~ line 17 ~ sql.query ~ err", err);
       result(err, null);
