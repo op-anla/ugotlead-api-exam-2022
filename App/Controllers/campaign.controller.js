@@ -76,7 +76,7 @@ exports.findOne = (req, res) => {
         });
       }
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   }).then((cache) => {
     console.log(
