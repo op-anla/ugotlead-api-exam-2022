@@ -132,7 +132,9 @@ exports.updateClaim = (req, res) => {
     //  User did not win
     res.locals.redeemInfo = {
       won: res.locals.redeemInfo.won,
-      reward: res.locals.redeemInfo.data,
+      data: {
+        reward: res.locals.redeemInfo.data,
+      },
     };
     return res.status(200).send(res.locals.redeemInfo);
   }
@@ -158,7 +160,9 @@ exports.updateClaim = (req, res) => {
       } else {
         res.locals.redeemInfo = {
           won: res.locals.redeemInfo.won,
-          reward: res.locals.redeemInfo.data,
+          data: {
+            reward: res.locals.redeemInfo.data,
+          },
         };
         return res.status(200).send(res.locals.redeemInfo);
       }
