@@ -244,7 +244,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
 router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
-  RedeemValidation.didUserWin,
+  RedeemValidation.didUserWinWithResponse,
 ]);
 /* 
 -----------------------------------------------
