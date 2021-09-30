@@ -25,7 +25,7 @@ EntryModel.getAllEntries = (result) => {
 
 EntryModel.getCountEntries = (result) => {
   console.log("trying to get conut of entries in models");
-  sql.query("SELECT COUNT(*) FROM entries", async (err, res) => {
+  sql.query("SELECT COUNT(*) AS players FROM entries", async (err, res) => {
     if (err) {
       console.log("🚀 ~ file: entry.model.js ~ line 31 ~ sql.query ~ err", err);
       result(null, err);
@@ -90,7 +90,22 @@ EntryModel.findTop5Campaigns = (result) => {
   console.log("trying to get top 5 campaigns based on entries");
 
   sql.query(
-    "SELECT campaign_id, COUNT(player_id) FROM entries GROUP BY campaign_id ORDER BY COUNT(player_id) DESC LIMIT 5",
+    // "SELECT campaign_id, COUNT(player_id) AS players " + //Old functioning version
+    //   "FROM entries GROUP BY campaign_id " +
+    //   "ORDER BY COUNT(player_id) DESC LIMIT 5",
+
+    "SELECT entries.campaign_id, " +
+      "campaigns.campaign_name, " +
+      "COUNT(DISTINCT logs.log_id) AS visitors, " + //Korrekt? Er dette = visitors?
+      "COUNT(DISTINCT entries.player_id) AS players " +
+      "FROM entries " +
+      "INNER JOIN campaigns " + //JOIN Campaigns-table to get names
+      "ON entries.campaign_id=campaigns.campaign_id " +
+      "INNER JOIN logs " + //JOIN logs to get visits
+      "ON logs.campaign_id=campaigns.campaign_id " +
+      "GROUP BY campaign_id " +
+      "ORDER BY COUNT(player_id) DESC LIMIT 5",
+
     async (err, res) => {
       if (err) {
         console.log(

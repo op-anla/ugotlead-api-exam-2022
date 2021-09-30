@@ -73,7 +73,7 @@ Company.getAll = (result) => {
   });
 };
 Company.countAll = (result) => {
-  sql.query("SELECT COUNT(*) FROM companies", async (err, res) => {
+  sql.query("SELECT COUNT(*) AS companies FROM companies", async (err, res) => {
     if (err) {
       console.log(
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",

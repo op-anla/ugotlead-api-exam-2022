@@ -347,42 +347,23 @@ router.get(`/${apiUrl}/cache/flushall`, [
 Analytics
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/analytics/get-all-visitors`, [
-  ValidationMiddleware.validJWTNeeded,
-  analytics.getAllVisitors,
-]);
-router.get(`/${apiUrl}/analytics/get-all-leads`, [
-  ValidationMiddleware.validJWTNeeded,
-  analytics.getAllLeads,
-]);
-router.get(`/${apiUrl}/analytics/count-players`, [
-  ValidationMiddleware.validJWTNeeded,
-  analytics.getCountPlayers,
-]);
-router.get(`/${apiUrl}/analytics/get-all-rewards`, [
-  ValidationMiddleware.validJWTNeeded,
-  analytics.getAllRewards,
-]);
+router.get(`/${apiUrl}/analytics/get-all-visitors`, [analytics.getAllVisitors]);
+router.get(`/${apiUrl}/analytics/get-all-leads`, [analytics.getAllLeads]);
+router.get(`/${apiUrl}/analytics/count-players`, [analytics.getCountPlayers]);
+router.get(`/${apiUrl}/analytics/get-all-rewards`, [analytics.getAllRewards]);
 router.get(`/${apiUrl}/analytics/get-all-campaigns`, [
-  ValidationMiddleware.validJWTNeeded,
   analytics.getAllCampaigns,
 ]);
 router.get(`/${apiUrl}/analytics/count-campaigns`, [
-  ValidationMiddleware.validJWTNeeded,
   analytics.getCountCampaigns,
 ]);
 router.get(`/${apiUrl}/analytics/get-all-companies`, [
-  ValidationMiddleware.validJWTNeeded,
   analytics.getAllCompanies,
 ]);
 router.get(`/${apiUrl}/analytics/count-companies`, [
-  ValidationMiddleware.validJWTNeeded,
   analytics.getCountCompanies,
 ]);
-router.get(`/${apiUrl}/analytics/top5`, [
-  ValidationMiddleware.validJWTNeeded,
-  analytics.getTop5,
-]);
+router.get(`/${apiUrl}/analytics/top5`, [analytics.getTop5]);
 /* 
 -----------------------------------------------
 Create the server and export the app 

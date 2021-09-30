@@ -384,7 +384,7 @@ Campaign.getAllCampaigns = (result) => {
 };
 
 Campaign.countAll = (result) => {
-  sql.query("SELECT COUNT(*) FROM campaigns", async (err, res) => {
+  sql.query("SELECT COUNT(*) AS campaigns FROM campaigns", async (err, res) => {
     if (err) {
       console.log(
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
