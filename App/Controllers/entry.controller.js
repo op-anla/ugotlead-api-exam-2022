@@ -51,7 +51,6 @@ exports.createEntry = (req, res, next) => {
     player_id: req.body.PlayerId,
     reward_id: res.locals.redeemInfo.data.reward.reward_id,
     entry_date: now,
-    has_played: 1,
   });
 
   // Save entry in db

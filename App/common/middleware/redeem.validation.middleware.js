@@ -1,5 +1,5 @@
 exports.didUserWin = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER");
+  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
@@ -18,12 +18,14 @@ exports.didUserWin = (req, res, next) => {
   const now = new Date();
   if (!viableRewards.length) {
     // No available rewards left so the user lose.
+    console.log("The user lost because no available rewards");
     res.locals.redeemInfo = {
       won: false,
       data: {
         reward: lost_reward[0],
       },
     };
+    return next();
   }
   // Use this variable to keep track of the user losing
   let didUserWin = false;

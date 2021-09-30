@@ -241,6 +241,11 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   reward_meta.findRewardMetaForRewardInRedeemFlow,
   rewards.updateClaim,
 ]);
+router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
+  RequestValidation.validateDomain,
+  rewards.getAllRewardsForRedeem,
+  RedeemValidation.didUserWin,
+]);
 /* 
 -----------------------------------------------
 LAYOUT AND WIDGETS
