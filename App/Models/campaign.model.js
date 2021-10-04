@@ -13,6 +13,9 @@ const Campaign = function (campaign) {
   this.campaign_description = campaign.campaign_description;
   this.restrict_access_interval = campaign.restrict_access_interval;
   this.campaign_integrations = campaign.campaign_integrations;
+  this.background_image_url = campaign.background_image_url;
+  this.brush_image_url = campaign.brush_image_url;
+  this.primary_color = campaign.primary_color;
 };
 Campaign.flushCache = () => {
   console.log("FLUSHING ");
