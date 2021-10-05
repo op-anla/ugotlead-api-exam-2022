@@ -7,7 +7,6 @@ const EntryModel = function (entry) {
   this.player_id = entry.player_id;
   this.reward_id = entry.reward_id;
   this.entry_date = entry.entry_date;
-  this.has_played = entry.has_played;
 };
 EntryModel.findEntry = (log, result) => {
   console.log("🚀 ~ file: entry.model.js ~ line 14 ~ log", log);

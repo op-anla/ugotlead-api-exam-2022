@@ -41,7 +41,9 @@ app.use(bodyParser.json());
 app.use("/", router);
 // Router
 router.get("/test", (req, res) => {
-  res.write("<h1>Server is up and running! Make your requests</h1>");
+  res.write(
+    "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
+  );
   res.end();
 });
 /* 
@@ -240,6 +242,11 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   entry.createEntry,
   reward_meta.findRewardMetaForRewardInRedeemFlow,
   rewards.updateClaim,
+]);
+router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
+  RequestValidation.validateDomain,
+  rewards.getAllRewardsForRedeem,
+  RedeemValidation.didUserWinWithResponse,
 ]);
 /* 
 -----------------------------------------------
