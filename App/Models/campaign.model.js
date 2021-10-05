@@ -126,7 +126,7 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   });
 };
 const process = require("process");
-Campaign.findById = (campaignId) => {
+Campaign.findById = (campaignId, result) => {
   console.log("Testing some process", process.pid);
   console.log("this find is executed by PID: ", process.pid);
   sql.query(
