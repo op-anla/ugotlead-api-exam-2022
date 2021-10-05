@@ -76,6 +76,7 @@ exports.findOne = (req, res) => {
         });
       }
     } else {
+      console.log("Campaign.findById ~ data", data);
       res.status(200).send(data);
     }
   }).then((cache) => {
