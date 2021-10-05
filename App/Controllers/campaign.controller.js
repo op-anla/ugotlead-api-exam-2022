@@ -39,7 +39,7 @@ exports.findAll = (req, res) => {
           err.message || "Some error occurred while retrieving campaigns.",
       });
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 };
