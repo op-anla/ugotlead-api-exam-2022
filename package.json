@@ -4,7 +4,7 @@
   "description": "This is an Express Server created for UGOTLEAD Product",
   "main": "./cluster.js",
   "scripts": {
-    "start": "node ./express/server.js",
+    "start": "node cluster.js",
     "clusterStart": "node cluster.js",
     "dev": "nodemon cluster.js",
     "dev:nocluster": "nodemon ./express/server.js",
