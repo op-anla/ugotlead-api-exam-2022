@@ -79,13 +79,15 @@ exports.findOne = (req, res) => {
       console.log("Campaign.findById ~ data", data);
       res.status(200).send(data);
     }
-  }).then((cache) => {
-    console.log(
-      "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
-      cache
-    );
-    res.status(200).send(cache);
   });
+  // Removing cache
+  // .then((cache) => {
+  //   console.log(
+  //     "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
+  //     cache
+  //   );
+  //   res.status(200).send(cache);
+  // });
 };
 exports.flushAllCache = (res) => {
   Campaign.flushCache().then((resCode) => {
