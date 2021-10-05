@@ -41,7 +41,9 @@ app.use(bodyParser.json());
 app.use("/", router);
 // Router
 router.get("/test", (req, res) => {
-  res.write("<h1>Server is up and running! Make your requests</h1>");
+  res.write(
+    "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
+  );
   res.end();
 });
 /* 
