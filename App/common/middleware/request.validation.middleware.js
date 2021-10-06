@@ -9,6 +9,7 @@ exports.validateDomain = (req, res, next) => {
     host: ["127.0.0.1:3008", "app.ugotlead.dk/"],
     origin: [
       "http://127.0.0.1:3000",
+      "http://127.0.0.1:3005",
       "https://app.ugotlead.dk",
       "https://app.ugotlead.dk/",
     ],
