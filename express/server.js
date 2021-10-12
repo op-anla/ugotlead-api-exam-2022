@@ -217,7 +217,7 @@ router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
 
 /* 
 -----------------------------------------------
-LOGGGING 
+LOGGING 
 -----------------------------------------------
 */
 router.get(`/${apiUrl}/checklogging/:campaignId`, [

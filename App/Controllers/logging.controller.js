@@ -42,71 +42,92 @@ exports.findLogForUser = (req, res, next) => {
   });
 };
 
+//De mest forventede OS-typer, som tjekkes efter én for en
 osChecker = (ua) => {
-  //De mest forventede OS-typer, som tjekkes efter én for en
   console.log("🚀 ~ file: logging.controller.js ~ line 46 ~ ua", ua);
   let os = "Ukendt";
-
-  if (ua.includes("Windows NT")) {
-    os = "Windows";
-  } else if (ua.includes("Android")) {
-    os = "Android";
-  } else if (ua.includes("like Mac OS X")) {
-    os = "iOS";
-  } else if (ua.includes("Macintosh")) {
-    os = "Mac";
-  } else if (ua.includes("Linux")) {
-    os = "Linux";
+  try {
+    if (ua.includes("Windows NT")) {
+      os = "Windows";
+    } else if (ua.includes("Android")) {
+      os = "Android";
+    } else if (ua.includes("like Mac OS X")) {
+      os = "iOS";
+    } else if (ua.includes("Macintosh")) {
+      os = "Mac";
+    } else if (ua.includes("Linux")) {
+      os = "Linux";
+    }
+    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ osChecker", os);
+    return os;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ error", error);
   }
-  console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ os", os);
-  return os;
 };
 
+//De mest forventede device-typer, som tjekkes efter én for en
 deviceChecker = (ua) => {
-  //De mest forventede device-typer, som tjekkes efter én for en
   console.log("🚀 ~ file: logging.controller.js ~ line 50 ~ ua", ua);
   let deviceType = "Ukendt";
-
-  if (ua.includes("Windows NT")) {
-    deviceType = "Windows PC";
-  } else if (ua.includes("Macintosh; Intel Mac OS")) {
-    deviceType = "Mac";
-  } else if (ua.includes("Linux") && ua.includes("Android")) {
-    deviceType = "Android Tablet";
-  } else if (ua.includes("Android")) {
-    deviceType = "Android Mobil";
-  } else if (ua.includes("MobileSafari")) {
-    deviceType = "Apple iPhone";
-  } else if (ua.includes("CPU iPhone OS")) {
-    deviceType = "Apple iPhone";
-  } else if (ua.includes("iPad")) {
-    deviceType = "Apple iPad";
+  try {
+    if (ua.includes("Windows NT")) {
+      deviceType = "Windows PC";
+    } else if (ua.includes("Macintosh; Intel Mac OS")) {
+      deviceType = "Mac";
+    } else if (ua.includes("Linux") && ua.includes("Android")) {
+      //Før evt kontrol på denne.
+      deviceType = "Android Tablet";
+    } else if (ua.includes("Tablet") && ua.includes("Android")) {
+      deviceType = "Android Tablet";
+    } else if (ua.includes("Android")) {
+      deviceType = "Android Mobil";
+    } else if (ua.includes("MobileSafari")) {
+      deviceType = "Apple iPhone";
+    } else if (ua.includes("CPU iPhone OS")) {
+      deviceType = "Apple iPhone";
+    } else if (ua.includes("iPad")) {
+      deviceType = "Apple iPad";
+    }
+    console.log(
+      "🚀 ~ file: logging.controller.js ~ line 62 ~ deviceChecker",
+      deviceType
+    );
+    return deviceType;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 90 ~ error", error);
   }
-  console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ os", deviceType);
-  return deviceType;
 };
 
+//De mest forventede web browsers, som tjekkes efter én for en
 browserChecker = (ua) => {
-  //De mest forventede web browsers, som tjekkes efter én for en
   console.log("🚀 ~ file: logging.controller.js ~ line 54 ~ ua", ua);
   let browser = "Ukendt";
-
-  if (ua.includes("Firefox")) {
-    browser = "Mozilla Firefox";
-  } else if (ua.includes("Edg")) {
-    browser = "Microsoft Edge";
-  } else if (ua.includes("Chrome/") && ua.includes("Safari/")) {
-    browser = "Google Chrome";
-  } else if (ua.includes("Safari/")) {
-    browser = "Safari";
-  } else if (ua.includes("OPR/")) {
-    browser = "Opera";
-  } else if (ua.includes("MSIE") || ua.includes("WOW64")) {
-    browser = "Internet Explorer";
+  try {
+    if (ua.includes("Firefox")) {
+      browser = "Mozilla Firefox";
+    } else if (ua.includes("Edg")) {
+      browser = "Microsoft Edge";
+    } else if (ua.includes("MSIE")) {
+      browser = "Internet Explorer";
+    } else if (ua.includes("OPR")) {
+      browser = "Opera";
+    } else if (ua.includes("Chrome/") && ua.includes("Safari/")) {
+      browser = "Google Chrome";
+    } else if (ua.includes("Safari/")) {
+      browser = "Safari";
+    } else if (ua.includes("WOW64")) {
+      browser = "Internet Explorer";
+    } else if (ua.includes("PostmanRuntime")) {
+      browser = "Postman";
+    }
+    console.log(
+      "🚀 ~ file: logging.controller.js ~ line 62 ~ browserChecker",
+      browser
+    );
+    return browser;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 121 ~ error", error);
   }
-
-  console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ os", browser);
-  return browser;
 };
 
 exports.createLogForUser = (req, res) => {
