@@ -42,7 +42,7 @@ exports.findLogForUser = (req, res, next) => {
   });
 };
 
-//De mest forventede OS-typer, som tjekkes efter én for en
+//Operativ systemer
 osChecker = (ua) => {
   console.log("🚀 ~ file: logging.controller.js ~ line 46 ~ ua", ua);
   let os = "Ukendt";
@@ -65,25 +65,20 @@ osChecker = (ua) => {
   }
 };
 
-//De mest forventede device-typer, som tjekkes efter én for en
+//Devices
 deviceChecker = (ua) => {
   console.log("🚀 ~ file: logging.controller.js ~ line 50 ~ ua", ua);
   let deviceType = "Ukendt";
   try {
-    if (ua.includes("Windows NT")) {
+    if (ua.includes("Windows")) {
       deviceType = "Windows PC";
     } else if (ua.includes("Macintosh; Intel Mac OS")) {
       deviceType = "Mac";
-    } else if (ua.includes("Linux") && ua.includes("Android")) {
-      //Før evt kontrol på denne.
+    } else if (ua.includes("Android") && !ua.includes("Mobile")) {
       deviceType = "Android Tablet";
-    } else if (ua.includes("Tablet") && ua.includes("Android")) {
-      deviceType = "Android Tablet";
-    } else if (ua.includes("Android")) {
+    } else if (ua.includes("Android") && ua.includes("Mobile")) {
       deviceType = "Android Mobil";
-    } else if (ua.includes("MobileSafari")) {
-      deviceType = "Apple iPhone";
-    } else if (ua.includes("CPU iPhone OS")) {
+    } else if (ua.includes("iPhone")) {
       deviceType = "Apple iPhone";
     } else if (ua.includes("iPad")) {
       deviceType = "Apple iPad";
@@ -98,7 +93,7 @@ deviceChecker = (ua) => {
   }
 };
 
-//De mest forventede web browsers, som tjekkes efter én for en
+//Webbrowsers
 browserChecker = (ua) => {
   console.log("🚀 ~ file: logging.controller.js ~ line 54 ~ ua", ua);
   let browser = "Ukendt";
