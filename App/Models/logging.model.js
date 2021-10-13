@@ -9,6 +9,22 @@ const Logging = function (logging) {
   this.HTTP_USER_AGENT = logging.user_agent;
   this.timestamp = logging.timestamp;
 };
+Logging.getAllLogs = (result) => {
+  console.log("trying to get all logs in models");
+  sql.query("SELECT * FROM logs", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: logging.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    // Here we have the correct response
+    result(null, res);
+    console.log("🚀 ~ file: logging.model.js ~ line 33 ~ sql.query ~ res", res);
+  });
+};
 
 Logging.findLog = (campaignId, log, result) => {
   console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", log);
@@ -18,7 +34,7 @@ Logging.findLog = (campaignId, log, result) => {
     (err, res) => {
       if (err) {
         console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+          "🚀 ~ file: logging.model.js ~ line 31 ~ sql.query ~ err",
           err
         );
         result(err, null);

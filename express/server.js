@@ -28,6 +28,8 @@ const standard_layout = require("../App/Controllers/standard_layout.controller.j
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
 // const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
+const analytics = require("../App/Controllers/analytics.controller.js");
+
 // Middleware
 const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middleware");
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
@@ -60,7 +62,6 @@ https://expressjs.com/en/guide/routing.html
 CAMPAIGNS
 -----------------------------------------------
 */
-
 router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findAll,
@@ -218,7 +219,7 @@ router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
 
 /* 
 -----------------------------------------------
-LOGGGING 
+LOGGING 
 -----------------------------------------------
 */
 router.get(`/${apiUrl}/checklogging/:campaignId`, [
@@ -348,6 +349,28 @@ router.get(`/${apiUrl}/cache/flushall`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.flushAllCache,
 ]);
+/* 
+-----------------------------------------------
+Analytics
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/analytics/get-all-visitors`, [analytics.getAllVisitors]);
+router.get(`/${apiUrl}/analytics/get-all-leads`, [analytics.getAllLeads]);
+router.get(`/${apiUrl}/analytics/count-players`, [analytics.getCountPlayers]);
+router.get(`/${apiUrl}/analytics/get-all-rewards`, [analytics.getAllRewards]);
+router.get(`/${apiUrl}/analytics/get-all-campaigns`, [
+  analytics.getAllCampaigns,
+]);
+router.get(`/${apiUrl}/analytics/count-campaigns`, [
+  analytics.getCountCampaigns,
+]);
+router.get(`/${apiUrl}/analytics/get-all-companies`, [
+  analytics.getAllCompanies,
+]);
+router.get(`/${apiUrl}/analytics/count-companies`, [
+  analytics.getCountCompanies,
+]);
+router.get(`/${apiUrl}/analytics/top5`, [analytics.getTop5]);
 /* 
 -----------------------------------------------
 Create the server and export the app 
