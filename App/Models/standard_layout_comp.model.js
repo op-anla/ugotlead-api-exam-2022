@@ -1,6 +1,6 @@
 const sql = require("./db.js");
-var cluster = require("cluster");
-var myCache = require("cluster-node-cache")(cluster);
+// const cluster = require("cluster");
+// const myCache = require("cluster-node-cache")(cluster);
 
 // constructor
 const StandardLayoutCompModel = function (newStandardLayoutComp) {

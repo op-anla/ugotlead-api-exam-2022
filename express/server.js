@@ -4,9 +4,9 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
-var cors = require("cors");
+const cors = require("cors");
 const http = require("http");
-
+require("dotenv").config();
 /* 
 -----------------------------------------------
 CONTROLLERS
@@ -26,7 +26,7 @@ const AuthorizationController = require("../App/auth/controllers/authorization.c
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
-const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
+// const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
 const analytics = require("../App/Controllers/analytics.controller.js");
 
@@ -42,8 +42,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", router);
 // Router
-router.get("/", (req, res) => {
-  res.write("<h1>Server is up and running! Make your requests</h1>");
+router.get("/test", (req, res) => {
+  res.write(
+    "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
+  );
   res.end();
 });
 /* 
@@ -241,6 +243,11 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   entry.createEntry,
   reward_meta.findRewardMetaForRewardInRedeemFlow,
   rewards.updateClaim,
+]);
+router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
+  RequestValidation.validateDomain,
+  rewards.getAllRewardsForRedeem,
+  RedeemValidation.didUserWinWithResponse,
 ]);
 /* 
 -----------------------------------------------

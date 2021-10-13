@@ -13,7 +13,9 @@ exports.findOneCompany = (req, res) => {
           message: "Error retrieving company with id " + req.params.companyId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 
@@ -38,24 +40,28 @@ exports.create = (req, res) => {
 
   // Save company in the database
   Company.create(company, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the company.",
       });
-    else res.status(201).send(data);
+    } else {
+      res.status(201).send(data);
+    }
   });
 };
 
 exports.findAll = (req, res) => {
   console.log("find all companies");
   Company.getAll((err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving campaigns.",
       });
-    else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 
@@ -82,13 +88,16 @@ exports.update = (req, res) => {
             message: "Error updating company with id " + req.params.companyId,
           });
         }
-      } else res.send(data);
+      } else {
+        res.send(data);
+      }
     }
   );
 };
 // Delete Company
 exports.delete = (req, res) => {
   Company.remove(req.params.companyId, (err, data) => {
+    console.log("Company.remove ~ data", data);
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -99,9 +108,10 @@ exports.delete = (req, res) => {
           message: "Could not delete Company with id " + req.params.companyId,
         });
       }
-    } else
+    } else {
       res.send({
         message: `Company was deleted successfully!`,
       });
+    }
   });
 };

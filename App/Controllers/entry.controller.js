@@ -5,7 +5,7 @@ const EntryModel = require("../Models/entry.model");
 ENTRY
 -----------------------------------------------
 */
-exports.findEntryFromLog = (req, res, next) => {
+exports.findEntryFromLog = (req, res) => {
   console.log("Find entry from log id", req.body);
 
   EntryModel.findEntry(req.body.log_id, (err, data) => {
@@ -55,11 +55,11 @@ exports.createEntry = (req, res, next) => {
 
   // Save entry in db
   EntryModel.create(newEntry, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || "Some error occurred while creating the entry.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.locals.entryData = data;
       return next();

@@ -28,11 +28,13 @@ exports.createMail = (req, res) => {
 
   // Save Campaign in the database
   EmailModel.create(email, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || "Some error occurred while creating the email.",
       });
-    else res.status(201).send(data);
+    } else {
+      res.status(201).send(data);
+    }
   });
 };
 exports.updateMail = (req, res) => {
@@ -68,7 +70,9 @@ exports.updateMail = (req, res) => {
             "Error updating  email with campaign id " + email.campaign_id,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 exports.getEmailInfoForCampaign = (req, res) => {
@@ -83,7 +87,9 @@ exports.getEmailInfoForCampaign = (req, res) => {
           message: "Error retrieving campaign with id " + req.params.campaignId,
         });
       }
-    } else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 exports.sendTest = (req, res) => {
@@ -103,9 +109,15 @@ exports.sendTest = (req, res) => {
     `;
     let subject = "UGOTLEAD - Gamification Product - Mail";
     // Setting the values to the req.body values if they exists
-    if (req.body.mailInfo.to !== "") toMail = req.body.mailInfo.to;
-    if (req.body.mailInfo.content !== "") content = req.body.mailInfo.content;
-    if (req.body.mailInfo.subject !== "") subject = req.body.mailInfo.subject;
+    if (req.body.mailInfo.to !== "") {
+      toMail = req.body.mailInfo.to;
+    }
+    if (req.body.mailInfo.content !== "") {
+      content = req.body.mailInfo.content;
+    }
+    if (req.body.mailInfo.subject !== "") {
+      subject = req.body.mailInfo.subject;
+    }
     console.log("Lets send the mail with these params", toMail, content);
     mailSetup.sendMail(
       {
@@ -123,9 +135,11 @@ exports.sendTest = (req, res) => {
 
   sendTest()
     .then((data) => {
+      console.log(".then ~ data", data);
       return res.status(200).send("Working");
     })
     .catch((e) => {
+      console.log("e", e);
       return res.status(400).send("Didn't work");
     });
 };
@@ -176,17 +190,21 @@ exports.sendUserEmailForPlaying = (req, res) => {
     if (didUserWin) {
       sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
         .then((data) => {
+          console.log(".then ~ data", data);
           return res.status(200).send("working");
         })
         .catch((e) => {
+          console.log("sendEmail ~ e", e);
           return res.status(400).send("Didn't work");
         });
     } else {
       sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
         .then((data) => {
+          console.log(".then ~ data", data);
           return res.status(200).send("working");
         })
         .catch((e) => {
+          console.log("sendEmail ~ e", e);
           return res.status(400).send("Didn't work");
         });
     }
@@ -274,15 +292,16 @@ exports.sendUserEmailForPlaying = (req, res) => {
     // We send a winner mail here
   }
   function validateContent(userEmail, userName, reward, emailInfo, didUserWin) {
-    return new Promise((resolve, reject) => {
+    console.log("validateContent ~ userEmail", userEmail);
+    return new Promise((resolve) => {
       console.log("We will validate this", emailInfo);
-
+      let content;
       if (didUserWin) {
         // We know the function was called from "Sendwinnermail"
-        var content = emailInfo.email_win_text;
+        content = emailInfo.email_win_text;
       } else {
         // We know the function was called from SendLoserMail
-        var content = emailInfo.email_consolation_text;
+        content = emailInfo.email_consolation_text;
       }
       // We now have the content we need
       console.log("what is the content for this specific case", content);

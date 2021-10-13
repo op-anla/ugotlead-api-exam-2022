@@ -9,11 +9,13 @@ LAYOUTWIDGET
 exports.findAllWidgets = (req, res) => {
   console.log("find all");
   LayoutWidgetModel.getAll((err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving widgets.",
       });
-    else res.send(data);
+    } else {
+      res.send(data);
+    }
   });
 };
 exports.createwidget = (req, res) => {
@@ -30,12 +32,12 @@ exports.createwidget = (req, res) => {
 
   // Save layout widget in db
   LayoutWidgetModel.create(newWidget, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the widget.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.status(201).send({
         message: "Added widget",
@@ -61,6 +63,7 @@ exports.updateWidget = (req, res) => {
     req.params.widgetId,
     new LayoutWidgetModel(req.body),
     (err, data) => {
+      console.log("data", data);
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -79,6 +82,7 @@ exports.updateWidget = (req, res) => {
 // Delete campaign
 exports.deleteSelectedWidget = (req, res) => {
   LayoutWidgetModel.remove(req.params.widgetId, (err, data) => {
+    console.log("LayoutWidgetModel.remove ~ data", data);
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -89,9 +93,10 @@ exports.deleteSelectedWidget = (req, res) => {
           message: "Could not delete Widget with id " + req.params.widgetId,
         });
       }
-    } else
+    } else {
       res.send({
         message: `Widget was deleted successfully!`,
       });
+    }
   });
 };

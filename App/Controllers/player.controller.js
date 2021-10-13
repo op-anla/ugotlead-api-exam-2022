@@ -19,12 +19,12 @@ exports.createPlayer = (req, res) => {
 
   // Save player in the database
   Player.create(newPlayer, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the player.",
       });
-    else {
+    } else {
       console.log("DATA IN LOG", data);
       res.status(201).send(data);
     }

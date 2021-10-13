@@ -65,7 +65,9 @@ exports.deleteById = (req, res) => {
           message: "Could not delete Reward with id " + req.params.reward_id,
         });
       }
-    } else res.status(200).send(data);
+    } else {
+      res.status(200).send(data);
+    }
   });
 };
 // Create and Save a new reward
@@ -94,12 +96,12 @@ exports.create = (req, res, next) => {
 
   // Save reward in the database
   Rewards.create(rewardVar, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the reward.",
       });
-    else {
+    } else {
       console.log("DATA", data);
       /* 
       We first make the reward in the database and then we create the reward meta in the database using next. 
@@ -130,7 +132,9 @@ exports.updateClaim = (req, res) => {
     //  User did not win
     res.locals.redeemInfo = {
       won: res.locals.redeemInfo.won,
-      reward: res.locals.redeemInfo.data,
+      data: {
+        reward: res.locals.redeemInfo.data,
+      },
     };
     return res.status(200).send(res.locals.redeemInfo);
   }
@@ -142,7 +146,7 @@ exports.updateClaim = (req, res) => {
   }
   Rewards.updateClaimedProp(
     res.locals.redeemInfo.data.reward.reward_id,
-    (err, data) => {
+    (err) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -156,7 +160,9 @@ exports.updateClaim = (req, res) => {
       } else {
         res.locals.redeemInfo = {
           won: res.locals.redeemInfo.won,
-          reward: res.locals.redeemInfo.data,
+          data: {
+            reward: res.locals.redeemInfo.data,
+          },
         };
         return res.status(200).send(res.locals.redeemInfo);
       }
@@ -178,7 +184,7 @@ exports.updateById = (req, res, next) => {
   Rewards.updateById(
     req.params.reward_id,
     new Rewards(req.body.reward),
-    (err, data) => {
+    (err) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -189,7 +195,9 @@ exports.updateById = (req, res, next) => {
             message: "Error updating reward with id " + req.params.reward_id,
           });
         }
-      } else return next();
+      } else {
+        return next();
+      }
     }
   );
 };
