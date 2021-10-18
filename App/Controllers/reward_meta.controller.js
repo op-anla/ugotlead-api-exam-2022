@@ -9,15 +9,15 @@ exports.create = (req, res) => {
   }
   console.log(
     "🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs",
-    req.body.reward_meta
+    res.locals.reward_meta
   );
 
   // Create a reward meta
   const newRewardMeta = new RewardMeta({
-    reward_id: req.body.reward_meta.reward_id,
-    reward_redeem_info: req.body.reward_meta.reward_redeem_info,
+    reward_id: res.locals.reward_meta.reward_id,
+    reward_redeem_info: res.locals.reward_meta.reward_redeem_info,
     reward_email_notification_info:
-      req.body.reward_meta.reward_email_notification_info,
+      res.locals.reward_meta.reward_email_notification_info,
   });
 
   // Save reward meta in the database
@@ -48,25 +48,21 @@ exports.updateById = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(
-    "Update reward meta id by id = ",
-    req.body.reward_meta.reward_meta_data_id,
-    req.body.reward_meta
-  );
+  console.log("Update reward meta id by id = ", req.body.reward_meta);
   RewardMeta.updateById(
-    req.body.reward_meta.reward_meta_data_id,
+    req.body.reward.reward_id,
     new RewardMeta(req.body.reward_meta),
     (err) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found reward_meta with id ${req.body.reward_meta.reward_meta_data_id}.`,
+            message: `Not found reward_meta with id ${req.body.reward_meta.reward_id}.`,
           });
         } else {
           res.status(500).send({
             message:
               "Error updating reward_meta with id " +
-              req.body.reward_meta.reward_meta_data_id,
+              req.body.reward_meta.reward_id,
           });
         }
       } else {

@@ -12,7 +12,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
   console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", rewardMeta);
 
   sql.query(
-    "UPDATE reward_meta_data SET  ? WHERE reward_meta_data_id = ?",
+    "UPDATE reward_meta_data SET  ? WHERE reward_id = ?",
     [rewardMeta, id],
     (err, res) => {
       if (err) {
