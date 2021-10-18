@@ -6,9 +6,11 @@ exports.validateDomain = (req, res, next) => {
     return next();
   }
   const acceptedVariables = {
-    host: ["127.0.0.1:3008", "app.ugotlead.dk/"],
+    host: ["127.0.0.1:3008", "app.ugotlead.dk/", "127.0.0.1:3000"],
     origin: [
       "http://127.0.0.1:3000",
+      "localhost:3000",
+      "http://localhost:3000",
       "http://127.0.0.1:3005",
       "https://app.ugotlead.dk",
       "https://app.ugotlead.dk/",
