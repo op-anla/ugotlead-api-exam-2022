@@ -7,12 +7,8 @@ LOGGING
 */
 
 exports.findLogForUser = (req, res, next) => {
-  console.log("FIND USER IN LOGGING", req.headers["user-agent"]);
-  const user_agent = req.headers["user-agent"];
-  const log = {
-    user_agent: user_agent,
-  };
-  Logging.findLog(req.params.campaignId, log, (err, data) => {
+  console.log("FIND USER IN LOGGING", req.params.session_id);
+  Logging.findLog(req.params.campaignId, req.params.session_id, (err, data) => {
     console.log(
       "🚀 ~ file: logging.controller.js ~ line 17 ~ Logging.findLog ~ err",
       err,
@@ -130,7 +126,8 @@ browserChecker = (ua) => {
 exports.createLogForUser = (req, res) => {
   console.log(
     "🚀 ~ file: logging.controller.js ~ line 5 ~ reqs CREATE LOG FOR USER",
-    req.headers
+    req.headers,
+    req.body
   );
   const _user_agent = req.headers["user-agent"];
 
@@ -149,6 +146,7 @@ exports.createLogForUser = (req, res) => {
     browser: _browser,
     user_agent: _user_agent,
     timestamp: today,
+    SESSION_ID: req.body.session_id,
   });
 
   // Save reward in the database

@@ -8,6 +8,7 @@ const Logging = function (logging) {
   this.browser = logging.browser;
   this.HTTP_USER_AGENT = logging.user_agent;
   this.timestamp = logging.timestamp;
+  this.SESSION_ID = logging.SESSION_ID;
 };
 Logging.getAllLogs = (result) => {
   console.log("trying to get all logs in models");
@@ -26,11 +27,11 @@ Logging.getAllLogs = (result) => {
   });
 };
 
-Logging.findLog = (campaignId, log, result) => {
-  console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", log);
+Logging.findLog = (campaignId, session_id, result) => {
+  console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", session_id);
   sql.query(
-    `SELECT * FROM logs WHERE (campaign_id = ? AND HTTP_USER_AGENT = ?)`,
-    [campaignId, null],
+    `SELECT * FROM logs WHERE (campaign_id = ? AND SESSION_ID = ?)`,
+    [campaignId, session_id],
     (err, res) => {
       if (err) {
         console.log(

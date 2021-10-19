@@ -18,6 +18,7 @@ exports.validateDomain = (req, res, next) => {
   };
   if (acceptedVariables.host.includes(req.headers.host)) {
     console.log("Accepted host");
+    return next();
     if (acceptedVariables.origin.includes(req.headers.origin)) {
       console.log("Accepted origin");
       return next();

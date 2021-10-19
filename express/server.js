@@ -222,7 +222,7 @@ router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
 LOGGING 
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/checklogging/:campaignId`, [
+router.get(`/${apiUrl}/checklogging/:campaignId/:session_id`, [
   RequestValidation.validateDomain,
   logging.findLogForUser,
   entry.findEntryFromLog,
