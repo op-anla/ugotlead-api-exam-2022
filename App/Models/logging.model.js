@@ -70,12 +70,12 @@ Logging.create = (newLog, result) => {
     }
 
     console.log("created log: ", {
-      id: res.insertId,
+      log_id: res.insertId,
       ...newLog,
     });
 
     result(null, {
-      id: res.insertId,
+      log_id: res.insertId,
       ...newLog,
     });
   });
