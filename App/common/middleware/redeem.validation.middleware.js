@@ -1,5 +1,5 @@
 exports.didUserWin = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards);
+  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
