@@ -20,7 +20,7 @@ exports.findLogForUser = (req, res, next) => {
       We will send back 404 with level of log
       */
       if (err.kind === "not_found") {
-        res.status(404).send({
+        res.status(200).send({
           message: err.kind,
           level: "log",
         });
@@ -29,10 +29,10 @@ exports.findLogForUser = (req, res, next) => {
       If the user however is in the logging we want to make sure the user has not yet made any entries
       */
     } else {
-      req.body = data;
+      res.locals.loggingData = data;
       // If the data is an array we just take the first one and send that
       if (data.length) {
-        req.body = data[0];
+        res.locals.loggingData = data[0];
       }
 
       return next();

@@ -6,9 +6,9 @@ ENTRY
 -----------------------------------------------
 */
 exports.findEntryFromLog = (req, res) => {
-  console.log("Find entry from log id", req.body);
+  console.log("Find entry from log id", res.locals.loggingData);
 
-  EntryModel.findEntry(req.body.log_id, (err, data) => {
+  EntryModel.findEntry(res.locals.loggingData.log_id, (err, data) => {
     if (err) {
       /* 
       If the entry is not found we will return 404 with a level of entry
@@ -18,17 +18,17 @@ exports.findEntryFromLog = (req, res) => {
       as a "correct" response object that will be used to advance the user in the flow.
       */
       if (err.kind === "not_found") {
-        res.status(404).send({
+        res.status(200).send({
           message: err.kind,
           level: "entry",
-          log: req.body,
+          log: res.locals.loggingData,
         });
       }
       /* 
       If the user however is in the entry we will refuse the user from playing
       */
     } else {
-      res.status(200).send(data);
+      res.status(401).send(data);
     }
   });
 };
