@@ -189,25 +189,9 @@ exports.sendUserEmailForPlaying = (req, res) => {
       reward
     );
     if (didUserWin) {
-      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
-        .then((data) => {
-          console.log(".then ~ data", data);
-          return res.status(200).send("working");
-        })
-        .catch((e) => {
-          console.log("sendEmail ~ e", e);
-          return res.status(400).send("Didn't work");
-        });
+      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
     } else {
-      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
-        .then((data) => {
-          console.log(".then ~ data", data);
-          return res.status(200).send("working");
-        })
-        .catch((e) => {
-          console.log("sendEmail ~ e", e);
-          return res.status(400).send("Didn't work");
-        });
+      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
     }
   }
 
@@ -230,28 +214,35 @@ exports.sendUserEmailForPlaying = (req, res) => {
     /* 
     We need to validate the emailinfo since we need some logo and other stuff
     */
-
-    validateContent(userEmail, userName, reward, emailInfo, didUserWin)
-      .then((formattedContent) => {
-        mailSetup.sendMail(
-          {
-            from: "no-reply@ugotlead.dk",
-            to: userEmail,
-            subject: subject,
-            html: formattedContent,
-          },
-          (err, info) => {
-            if (err) {
-              console.log(err);
-              // Error
-            } else {
-              console.log(info);
-              return res.status(200).send();
-            }
-          }
-        );
-      })
-      .catch(() => {});
+    // Validate now
+    let payload = {
+      userEmail,
+      userName,
+      reward,
+      emailInfo,
+      didUserWin,
+    };
+    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+    console.log("replaceContent", replaceContent);
+    // We send a winner mail here
+    mailSetup.sendMail(
+      {
+        from: "no-reply@ugotlead.dk",
+        to: userEmail,
+        subject: subject,
+        html: replaceContent,
+      },
+      (err, info) => {
+        if (err) {
+          console.log(err);
+          return res.status(400).send();
+          // Error
+        } else {
+          console.log(info);
+          return res.status(200).send();
+        }
+      }
+    );
   }
   async function sendLoserMail(
     userEmail,
@@ -268,90 +259,35 @@ exports.sendUserEmailForPlaying = (req, res) => {
       emailInfo
     );
     let subject = "Du vandt desværre ikke...";
-    validateContent(userEmail, userName, reward, emailInfo, didUserWin)
-      .then((formattedContent) => {
-        console.log(".then ~ formattedContent", formattedContent);
-        mailSetup.sendMail(
-          {
-            from: "no-reply@ugotlead.dk",
-            to: userEmail,
-            subject: subject,
-            html: formattedContent,
-          },
-          (err, info) => {
-            if (err) {
-              console.log(err);
-              // Error
-            } else {
-              console.log(info);
-              return res.status(200).send();
-            }
-          }
-        );
-      })
-      .catch(() => {});
+    // Validate now
+    let payload = {
+      userEmail,
+      userName,
+      reward,
+      emailInfo,
+      didUserWin,
+    };
+    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+    console.log("replaceContent", replaceContent);
     // We send a winner mail here
-  }
-  function validateContent(userEmail, userName, reward, emailInfo, didUserWin) {
-    console.log("validateContent ~ userEmail", userEmail);
-    console.log("Tag bank", TAG_BANK);
-    return new Promise((resolve) => {
-      console.log("We will validate this", emailInfo);
-      let content;
-      if (didUserWin) {
-        // We know the function was called from "Sendwinnermail"
-        content = emailInfo.email_win_text;
-      } else {
-        // We know the function was called from SendLoserMail
-        content = emailInfo.email_consolation_text;
+    mailSetup.sendMail(
+      {
+        from: "no-reply@ugotlead.dk",
+        to: userEmail,
+        subject: subject,
+        html: replaceContent,
+      },
+      (err, info) => {
+        if (err) {
+          console.log(err);
+          return res.status(400).send();
+          // Error
+        } else {
+          console.log(info);
+          return res.status(200).send();
+        }
       }
-      // We now have the content we need
-      console.log("what is the content for this specific case", content);
-
-      /* 
-      TAG BANK
-      */
-      console.log("Tag bank", TAG_BANK);
-      const tags = {
-        tag_username: "user_name",
-        tag_reward: "reward",
-      };
-      /* 
-    -------------
-    */
-      if (foundTags.length) {
-        // We actually found some tags
-        let formattedContent = content;
-        foundTags.forEach((tag) => {
-          if (tag.includes(tags.tag_username)) {
-            // Username check
-            formattedContent = formattedContent.replace(
-              `{{${tags.tag_username}}}`,
-              userName
-            );
-          }
-          if (tag.includes(tags.tag_reward)) {
-            // Reward check
-            let rewardContent = `
-              <h3>Gevinst detaljer:<h3><br>
-              <strong>Gevinst navn: ${reward.reward.reward_name}</strong>
-              `;
-
-            formattedContent = formattedContent.replace(
-              `{{${tags.tag_reward}}}`,
-              rewardContent
-            );
-          }
-          // We also need to change data that is not correctly aligned with the syntax we use
-          formattedContent = formattedContent.replace(tag, "undefined");
-        });
-        console.log("returnnewPromise ~ formattedContent", formattedContent);
-        resolve(formattedContent);
-      } else {
-        // Didn't find any tags so just return it
-        resolve(content);
-      }
-    });
+    );
   }
 };
 exports.sendUserEmailForPlayingTESTING = (req, res) => {
@@ -359,12 +295,7 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
   We will first get the email information from the database.
   We use this to generate the different emails.
   */
-  console.log(
-    "The user has played, so let's see the data of testing endpoint",
-    req.body
-  );
   let campaignId = req.body.payload.campaignInfo.campaign_id;
-  console.log("campaignId", campaignId);
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -385,7 +316,6 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
   Now we have campaignid and emailinfo
   */
   async function sendEmail() {
-    console.log("let's see emailinfo ", res.locals.emailInfo);
     let emailInfo = res.locals.emailInfo;
     let toUserMail = "anla@onlineplus.dk";
     let toUserName = "Andreas Lagoni";
@@ -402,33 +332,13 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
       reward
     );
     if (didUserWin) {
-      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
-        .then((data) => {
-          return res.status(200).send("working");
-        })
-        .catch((e) => {
-          console.log("sendEmail ~ e", e);
-          return res.status(400).send("Didn't work");
-        });
+      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
     } else {
-      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin)
-        .then((data) => {
-          return res.status(200).send("working");
-        })
-        .catch((e) => {
-          console.log("sendEmail ~ e", e);
-          return res.status(400).send("Didn't work");
-        });
+      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
     }
   }
 
-  async function sendWinnerMail(
-    userEmail,
-    userName,
-    reward,
-    emailInfo,
-    didUserWin
-  ) {
+  function sendWinnerMail(userEmail, userName, reward, emailInfo, didUserWin) {
     console.log(
       "sendWinnerMail ~ userEmail, userName, reward, emailInfo",
       userEmail,
@@ -441,137 +351,65 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
     /* 
     We need to validate the emailinfo since we need some logo and other stuff
     */
-
-    return validateContent(userEmail, userName, reward, emailInfo, didUserWin)
-      .then((formattedContent) => {
-        mailSetup.sendMail(
-          {
-            from: "no-reply@ugotlead.dk",
-            to: userEmail,
-            subject: subject,
-            html: formattedContent,
-          },
-          (err, info) => {
-            if (err) {
-              console.log(err);
-              // Error
-            } else {
-              console.log(info);
-              return res.status(200).send();
-            }
-          }
-        );
-      })
-      .catch((e) => {
-        return e;
-      });
-  }
-  async function sendLoserMail(
-    userEmail,
-    userName,
-    reward,
-    emailInfo,
-    didUserWin
-  ) {
-    console.log(
-      "sendLoserMail ~ userEmail, userName, reward, emailInfo",
+    // Validate now
+    let payload = {
       userEmail,
       userName,
       reward,
-      emailInfo
-    );
-    let subject = "Du vandt desværre ikke...";
-    validateContent(userEmail, userName, reward, emailInfo, didUserWin)
-      .then((formattedContent) => {
-        console.log(".then ~ formattedContent", formattedContent);
-        mailSetup.sendMail(
-          {
-            from: "no-reply@ugotlead.dk",
-            to: userEmail,
-            subject: subject,
-            html: formattedContent,
-          },
-          (err, info) => {
-            if (err) {
-              console.log(err);
-              // Error
-            } else {
-              console.log(info);
-              return res.status(200).send();
-            }
-          }
-        );
-      })
-      .catch(() => {});
-    // We send a winner mail here
-  }
-  function validateContent(userEmail, userName, reward, emailInfo, didUserWin) {
-    return new Promise((resolve) => {
-      console.log("We will validate this", emailInfo);
-      let content;
-      if (didUserWin) {
-        // We know the function was called from "Sendwinnermail"
-        content = emailInfo.email_win_text;
-      } else {
-        // We know the function was called from SendLoserMail
-        content = emailInfo.email_consolation_text;
-      }
-      // We now have the content we need
-      console.log("what is the content for this specific case", content);
-      // Validate now
-      let payload = {
-        userEmail,
-        userName,
-        reward,
-        emailInfo,
-      };
-      let tags_content = dynamic_tag_handling.returnDynamicContent(
-        content,
-        payload
-      );
-      console.log("returnnewPromise ~ tags_content", tags_content);
-      /* 
-      TAG BANK
-      */
-      const tags = {
-        tag_username: "user_name",
-        tag_reward: "reward",
-      };
-      /* 
-    -------------
-    */
-      if (foundTags.length) {
-        // We actually found some tags
-        let formattedContent = content;
-        foundTags.forEach((tag) => {
-          if (tag.includes(tags.tag_username)) {
-            // Username check
-            formattedContent = formattedContent.replace(
-              `{{${tags.tag_username}}}`,
-              userName
-            );
-          }
-          if (tag.includes(tags.tag_reward)) {
-            // Reward check
-            let rewardContent = `
-              <h3>Gevinst detaljer:<h3><br>
-              <strong>Gevinst navn: ${reward.reward_name}</strong>
-              `;
+      emailInfo,
+      didUserWin,
+    };
+    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+    console.log("replaceContent", replaceContent);
 
-            formattedContent = formattedContent.replace(
-              `{{${tags.tag_reward}}}`,
-              rewardContent
-            );
-          }
-          // We also need to change data that is not correctly aligned with the syntax we use
-          formattedContent = formattedContent.replace(tag, "undefined");
-        });
-        console.log("returnnewPromise ~ formattedContent", formattedContent);
-        resolve(formattedContent);
-      } else {
-        // Didn't find any tags so just return it
-        resolve(content);
+    mailSetup.sendMail(
+      {
+        from: "no-reply@ugotlead.dk",
+        to: userEmail,
+        subject: subject,
+        html: replaceContent,
+      },
+      (err, info) => {
+        if (err) {
+          console.log(err);
+          return res.status(400).send();
+          // Error
+        } else {
+          console.log(info);
+          return res.status(200).send();
+        }
       }
-    });
+    );
+  }
+  function sendLoserMail(userEmail, userName, reward, emailInfo, didUserWin) {
+    let subject = "Du vandt desværre ikke...";
+    // Validate now
+    let payload = {
+      userEmail,
+      userName,
+      reward,
+      emailInfo,
+      didUserWin,
+    };
+    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+    console.log("replaceContent", replaceContent);
+
+    mailSetup.sendMail(
+      {
+        from: "no-reply@ugotlead.dk",
+        to: userEmail,
+        subject: subject,
+        html: replaceContent,
+      },
+      (err, info) => {
+        if (err) {
+          console.log(err);
+          // Error
+        } else {
+          console.log(info);
+          return res.status(200).send();
+        }
+      }
+    );
   }
 };

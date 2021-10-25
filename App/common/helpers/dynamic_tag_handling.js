@@ -1,31 +1,36 @@
-const TAG_BANK = require("./TAG_BANK.json");
-
 module.exports = {
-  returnDynamicContent: function (contentToMatch) {
+  returnDynamicContent: function (payload) {
+    let content;
+    if (payload.didUserWin) {
+      // We know the function was called from "Sendwinnermail"
+      content = payload.emailInfo.email_win_text;
+    } else {
+      // We know the function was called from SendLoserMail
+      content = payload.emailInfo.email_consolation_text;
+    }
     let regex = /\{{(.*?)\}}/g;
-    let foundTags = contentToMatch.match(regex);
-    console.log("TAG_BANK", TAG_BANK, foundTags);
+    let foundTags = content.match(regex);
 
     if (Array.isArray(foundTags) && foundTags.length) {
       // We actually found some tags
-      let formattedArray = [];
       foundTags.forEach((tag) => {
-        console.log("foundTags.forEach ~ tag", tag);
-        if (typeof TAG_BANK[tag] === "object") {
-          //   Found a tag
-          formattedArray.push(TAG_BANK[tag].replaceWith);
+        if (tag.includes("user_name")) {
+          // Username check
+          content = content.replace(`{{user_name}}`, payload.userName);
+        }
+        if (tag.includes("reward")) {
+          // Reward check
+          let rewardContent = `
+          <h3>Gevinst detaljer:</h3><br>
+          <strong>Gevinst navn: ${payload.reward.reward_name}</strong>
+          `;
+
+          content = content.replace(`{{reward}}`, rewardContent);
         }
       });
-      module.exports.returnFormattedContentFromDynamic(formattedArray);
-      return formattedArray;
+      return content;
     } else {
       return null;
     }
-  },
-  returnFormattedContentFromDynamic: function (
-    contentToMatch,
-    contentToReplaceWith
-  ) {
-    console.log("contentToMatch", contentToMatch);
   },
 };
