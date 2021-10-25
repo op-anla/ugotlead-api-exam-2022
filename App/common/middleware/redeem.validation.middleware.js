@@ -133,48 +133,47 @@ exports.didUserWinWithResponse = (req, res, next) => {
       return res.status(200).send(res.locals.redeemInfo);
     }
   });
-  // Checking automatic winning percentage
-  // Here we use automatic percentage to calculate winning
-  let baseNum = Math.random() * 100;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
-    baseNum
-  );
-  let testPercentage = 100 - 30;
-  let basePercentage = 100 - percentOfWinning;
-  console.log(
-    "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
-    basePercentage
-  );
-
-  //   Test percentage
-  // Comment for not testing
-  if (baseNum >= basePercentage) {
-    let randomRewardToPick =
-      viableRewards[Math.floor(Math.random() * viableRewards.length)];
-
-    console.log("USER WON");
-    // User won
-    didUserWin = true;
-    res.locals.redeemInfo = {
-      won: true,
-      data: {
-        reward: randomRewardToPick,
-      },
-    };
-    return res.status(200).send(res.locals.redeemInfo);
-  } else {
-    console.log("User did not win!");
-  }
-  // Since there is no async code inside foreach it will be syncronous - meaning code after here runs after foreach
   if (!didUserWin) {
-    // User lost
-    res.locals.redeemInfo = {
-      won: false,
-      data: {
-        reward: lost_reward[0],
-      },
-    };
-    return res.status(200).send(res.locals.redeemInfo);
+    // Checking automatic winning percentage
+    // Here we use automatic percentage to calculate winning
+    let baseNum = Math.random() * 100;
+    console.log(
+      "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
+      baseNum
+    );
+    let testPercentage = 100 - 30;
+    let basePercentage = 100 - percentOfWinning;
+    console.log(
+      "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
+      basePercentage
+    );
+
+    //   Test percentage
+    // Comment for not testing
+    if (baseNum >= basePercentage) {
+      let randomRewardToPick =
+        viableRewards[Math.floor(Math.random() * viableRewards.length)];
+
+      console.log("USER WON");
+      // User won
+      didUserWin = true;
+      res.locals.redeemInfo = {
+        won: true,
+        data: {
+          reward: randomRewardToPick,
+        },
+      };
+      return res.status(200).send(res.locals.redeemInfo);
+    } else {
+      console.log("User did not win!");
+      // User lost
+      res.locals.redeemInfo = {
+        won: false,
+        data: {
+          reward: lost_reward[0],
+        },
+      };
+      return res.status(200).send(res.locals.redeemInfo);
+    }
   }
 };
