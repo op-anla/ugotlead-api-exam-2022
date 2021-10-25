@@ -330,7 +330,12 @@ router.post(`/${apiUrl}/email/sendtest`, [
   email.sendTest,
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
+  RequestValidation.validateDomain,
   email.sendUserEmailForPlaying,
+]);
+router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
+  RequestValidation.validateDomain,
+  email.sendUserEmailForPlayingTESTING,
 ]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,
