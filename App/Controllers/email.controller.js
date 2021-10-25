@@ -2,9 +2,7 @@
 const mailSetup = require("../Models/emailsetup");
 const EmailModel = require("../Models/emails.model");
 
-const {
-  returnDynamicContent,
-} = require("../common/helpers/dynamic_tag_handling");
+const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
 exports.createMail = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -309,10 +307,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
       }
       // We now have the content we need
       console.log("what is the content for this specific case", content);
-      // Validate now
-      let regex = /\{{(.*?)\}}/g;
-      let foundTags = content.match(regex);
-      console.log("returnnewPromise ~ foundTags", foundTags);
+
       /* 
       TAG BANK
       */
@@ -368,7 +363,6 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
     "The user has played, so let's see the data of testing endpoint",
     req.body
   );
-  console.log("sadjawndawj", returnDynamicContent());
   let campaignId = req.body.payload.campaignInfo.campaign_id;
   console.log("campaignId", campaignId);
   EmailModel.findById(campaignId, (err, data) => {
@@ -512,7 +506,6 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
     // We send a winner mail here
   }
   function validateContent(userEmail, userName, reward, emailInfo, didUserWin) {
-    console.log("validateContent ~ userEmail", userEmail);
     return new Promise((resolve) => {
       console.log("We will validate this", emailInfo);
       let content;
@@ -526,9 +519,17 @@ exports.sendUserEmailForPlayingTESTING = (req, res) => {
       // We now have the content we need
       console.log("what is the content for this specific case", content);
       // Validate now
-      let regex = /\{{(.*?)\}}/g;
-      let foundTags = content.match(regex);
-      console.log("returnnewPromise ~ foundTags", foundTags);
+      let payload = {
+        userEmail,
+        userName,
+        reward,
+        emailInfo,
+      };
+      let tags_content = dynamic_tag_handling.returnDynamicContent(
+        content,
+        payload
+      );
+      console.log("returnnewPromise ~ tags_content", tags_content);
       /* 
       TAG BANK
       */

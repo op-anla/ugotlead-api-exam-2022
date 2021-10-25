@@ -1,4 +1,8 @@
 {
-    "tag_username": "user_name",
-    "tag_reward": "reward"
+    "{{user_name}}": {
+        "replaceWith": ""
+    },
+    "{{reward}}": {
+        "replaceWith": "<h3>Gevinst detaljer:</h3><br><strong>Gevinst navn: ${reward.reward_name}</strong>"
+    }
 }
