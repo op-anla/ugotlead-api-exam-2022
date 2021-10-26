@@ -21,7 +21,6 @@ module.exports = {
         if (tag.includes("reward")) {
           // Reward check
           let rewardContent = `
-          <h3>Gevinst detaljer:</h3><br>
           <strong>Gevinst navn: ${payload.reward.reward_name}</strong>
           `;
 
