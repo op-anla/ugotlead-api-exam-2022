@@ -331,11 +331,11 @@ router.post(`/${apiUrl}/email/sendtest`, [
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   RequestValidation.validateDomain,
-  email.sendUserEmailForPlaying,
+  email.sendEmailToOperators,
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
   RequestValidation.validateDomain,
-  email.sendUserEmailForPlayingTESTING,
+  email.sendEmailToOperatorsForTesting,
 ]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,

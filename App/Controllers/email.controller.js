@@ -144,7 +144,7 @@ exports.sendTest = (req, res) => {
       return res.status(400).send("Didn't work");
     });
 };
-exports.sendUserEmailForPlaying = (req, res) => {
+exports.sendEmailToOperators = (req, res) => {
   /* 
   We will first get the email information from the database.
   We use this to generate the different emails.
@@ -290,7 +290,7 @@ exports.sendUserEmailForPlaying = (req, res) => {
     );
   }
 };
-exports.sendUserEmailForPlayingTESTING = (req, res) => {
+exports.sendEmailToOperatorsForTesting = (req, res) => {
   /* 
   We will first get the email information from the database.
   We use this to generate the different emails.
