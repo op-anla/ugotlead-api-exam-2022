@@ -60,6 +60,9 @@ exports.updateMail = (req, res) => {
     email_custom_css: req.body.email_custom_css
       ? req.body.email_custom_css
       : "",
+    email_admin_text: req.body.emails.admin_email.content
+      ? req.body.emails.admin_email.content
+      : "",
   });
   EmailModel.updateById(email.campaign_id, email, (err, data) => {
     if (err) {

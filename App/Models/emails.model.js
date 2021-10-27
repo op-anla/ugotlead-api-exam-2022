@@ -10,6 +10,7 @@ const EmailModel = function (email) {
   this.email_win_text = email.email_win_text;
   this.email_consolation_text = email.email_consolation_text;
   this.email_custom_css = email.email_custom_css;
+  this.email_admin_text = email.email_admin_text;
 };
 EmailModel.create = (newEmail, result) => {
   sql.query("INSERT INTO campaign_emails SET ?", newEmail, (err, res) => {
