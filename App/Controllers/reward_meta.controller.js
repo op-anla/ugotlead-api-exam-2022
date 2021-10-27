@@ -120,30 +120,23 @@ exports.findRewardMetaForReward = (req, res) => {
   });
 };
 
-// Find the specific rewards meta for one reward - USED FOR REDEEM WORKFLOW
-exports.findRewardMetaForRewardInRedeemFlow = (req, res, next) => {
-  console.log(
-    "From what reward do we need to get reward meta?",
-    res.locals.redeemInfo.data.reward.reward_id
-  );
-  let reward_id = res.locals.redeemInfo.data.reward.reward_id;
+// Find the specific rewards meta for one reward - USED FOR EVERY ENDPOINT NEEDING THE NEXT MIDDLEWARE
+exports.findRewardMetaForRewardUsingMiddleware = (req, res, next) => {
+  let reward_id = req.body.reward.reward_id;
+  console.log("What reward id should we get meta from?", reward_id);
   RewardMeta.findByRewardId(reward_id, (err, data) => {
     if (err) {
-      console.log(
-        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
-        err
-      );
+      console.log("RewardMeta.findByRewardId ~ err", err);
 
       if (err.kind === "not_found") {
         res.status(404).send();
       } else {
         res.status(500).send({
-          message:
-            "Error retrieving reward_meta with id " + req.params.rewardId,
+          message: "Error retrieving reward_meta with id " + reward_id,
         });
       }
     } else {
-      res.locals.redeemInfo.data.rewardMeta = data[0];
+      res.locals.rewardMeta = data;
       return next();
     }
   });

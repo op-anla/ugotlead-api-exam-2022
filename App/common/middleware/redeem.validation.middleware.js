@@ -30,6 +30,7 @@ exports.didUserWin = (req, res, next) => {
         reward: lost_reward[0],
       },
     };
+    req.body.reward = res.locals.redeemInfo.data.reward;
     return next();
   }
   // Use this variable to keep track of the user losing
@@ -50,6 +51,7 @@ exports.didUserWin = (req, res, next) => {
           reward: reward,
         },
       };
+      req.body.reward = res.locals.redeemInfo.data.reward;
       return next();
     }
   });
@@ -62,6 +64,7 @@ exports.didUserWin = (req, res, next) => {
         reward: lost_reward[0],
       },
     };
+    req.body.reward = res.locals.redeemInfo.data.reward;
     return next();
   }
 };

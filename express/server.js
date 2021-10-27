@@ -241,7 +241,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWin,
   entry.createEntry,
-  reward_meta.findRewardMetaForRewardInRedeemFlow,
+  reward_meta.findRewardMetaForRewardUsingMiddleware,
   rewards.updateClaim,
 ]);
 router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
@@ -335,6 +335,7 @@ router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
   RequestValidation.validateDomain,
+  reward_meta.findRewardMetaForRewardUsingMiddleware,
   email.sendEmailToOperatorsForTesting,
 ]);
 router.post(`/${apiUrl}/email/create-mail`, [
