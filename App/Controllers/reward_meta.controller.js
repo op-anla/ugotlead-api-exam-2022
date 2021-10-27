@@ -122,8 +122,8 @@ exports.findRewardMetaForReward = (req, res) => {
 
 // Find the specific rewards meta for one reward - USED FOR EVERY ENDPOINT NEEDING THE NEXT MIDDLEWARE
 exports.findRewardMetaForRewardUsingMiddleware = (req, res, next) => {
+  console.log("What reward id should we get meta from?", req.body);
   let reward_id = req.body.reward.reward_id;
-  console.log("What reward id should we get meta from?", reward_id);
   RewardMeta.findByRewardId(reward_id, (err, data) => {
     if (err) {
       console.log("RewardMeta.findByRewardId ~ err", err);

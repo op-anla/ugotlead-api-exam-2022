@@ -1,6 +1,7 @@
 "use strict";
 const mailSetup = require("../Models/emailsetup");
 const EmailModel = require("../Models/emails.model");
+const emailHelper = require("../common/helpers/emails");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
 exports.createMail = (req, res) => {
@@ -165,137 +166,23 @@ exports.sendEmailToOperators = (req, res) => {
       }
     } else {
       res.locals.emailInfo = data;
-      sendEmail();
+      let payload = {
+        emailInfo: res.locals.emailInfo,
+        toUserMail: req.body.payload.currentUser.email,
+        toUserName: req.body.payload.currentUser.navn,
+        reward: req.body.payload.redeemInfo.reward,
+        didUserWin: req.body.payload.redeemInfo.won,
+      };
+      emailHelper.sendMail(payload);
     }
   });
-  /* 
-  Now we have campaignid and emailinfo
-  */
-  function sendEmail() {
-    console.log("let's see emailinfo ", res.locals.emailInfo);
-    let emailInfo = res.locals.emailInfo;
-    let toUserMail = req.body.payload.currentUser.email;
-    let toUserName = req.body.payload.currentUser.navn;
-    let reward = req.body.payload.redeemInfo.reward;
-    let didUserWin = req.body.payload.redeemInfo.won;
-    console.log(
-      "Lets just check the data we send to the email. Did the user win? ",
-      didUserWin,
-      "What is the mail?",
-      toUserMail,
-      "What is the name?",
-      toUserName,
-      "what is the reward?",
-      reward
-    );
-    if (didUserWin) {
-      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
-    } else {
-      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
-    }
-  }
-
-  async function sendWinnerMail(
-    userEmail,
-    userName,
-    reward,
-    emailInfo,
-    didUserWin
-  ) {
-    console.log(
-      "sendWinnerMail ~ userEmail, userName, reward, emailInfo",
-      userEmail,
-      userName,
-      reward,
-      emailInfo
-    );
-    // We send a winner mail here
-    let subject = "Tillykke ! - Du har vundet !";
-    /* 
-    We need to validate the emailinfo since we need some logo and other stuff
-    */
-    // Validate now
-    let payload = {
-      userEmail,
-      userName,
-      reward,
-      emailInfo,
-      didUserWin,
-    };
-    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-    console.log("replaceContent", replaceContent);
-    // We send a winner mail here
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: userEmail,
-        subject: subject,
-        html: replaceContent,
-      },
-      (err, info) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send();
-          // Error
-        } else {
-          console.log(info);
-          return res.status(200).send();
-        }
-      }
-    );
-  }
-  async function sendLoserMail(
-    userEmail,
-    userName,
-    reward,
-    emailInfo,
-    didUserWin
-  ) {
-    console.log(
-      "sendLoserMail ~ userEmail, userName, reward, emailInfo",
-      userEmail,
-      userName,
-      reward,
-      emailInfo
-    );
-    let subject = "Du vandt desværre ikke...";
-    // Validate now
-    let payload = {
-      userEmail,
-      userName,
-      reward,
-      emailInfo,
-      didUserWin,
-    };
-    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-    console.log("replaceContent", replaceContent);
-    // We send a winner mail here
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: userEmail,
-        subject: subject,
-        html: replaceContent,
-      },
-      (err, info) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send();
-          // Error
-        } else {
-          console.log(info);
-          return res.status(200).send();
-        }
-      }
-    );
-  }
 };
 exports.sendEmailToOperatorsForTesting = (req, res) => {
   /* 
   We will first get the email information from the database.
   We use this to generate the different emails.
   */
-  let campaignId = req.body.payload.campaignInfo.campaign_id;
+  let campaignId = req.body.campaignInfo.campaign_id;
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -319,8 +206,8 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
     let emailInfo = res.locals.emailInfo;
     let toUserMail = "anla@onlineplus.dk";
     let toUserName = "Andreas Lagoni";
-    let reward = req.body.payload.redeemInfo.data.reward;
-    let didUserWin = req.body.payload.redeemInfo.won;
+    let reward = req.body.redeemInfo.data.reward;
+    let didUserWin = req.body.redeemInfo.won;
     console.log(
       "Lets just check the data we send to the email. Did the user win? ",
       didUserWin,
