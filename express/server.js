@@ -35,12 +35,13 @@ const VerifyUserMiddleware = require("../App/auth/middleware/verify.user.middlew
 const RedeemValidation = require("../App/common/middleware/redeem.validation.middleware");
 const ValidationMiddleware = require("../App/common/middleware/auth.validation.middleware");
 const RequestValidation = require("../App/common/middleware/request.validation.middleware");
-// App uses
 
+// App uses
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", router);
+
 // Router
 router.get("/test", (req, res) => {
   res.write(
@@ -48,15 +49,18 @@ router.get("/test", (req, res) => {
   );
   res.end();
 });
+
 /* 
 Version: 1.0
 */
 const version = "v1";
 const apiUrl = `${version}/api`;
+
 /* 
 Routing docs
 https://expressjs.com/en/guide/routing.html
 */
+
 /* 
 -----------------------------------------------
 CAMPAIGNS
@@ -83,6 +87,7 @@ router.delete(`/${apiUrl}/delete-campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.delete,
 ]);
+
 /* 
 -----------------------------------------------
 LAYOUT FOR CAMPAIGNS
@@ -104,6 +109,7 @@ router.delete(`/${apiUrl}/delete-layout/campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   layout.removeWidgetFromCampaign,
 ]);
+
 /* 
 -----------------------------------------------
 COMPANIES
@@ -129,6 +135,7 @@ router.delete(`/${apiUrl}/company/:companyId`, [
   ValidationMiddleware.validJWTNeeded,
   companies.delete,
 ]);
+
 /* 
 -----------------------------------------------
 USERS
@@ -158,6 +165,7 @@ router.delete(`/${apiUrl}/user/:userId`, [
   ValidationMiddleware.validJWTNeeded,
   user.deleteUser,
 ]);
+
 /* 
 -----------------------------------------------
 AUTH
@@ -171,6 +179,7 @@ router.post(`/${apiUrl}/auth`, [
 ]);
 // router.post(`/${apiUrl}/google/auth`, [GoogleAuth.login]);
 // router.get(`/${apiUrl}/google/user`, [GoogleAuth.checkUser]);
+
 /* 
 -----------------------------------------------
 MAILCHIMP 
@@ -178,7 +187,6 @@ This is actually extending the Campaign because each campaign will have auth end
 The Maillchimp info will also be saved for that specific campaign and not on the specific user. 
 -----------------------------------------------
 */
-
 router.get(`/${apiUrl}/auth/mailchimp`, [mailchimpController.redirectToLogin]);
 
 router.get(`/${apiUrl}/auth/mailchimp/login`, [
@@ -190,6 +198,7 @@ router.get(`/${apiUrl}/getlists`, [
   mailchimpController.getAudienceLists,
 ]);
 router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
+
 /* 
 -----------------------------------------------
 REWARDS 
@@ -231,6 +240,7 @@ router.post(`/${apiUrl}/create-logging/:campaignId`, [
   RequestValidation.validateDomain,
   logging.createLogForUser,
 ]);
+
 /* 
 -----------------------------------------------
 REWARD AND REDEEM 
@@ -249,6 +259,7 @@ router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
   rewards.getAllRewardsForRedeem,
   RedeemValidation.didUserWinWithResponse,
 ]);
+
 /* 
 -----------------------------------------------
 LAYOUT AND WIDGETS
@@ -270,6 +281,7 @@ router.delete(`/${apiUrl}/layout/delete-widget/:widgetId`, [
   ValidationMiddleware.validJWTNeeded,
   layoutWidgets.deleteSelectedWidget,
 ]);
+
 /* 
 -----------------------------------------------
 STANDARD LAYOUT
@@ -316,6 +328,7 @@ router.delete(
     standard_layout_comp.deleteStandardLayoutWidget,
   ]
 );
+
 /* 
 -----------------------------------------------
 Emails
@@ -340,6 +353,7 @@ router.post(`/${apiUrl}/email/update-mail`, [
   ValidationMiddleware.validJWTNeeded,
   email.updateMail,
 ]);
+
 /* 
 -----------------------------------------------
 Cache
@@ -349,28 +363,61 @@ router.get(`/${apiUrl}/cache/flushall`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.flushAllCache,
 ]);
+
+/* 
+-----------------------------------------------
+Control
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/control/bearer-validation`, [
+  ValidationMiddleware.validJWTSimple,
+]);
+router.get(`/${apiUrl}/control/control-test`, [
+  ValidationMiddleware.validJWTTest,
+]);
+
 /* 
 -----------------------------------------------
 Analytics
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/analytics/get-all-visitors`, [analytics.getAllVisitors]);
-router.get(`/${apiUrl}/analytics/get-all-leads`, [analytics.getAllLeads]);
-router.get(`/${apiUrl}/analytics/count-players`, [analytics.getCountPlayers]);
-router.get(`/${apiUrl}/analytics/get-all-rewards`, [analytics.getAllRewards]);
+router.get(`/${apiUrl}/analytics/get-all-visitors`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllVisitors,
+]);
+router.get(`/${apiUrl}/analytics/get-all-leads`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllLeads,
+]);
+router.get(`/${apiUrl}/analytics/count-players`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getCountPlayers,
+]);
+router.get(`/${apiUrl}/analytics/get-all-rewards`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getAllRewards,
+]);
 router.get(`/${apiUrl}/analytics/get-all-campaigns`, [
+  ValidationMiddleware.validJWTNeeded,
   analytics.getAllCampaigns,
 ]);
 router.get(`/${apiUrl}/analytics/count-campaigns`, [
+  ValidationMiddleware.validJWTNeeded,
   analytics.getCountCampaigns,
 ]);
 router.get(`/${apiUrl}/analytics/get-all-companies`, [
+  ValidationMiddleware.validJWTNeeded,
   analytics.getAllCompanies,
 ]);
 router.get(`/${apiUrl}/analytics/count-companies`, [
+  ValidationMiddleware.validJWTNeeded,
   analytics.getCountCompanies,
 ]);
-router.get(`/${apiUrl}/analytics/top5`, [analytics.getTop5]);
+router.get(`/${apiUrl}/analytics/top5`, [
+  ValidationMiddleware.validJWTNeeded,
+  analytics.getTop5,
+]);
+
 /* 
 -----------------------------------------------
 Create the server and export the app 
