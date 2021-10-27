@@ -1,13 +1,8 @@
 module.exports = {
   returnDynamicContent: function (payload) {
-    let content;
-    if (payload.didUserWin) {
-      // We know the function was called from "Sendwinnermail"
-      content = payload.emailInfo.email_win_text;
-    } else {
-      // We know the function was called from SendLoserMail
-      content = payload.emailInfo.email_consolation_text;
-    }
+    let content = payload.content;
+    console.log("content", content);
+
     let regex = /\{{(.*?)\}}/g;
     let foundTags = content.match(regex);
 
@@ -29,7 +24,7 @@ module.exports = {
       });
       return content;
     } else {
-      return null;
+      return content;
     }
   },
 };

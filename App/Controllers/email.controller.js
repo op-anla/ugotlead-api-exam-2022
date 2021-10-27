@@ -212,7 +212,14 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
       }
     } else {
       res.locals.emailInfo = data;
+      let content = "";
+      if (req.body.redeemInfo.won) {
+        content = res.locals.emailInfo.email_win_text;
+      } else {
+        content = res.locals.emailInfo.email_consolation_text;
+      }
       let payload = {
+        content: content,
         emailInfo: res.locals.emailInfo,
         reward: req.body.redeemInfo.data.reward,
         didUserWin: req.body.redeemInfo.won,
@@ -243,11 +250,20 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
         );
       }
       if (email_notification.reward_notification_for_owner == true) {
+        content = res.locals.emailInfo.email_admin_text;
+        payload = {
+          content: content,
+          emailInfo: res.locals.emailInfo,
+          reward: req.body.redeemInfo.data.reward,
+          didUserWin: req.body.redeemInfo.won,
+        };
+        replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+        console.log("EmailModel.findById ~ replaceContent", replaceContent);
         emailHelper.sendMail(
           "no-reply@ugotlead.dk",
           "anla@onlineplus.dk",
           "U GOT LEAD - En bruger har vundet en præmie!",
-          "Der er kunde som har vundet en præmie!"
+          replaceContent
         );
       }
     }
