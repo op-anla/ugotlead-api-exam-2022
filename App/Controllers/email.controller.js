@@ -4,6 +4,7 @@ const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
+const { checkMyJson } = require("../common/helpers/checkmyjson");
 exports.createMail = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -173,7 +174,19 @@ exports.sendEmailToOperators = (req, res) => {
         reward: req.body.payload.redeemInfo.reward,
         didUserWin: req.body.payload.redeemInfo.won,
       };
-      emailHelper.sendMail(payload);
+      let didUserWin = req.body.payload.redeemInfo.won;
+      let toMail = req.body.payload.currentUser.email;
+      let subject = didUserWin
+        ? "Tillykke ! - Du har vundet !"
+        : "Du vandt desværre ikke...";
+      const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+      console.log("replaceContent", replaceContent);
+      emailHelper.sendMail(
+        "no-reply@ugotlead.dk",
+        toMail,
+        subject,
+        replaceContent
+      );
     }
   });
 };
@@ -196,107 +209,44 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
       }
     } else {
       res.locals.emailInfo = data;
-      sendEmail();
+      let payload = {
+        emailInfo: res.locals.emailInfo,
+        reward: req.body.redeemInfo.data.reward,
+        didUserWin: req.body.redeemInfo.won,
+      };
+      let rewardMeta = res.locals.rewardMeta;
+      let didUserWin = req.body.redeemInfo.won;
+      let subject = didUserWin
+        ? "Tillykke ! - Du har vundet !"
+        : "Du vandt desværre ikke...";
+      let replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+
+      console.log("REWARD INFO", rewardMeta);
+      let email_notification = checkMyJson(
+        rewardMeta.reward_email_notification_info
+      )
+        ? JSON.parse(rewardMeta.reward_email_notification_info)
+        : undefined;
+      console.log(
+        "EmailModel.findById ~ email_notification",
+        email_notification
+      );
+      if (email_notification.reward_mail_for_user == true) {
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          "anla@onlineplus.dk",
+          subject,
+          replaceContent
+        );
+      }
+      if (email_notification.reward_notification_for_owner == true) {
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          "anla@onlineplus.dk",
+          "U GOT LEAD - En bruger har vundet en præmie!",
+          "Der er kunde som har vundet en præmie!"
+        );
+      }
     }
   });
-  /* 
-  Now we have campaignid and emailinfo
-  */
-  async function sendEmail() {
-    let emailInfo = res.locals.emailInfo;
-    let toUserMail = "anla@onlineplus.dk";
-    let toUserName = "Andreas Lagoni";
-    let reward = req.body.redeemInfo.data.reward;
-    let didUserWin = req.body.redeemInfo.won;
-    console.log(
-      "Lets just check the data we send to the email. Did the user win? ",
-      didUserWin,
-      "What is the mail?",
-      toUserMail,
-      "What is the name?",
-      toUserName,
-      "what is the reward?",
-      reward
-    );
-    if (didUserWin) {
-      sendWinnerMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
-    } else {
-      sendLoserMail(toUserMail, toUserName, reward, emailInfo, didUserWin);
-    }
-  }
-
-  function sendWinnerMail(userEmail, userName, reward, emailInfo, didUserWin) {
-    console.log(
-      "sendWinnerMail ~ userEmail, userName, reward, emailInfo",
-      userEmail,
-      userName,
-      reward,
-      emailInfo
-    );
-    // We send a winner mail here
-    let subject = "Tillykke ! - Du har vundet !";
-    /* 
-    We need to validate the emailinfo since we need some logo and other stuff
-    */
-    // Validate now
-    let payload = {
-      userEmail,
-      userName,
-      reward,
-      emailInfo,
-      didUserWin,
-    };
-    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-    console.log("replaceContent", replaceContent);
-
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: userEmail,
-        subject: subject,
-        html: replaceContent,
-      },
-      (err, info) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send();
-          // Error
-        } else {
-          console.log(info);
-          return res.status(200).send();
-        }
-      }
-    );
-  }
-  function sendLoserMail(userEmail, userName, reward, emailInfo, didUserWin) {
-    let subject = "Du vandt desværre ikke...";
-    // Validate now
-    let payload = {
-      userEmail,
-      userName,
-      reward,
-      emailInfo,
-      didUserWin,
-    };
-    const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-    console.log("replaceContent", replaceContent);
-
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: userEmail,
-        subject: subject,
-        html: replaceContent,
-      },
-      (err, info) => {
-        if (err) {
-          console.log(err);
-          // Error
-        } else {
-          console.log(info);
-          return res.status(200).send();
-        }
-      }
-    );
-  }
 };
