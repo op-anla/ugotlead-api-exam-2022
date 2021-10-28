@@ -15,6 +15,7 @@ exports.create = (req, res) => {
     campaign_name: req.body.campaign_name,
     campaign_description: req.body.campaign_description,
     campaign_owner_id: req.body.campaign_owner_id,
+    campaign_integrations: "",
   });
 
   // Save Campaign in the database
