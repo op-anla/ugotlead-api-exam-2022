@@ -372,9 +372,6 @@ Control
 router.get(`/${apiUrl}/control/bearer-validation`, [
   ValidationMiddleware.validJWTSimple,
 ]);
-router.get(`/${apiUrl}/control/control-test`, [
-  ValidationMiddleware.validJWTTest,
-]);
 
 /* 
 -----------------------------------------------

@@ -110,13 +110,3 @@ exports.validJWTSimple = (req, res) => {
     return res.status(401).send("You are not authorized");
   }
 };
-
-exports.validJWTTest = (req, res) => {
-  console.log("Inside serverside validationMiddleware: validJWTTest");
-  console.log(
-    "🚀 ~ file: auth.validation.middleware.js ~ line 111 ~ req",
-    req.headers
-  );
-
-  return res.sendStatus(200);
-};
