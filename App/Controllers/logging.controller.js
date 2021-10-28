@@ -138,7 +138,7 @@ exports.createLogForUser = (req, res) => {
   const timeElapsed = Date.now();
   const today = new Date(timeElapsed);
 
-  // Create a reward
+  // Create a logging
   const newLog = new Logging({
     campaign_id: parseInt(req.params.campaignId),
     operation_system: _os,
@@ -149,7 +149,7 @@ exports.createLogForUser = (req, res) => {
     SESSION_ID: req.body.session_id,
   });
 
-  // Save reward in the database
+  // Save log in the database
   Logging.create(newLog, (err, data) => {
     if (err) {
       res.status(500).send({

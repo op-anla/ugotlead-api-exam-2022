@@ -17,6 +17,7 @@ const Campaign = function (campaign) {
   this.background_image_url = campaign.background_image_url;
   this.brush_image_url = campaign.brush_image_url;
   this.primary_color = campaign.primary_color;
+  this.leads_goal = campaign.leads_goal;
 };
 Campaign.flushCache = () => {
   console.log("FLUSHING ");
@@ -226,11 +227,6 @@ Campaign.remove = (id, result) => {
       );
       return;
     }
-    console.log("trying to flush cache");
-    myCache.flushAll().then((results) => {
-      console.log("myCache.flushAll ~ results", results);
-    });
-    console.log("deleted campaign with campaign_id: ", id);
     result(null, res);
   });
 };
@@ -256,10 +252,6 @@ Campaign.updateById = (id, campaign, result) => {
         );
         return;
       }
-      console.log("trying to flush cache");
-      myCache.flushAll().then((results) => {
-        console.log("myCache.flushAll ~ results", results);
-      });
       console.log("updated campaign: ", {
         id: id,
         ...campaign,
@@ -339,10 +331,6 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
           );
           return;
         }
-        console.log("trying to flush cache");
-        myCache.flushAll().then((results) => {
-          console.log("myCache.flushAll ~ results", results);
-        });
         console.log("updated campaign: ", {
           id: id,
           mailchimpInfo: mailchimpInfo,

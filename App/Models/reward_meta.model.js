@@ -93,8 +93,8 @@ RewardMeta.findByRewardId = (rewardId, result) => {
       }
 
       if (res.length) {
-        console.log("found reward_meta: ", res);
-        result(null, res);
+        console.log("found reward_meta: ", res[0]);
+        result(null, res[0]);
         return;
       }
 
