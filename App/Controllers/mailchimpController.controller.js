@@ -201,7 +201,7 @@ exports.addMemberToMailchimp = async (req, res) => {
   };
 
   try {
-    await mailchimp.lists.addListMember(mailchimpInfo.selectedListId, {
+    await mailchimp.lists.addListMember(mailchimpInfo.listId, {
       email_address: req.body.email,
       merge_fields: mergeFields,
       status: "subscribed",
