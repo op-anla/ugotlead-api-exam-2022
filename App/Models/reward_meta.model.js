@@ -45,7 +45,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
 };
 RewardMeta.remove = (id, result) => {
   sql.query(
-    "DELETE FROM reward_meta_data WHERE reward_meta_data_id = ?",
+    "DELETE FROM reward_meta_data WHERE reward_id = ?",
     id,
     (err, res) => {
       if (err) {

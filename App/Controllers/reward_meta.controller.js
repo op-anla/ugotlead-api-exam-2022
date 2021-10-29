@@ -73,10 +73,10 @@ exports.updateById = (req, res) => {
 };
 // Delete reward meta
 exports.deleteById = (req, res, next) => {
-  if (!req.headers.reward_meta_id) {
+  if (!req.params.reward_id) {
     return next();
   }
-  RewardMeta.remove(req.headers.reward_meta_id, (err) => {
+  RewardMeta.remove(req.params.reward_id, (err) => {
     if (err) {
       if (err.kind === "not_found") {
         /* 
@@ -87,8 +87,7 @@ exports.deleteById = (req, res, next) => {
       } else {
         res.status(500).send({
           message:
-            "Could not delete reward meta with id " +
-            req.headers.reward_meta_id,
+            "Could not delete reward meta with id " + req.params.reward_id,
         });
       }
     } else {
