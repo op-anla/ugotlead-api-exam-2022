@@ -108,11 +108,14 @@ exports.create = (req, res, next) => {
       Next will call the next function in line in our server.js
       There we have reward_meta function to create those. 
 
-      The thing is:
-      To be able to create reward meta we need the reward id of the newly created reward. We can only get that if we change the response body
-      And then send that new response body to the next function. 
+      To be able to create reward meta we need the reward id of the newly created reward. We can only get that
+      if we change the res.locals object 
       */
-      req.body.reward_meta.reward_id = data.id;
+      res.locals.reward_meta = {
+        ...req.body.reward.reward_meta,
+        reward_id: data.id,
+      };
+
       return next();
     }
   });
@@ -133,7 +136,7 @@ exports.updateClaim = (req, res) => {
     res.locals.redeemInfo = {
       won: res.locals.redeemInfo.won,
       data: {
-        reward: res.locals.redeemInfo.data,
+        reward: res.locals.redeemInfo.data.reward,
       },
     };
     return res.status(200).send(res.locals.redeemInfo);

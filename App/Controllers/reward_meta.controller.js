@@ -9,15 +9,15 @@ exports.create = (req, res) => {
   }
   console.log(
     "🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs",
-    req.body.reward_meta
+    res.locals.reward_meta
   );
 
   // Create a reward meta
   const newRewardMeta = new RewardMeta({
-    reward_id: req.body.reward_meta.reward_id,
-    reward_redeem_info: req.body.reward_meta.reward_redeem_info,
+    reward_id: res.locals.reward_meta.reward_id,
+    reward_redeem_info: res.locals.reward_meta.reward_redeem_info,
     reward_email_notification_info:
-      req.body.reward_meta.reward_email_notification_info,
+      res.locals.reward_meta.reward_email_notification_info,
   });
 
   // Save reward meta in the database
@@ -48,25 +48,21 @@ exports.updateById = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(
-    "Update reward meta id by id = ",
-    req.body.reward_meta.reward_meta_data_id,
-    req.body.reward_meta
-  );
+  console.log("Update reward meta id by id = ", req.body.reward_meta);
   RewardMeta.updateById(
-    req.body.reward_meta.reward_meta_data_id,
+    req.body.reward.reward_id,
     new RewardMeta(req.body.reward_meta),
     (err) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found reward_meta with id ${req.body.reward_meta.reward_meta_data_id}.`,
+            message: `Not found reward_meta with id ${req.body.reward_meta.reward_id}.`,
           });
         } else {
           res.status(500).send({
             message:
               "Error updating reward_meta with id " +
-              req.body.reward_meta.reward_meta_data_id,
+              req.body.reward_meta.reward_id,
           });
         }
       } else {
@@ -77,10 +73,10 @@ exports.updateById = (req, res) => {
 };
 // Delete reward meta
 exports.deleteById = (req, res, next) => {
-  if (!req.headers.reward_meta_id) {
+  if (!req.params.reward_id) {
     return next();
   }
-  RewardMeta.remove(req.headers.reward_meta_id, (err) => {
+  RewardMeta.remove(req.params.reward_id, (err) => {
     if (err) {
       if (err.kind === "not_found") {
         /* 
@@ -91,8 +87,7 @@ exports.deleteById = (req, res, next) => {
       } else {
         res.status(500).send({
           message:
-            "Could not delete reward meta with id " +
-            req.headers.reward_meta_id,
+            "Could not delete reward meta with id " + req.params.reward_id,
         });
       }
     } else {
@@ -124,30 +119,23 @@ exports.findRewardMetaForReward = (req, res) => {
   });
 };
 
-// Find the specific rewards meta for one reward - USED FOR REDEEM WORKFLOW
-exports.findRewardMetaForRewardInRedeemFlow = (req, res, next) => {
-  console.log(
-    "From what reward do we need to get reward meta?",
-    res.locals.redeemInfo.data.reward.reward_id
-  );
-  let reward_id = res.locals.redeemInfo.data.reward.reward_id;
+// Find the specific rewards meta for one reward - USED FOR EVERY ENDPOINT NEEDING THE NEXT MIDDLEWARE
+exports.findRewardMetaForRewardUsingMiddleware = (req, res, next) => {
+  console.log("What reward id should we get meta from?", req.body);
+  let reward_id = req.body.reward.reward_id;
   RewardMeta.findByRewardId(reward_id, (err, data) => {
     if (err) {
-      console.log(
-        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
-        err
-      );
+      console.log("RewardMeta.findByRewardId ~ err", err);
 
       if (err.kind === "not_found") {
         res.status(404).send();
       } else {
         res.status(500).send({
-          message:
-            "Error retrieving reward_meta with id " + req.params.rewardId,
+          message: "Error retrieving reward_meta with id " + reward_id,
         });
       }
     } else {
-      res.locals.redeemInfo.data.rewardMeta = data[0];
+      res.locals.rewardMeta = data;
       return next();
     }
   });

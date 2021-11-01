@@ -17,6 +17,7 @@ const Campaign = function (campaign) {
   this.background_image_url = campaign.background_image_url;
   this.brush_image_url = campaign.brush_image_url;
   this.primary_color = campaign.primary_color;
+  this.leads_goal = campaign.leads_goal;
 };
 Campaign.flushCache = () => {
   console.log("FLUSHING ");
@@ -42,7 +43,6 @@ Campaign.create = (newCampaign, result) => {
       ...newCampaign,
     });
 
-    myCache.flushAll();
     result(null, {
       id: res.insertId,
       ...newCampaign,
@@ -226,11 +226,6 @@ Campaign.remove = (id, result) => {
       );
       return;
     }
-    console.log("trying to flush cache");
-    myCache.flushAll().then((results) => {
-      console.log("myCache.flushAll ~ results", results);
-    });
-    console.log("deleted campaign with campaign_id: ", id);
     result(null, res);
   });
 };
@@ -256,10 +251,6 @@ Campaign.updateById = (id, campaign, result) => {
         );
         return;
       }
-      console.log("trying to flush cache");
-      myCache.flushAll().then((results) => {
-        console.log("myCache.flushAll ~ results", results);
-      });
       console.log("updated campaign: ", {
         id: id,
         ...campaign,
@@ -339,10 +330,6 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
           );
           return;
         }
-        console.log("trying to flush cache");
-        myCache.flushAll().then((results) => {
-          console.log("myCache.flushAll ~ results", results);
-        });
         console.log("updated campaign: ", {
           id: id,
           mailchimpInfo: mailchimpInfo,
@@ -396,6 +383,34 @@ Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
 };
 Campaign.getAll = (result) => {
   sql.query("SELECT * FROM campaigns LIMIT 10", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    result(null, res);
+  });
+};
+
+Campaign.getAllCampaigns = (result) => {
+  sql.query("SELECT * FROM campaigns", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    result(null, res);
+  });
+};
+
+Campaign.countAll = (result) => {
+  sql.query("SELECT COUNT(*) AS campaigns FROM campaigns", async (err, res) => {
     if (err) {
       console.log(
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",

@@ -13,6 +13,32 @@ const Reward = function (reward) {
   this.reward_claimed = reward.reward_claimed;
   this.reward_drawtime = reward.reward_drawtime;
 };
+
+Reward.getAllRewards = (result) => {
+  console.log("trying to get all rewards in models");
+  let reward_type = 1; //Kun faktiske præmier og ikke nitter.
+  sql.query(
+    "SELECT * FROM rewards WHERE reward_type = ?",
+    reward_type,
+    async (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: reward.model.js ~ line 21 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
+      // Here we have the correct response
+      result(null, res);
+      console.log(
+        "🚀 ~ file: reward.model.js ~ line 27 ~ sql.query ~ res",
+        res
+      );
+    }
+  );
+};
+
 Reward.findByCampaignId = (campaignId, result) => {
   sql.query(
     `SELECT * FROM rewards WHERE campaign_id = ?`,

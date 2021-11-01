@@ -8,17 +8,34 @@ const Logging = function (logging) {
   this.browser = logging.browser;
   this.HTTP_USER_AGENT = logging.user_agent;
   this.timestamp = logging.timestamp;
+  this.SESSION_ID = logging.SESSION_ID;
+};
+Logging.getAllLogs = (result) => {
+  console.log("trying to get all logs in models");
+  sql.query("SELECT * FROM logs", async (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: logging.model.js ~ line 101 ~ sql.query ~ err",
+        err
+      );
+      result(null, err);
+      return;
+    }
+    // Here we have the correct response
+    result(null, res);
+    console.log("🚀 ~ file: logging.model.js ~ line 33 ~ sql.query ~ res", res);
+  });
 };
 
-Logging.findLog = (campaignId, log, result) => {
-  console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", log);
+Logging.findLog = (campaignId, session_id, result) => {
+  console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", session_id);
   sql.query(
-    `SELECT * FROM logs WHERE (campaign_id = ? AND HTTP_USER_AGENT = ?)`,
-    [campaignId, log.user_agent],
+    `SELECT * FROM logs WHERE (campaign_id = ? AND SESSION_ID = ?)`,
+    [campaignId, session_id],
     (err, res) => {
       if (err) {
         console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+          "🚀 ~ file: logging.model.js ~ line 31 ~ sql.query ~ err",
           err
         );
         result(err, null);
@@ -53,12 +70,12 @@ Logging.create = (newLog, result) => {
     }
 
     console.log("created log: ", {
-      id: res.insertId,
+      log_id: res.insertId,
       ...newLog,
     });
 
     result(null, {
-      id: res.insertId,
+      log_id: res.insertId,
       ...newLog,
     });
   });

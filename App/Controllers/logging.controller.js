@@ -7,12 +7,8 @@ LOGGING
 */
 
 exports.findLogForUser = (req, res, next) => {
-  console.log("FIND USER IN LOGGING", req.headers["user-agent"]);
-  const user_agent = req.headers["user-agent"];
-  const log = {
-    user_agent: user_agent,
-  };
-  Logging.findLog(req.params.campaignId, log, (err, data) => {
+  console.log("FIND USER IN LOGGING", req.params.session_id);
+  Logging.findLog(req.params.campaignId, req.params.session_id, (err, data) => {
     console.log(
       "🚀 ~ file: logging.controller.js ~ line 17 ~ Logging.findLog ~ err",
       err,
@@ -24,7 +20,7 @@ exports.findLogForUser = (req, res, next) => {
       We will send back 404 with level of log
       */
       if (err.kind === "not_found") {
-        res.status(404).send({
+        res.status(200).send({
           message: err.kind,
           level: "log",
         });
@@ -33,35 +29,127 @@ exports.findLogForUser = (req, res, next) => {
       If the user however is in the logging we want to make sure the user has not yet made any entries
       */
     } else {
-      req.body = data;
+      res.locals.loggingData = data;
       // If the data is an array we just take the first one and send that
       if (data.length) {
-        req.body = data[0];
+        res.locals.loggingData = data[0];
       }
 
       return next();
     }
   });
 };
+
+//Operativ systemer
+osChecker = (ua) => {
+  console.log("🚀 ~ file: logging.controller.js ~ line 46 ~ ua", ua);
+  let os = "Ukendt";
+  try {
+    if (ua.includes("Windows NT")) {
+      os = "Windows";
+    } else if (ua.includes("Android")) {
+      os = "Android";
+    } else if (ua.includes("like Mac OS X")) {
+      os = "iOS";
+    } else if (ua.includes("Macintosh")) {
+      os = "Mac";
+    } else if (ua.includes("Linux")) {
+      os = "Linux";
+    }
+    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ osChecker", os);
+    return os;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ error", error);
+  }
+};
+
+//Devices
+deviceChecker = (ua) => {
+  console.log("🚀 ~ file: logging.controller.js ~ line 50 ~ ua", ua);
+  let deviceType = "Ukendt";
+  try {
+    if (ua.includes("Windows")) {
+      deviceType = "Windows PC";
+    } else if (ua.includes("Macintosh; Intel Mac OS")) {
+      deviceType = "Mac";
+    } else if (ua.includes("Android") && !ua.includes("Mobile")) {
+      deviceType = "Android Tablet";
+    } else if (ua.includes("Android") && ua.includes("Mobile")) {
+      deviceType = "Android Mobil";
+    } else if (ua.includes("iPhone")) {
+      deviceType = "Apple iPhone";
+    } else if (ua.includes("iPad")) {
+      deviceType = "Apple iPad";
+    }
+    console.log(
+      "🚀 ~ file: logging.controller.js ~ line 62 ~ deviceChecker",
+      deviceType
+    );
+    return deviceType;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 90 ~ error", error);
+  }
+};
+
+//Webbrowsers
+browserChecker = (ua) => {
+  console.log("🚀 ~ file: logging.controller.js ~ line 54 ~ ua", ua);
+  let browser = "Ukendt";
+  try {
+    if (ua.includes("Firefox")) {
+      browser = "Mozilla Firefox";
+    } else if (ua.includes("Edg")) {
+      browser = "Microsoft Edge";
+    } else if (ua.includes("MSIE")) {
+      browser = "Internet Explorer";
+    } else if (ua.includes("OPR")) {
+      browser = "Opera";
+    } else if (ua.includes("Chrome/") && ua.includes("Safari/")) {
+      browser = "Google Chrome";
+    } else if (ua.includes("Safari/")) {
+      browser = "Safari";
+    } else if (ua.includes("WOW64")) {
+      browser = "Internet Explorer";
+    } else if (ua.includes("PostmanRuntime")) {
+      browser = "Postman";
+    }
+    console.log(
+      "🚀 ~ file: logging.controller.js ~ line 62 ~ browserChecker",
+      browser
+    );
+    return browser;
+  } catch (error) {
+    console.log("🚀 ~ file: logging.controller.js ~ line 121 ~ error", error);
+  }
+};
+
 exports.createLogForUser = (req, res) => {
   console.log(
-    "🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs CREATE LOG FOR USER",
-    req.headers
+    "🚀 ~ file: logging.controller.js ~ line 5 ~ reqs CREATE LOG FOR USER",
+    req.headers,
+    req.body
   );
-  const user_agent = req.headers["user-agent"];
+  const _user_agent = req.headers["user-agent"];
+
+  const _os = osChecker(_user_agent);
+  const _device = deviceChecker(_user_agent);
+  const _browser = browserChecker(_user_agent);
+
   const timeElapsed = Date.now();
   const today = new Date(timeElapsed);
-  // Create a reward
+
+  // Create a logging
   const newLog = new Logging({
     campaign_id: parseInt(req.params.campaignId),
-    operation_system: "",
-    device: "",
-    browser: "",
-    user_agent: user_agent,
+    operation_system: _os,
+    device: _device,
+    browser: _browser,
+    user_agent: _user_agent,
     timestamp: today,
+    SESSION_ID: req.body.session_id,
   });
 
-  // Save reward in the database
+  // Save log in the database
   Logging.create(newLog, (err, data) => {
     if (err) {
       res.status(500).send({

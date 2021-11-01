@@ -201,7 +201,7 @@ exports.addMemberToMailchimp = async (req, res) => {
   };
 
   try {
-    await mailchimp.lists.addListMember(mailchimpInfo.selectedListId, {
+    await mailchimp.lists.addListMember(mailchimpInfo.listId, {
       email_address: req.body.email,
       merge_fields: mergeFields,
       status: "subscribed",
@@ -213,7 +213,7 @@ exports.addMemberToMailchimp = async (req, res) => {
     player.createPlayer(req, res);
   } catch (error) {
     let responseCode = error.status;
-    console.log("exports.addMemberToMailchimp= ~ error", error.status);
+    console.log("exports.addMemberToMailchimp= ~ error", error);
 
     if (responseCode === undefined) {
       responseCode = 404;

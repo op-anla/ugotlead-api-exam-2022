@@ -38,9 +38,6 @@ exports.validJWTNeeded = (req, res, next) => {
   } else {
     /* 
     If the request doesn't have authorization header we assume the person is not logged in and therefore not authorized
-    */
-    console.log("Else in validation middleware");
-    /* 
     There might be a chance that the auth is set in cookies, so we just double check
     */
     console.log("Cookies?", req.headers.cookie);
@@ -60,6 +57,55 @@ exports.validJWTNeeded = (req, res, next) => {
       };
       console.log("new header?", req.headers);
       return next();
+    }
+    return res.status(401).send("You are not authorized");
+  }
+};
+
+exports.validJWTSimple = (req, res) => {
+  console.log("Inside serverside validationMiddleware: validJWTSimple");
+  console.log(
+    "🚀 ~ file: auth.validation.middleware.js ~ line 66 ~ req",
+    req.headers
+  );
+  if (req.headers["authorization"]) {
+    try {
+      let authorization = req.headers["authorization"].split(" ");
+      if (authorization[0] !== "Bearer") {
+        console.log("auth not bearer");
+        return res.status(401).send("You are not authorized");
+      } else {
+        req.jwt = jwt.verify(authorization[1], secret); //Comparison of token and expected value
+        console.log("This user is verified", req.jwt);
+        return res.sendStatus(200); //These are the only difference from above
+      }
+    } catch (err) {
+      console.log(
+        "🚀 ~ file: auth.validation.middleware.js ~ line 82 ~ err",
+        err
+      );
+      return res.status(401).send("You are not authorized");
+    }
+  } else {
+    console.log("Else in validation middleware");
+    console.log("Cookies?", req.headers.cookie);
+    if (req.headers.cookie === undefined) {
+      return res.status(401).send();
+    }
+    if (req.headers.cookie.includes("auth._token.local")) {
+      console.log("There is actually token here");
+      let split = req.headers.cookie.split("auth._token.local=");
+      let split2 = split[1].split(";");
+      let split3 = split2[0].split("Bearer%20");
+      let bearer = split3[1];
+      console.log("My bearer", bearer);
+      req.headers = {
+        authorization: "Bearer " + bearer,
+        ...req.headers,
+      };
+      console.log("new header?", req.headers);
+      // return next();
+      return res.sendStatus(200); //These are the only difference from above
     }
     return res.status(401).send("You are not authorized");
   }

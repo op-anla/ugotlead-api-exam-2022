@@ -12,7 +12,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
   console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", rewardMeta);
 
   sql.query(
-    "UPDATE reward_meta_data SET  ? WHERE reward_meta_data_id = ?",
+    "UPDATE reward_meta_data SET  ? WHERE reward_id = ?",
     [rewardMeta, id],
     (err, res) => {
       if (err) {
@@ -45,7 +45,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
 };
 RewardMeta.remove = (id, result) => {
   sql.query(
-    "DELETE FROM reward_meta_data WHERE reward_meta_data_id = ?",
+    "DELETE FROM reward_meta_data WHERE reward_id = ?",
     id,
     (err, res) => {
       if (err) {
@@ -93,8 +93,8 @@ RewardMeta.findByRewardId = (rewardId, result) => {
       }
 
       if (res.length) {
-        console.log("found reward_meta: ", res);
-        result(null, res);
+        console.log("found reward_meta: ", res[0]);
+        result(null, res[0]);
         return;
       }
 

@@ -57,7 +57,7 @@ Layout.findLayoutForCampaign = (campaignId, result) => {
       }
 
       if (res.length) {
-        console.log("found layouts: ", res);
+        console.log("found layouts: ", res.length);
         result(null, res);
         return;
       }
