@@ -43,7 +43,6 @@ Campaign.create = (newCampaign, result) => {
       ...newCampaign,
     });
 
-    myCache.flushAll();
     result(null, {
       id: res.insertId,
       ...newCampaign,
