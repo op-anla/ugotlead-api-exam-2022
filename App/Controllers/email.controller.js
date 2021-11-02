@@ -5,6 +5,7 @@ const emailHelper = require("../common/helpers/emails");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
 const { checkMyJson } = require("../common/helpers/checkmyjson");
+const { response } = require("express");
 exports.createMail = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -125,18 +126,25 @@ exports.sendTest = (req, res) => {
       subject = req.body.mailInfo.subject;
     }
     console.log("Lets send the mail with these params", toMail, content);
-    mailSetup.sendMail(
-      {
-        from: "no-reply@ugotlead.dk",
-        to: toMail,
-        subject: subject,
-        html: content,
-      },
-      (err, info) => {
-        console.log(info);
-        console.log(err);
-      }
-    );
+    mailSetup
+      .sendMail(
+        {
+          from: "no-reply@ugotlead.dk",
+          to: toMail,
+          subject: subject,
+          html: content,
+        },
+        (err, info) => {
+          console.log(info);
+          console.log(err);
+        }
+      )
+      .then((responseCode) => {
+        return res.status(responseCode).send();
+      })
+      .catch((responseCode) => {
+        return res.status(responseCode).send();
+      });
   }
 
   sendTest()
