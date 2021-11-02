@@ -15,11 +15,21 @@ exports.didUserWin = (req, res, next) => {
   let viableRewards = notClaimedRewards.filter((reward) => {
     return reward.reward_type != 0;
   });
-  console.log("viableRewards ~ viableRewards", viableRewards);
-  /* We go through each reward and see which is closest to now (drawtime) */
+  const amountOfViableRewards = viableRewards.length;
   let lost_reward = req.body.rewards.filter((reward) => {
     return reward.reward_type === 0;
   });
+  const amountOfLeads = req.body.campaign.leads_goal;
+  const percentOfWinning = (amountOfViableRewards / amountOfLeads) * 100;
+  console.log("percentOfWinning", percentOfWinning);
+  console.log("viableRewards ~ viableRewards", viableRewards.length);
+  /* We go through each reward and see which is closest to now (drawtime) */
+  /* 
+  The chances of each reward depends on what options there is. 
+  If the drawtime on rewards is null and the campaign has "Leads" we know to use automatic 
+
+  First priority is always drawtime though!!!
+  */
   const now = new Date();
   if (!viableRewards.length) {
     // No available rewards left so the user lose.
@@ -36,6 +46,9 @@ exports.didUserWin = (req, res, next) => {
   // Use this variable to keep track of the user losing
   let didUserWin = false;
   viableRewards.forEach((reward) => {
+    if (reward.reward_drawtime == null) {
+      return;
+    }
     let drawTime = new Date(reward.reward_drawtime);
     console.log("viableRewards.forEach ~ drawTime", drawTime, now);
     console.log(
@@ -55,17 +68,50 @@ exports.didUserWin = (req, res, next) => {
       return next();
     }
   });
-  // Since there is no async code inside foreach it will be syncronous - meaning code after here runs after foreach
   if (!didUserWin) {
-    // User lost
-    res.locals.redeemInfo = {
-      won: false,
-      data: {
-        reward: lost_reward[0],
-      },
-    };
-    req.body.reward = res.locals.redeemInfo.data.reward;
-    return next();
+    // Checking automatic winning percentage
+    // Here we use automatic percentage to calculate winning
+    let baseNum = Math.random() * 100;
+    console.log(
+      "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
+      baseNum
+    );
+    let testPercentage = 100 - 30;
+    let basePercentage = 100 - percentOfWinning;
+    console.log(
+      "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
+      basePercentage
+    );
+
+    //   Test percentage
+    // Comment for not testing
+    if (baseNum >= basePercentage) {
+      let randomRewardToPick =
+        viableRewards[Math.floor(Math.random() * viableRewards.length)];
+
+      console.log("USER WON");
+      // User won
+      didUserWin = true;
+      res.locals.redeemInfo = {
+        won: true,
+        data: {
+          reward: randomRewardToPick,
+        },
+      };
+      req.body.reward = res.locals.redeemInfo.data.reward;
+      return next();
+    } else {
+      console.log("User did not win!");
+      // User lost
+      res.locals.redeemInfo = {
+        won: false,
+        data: {
+          reward: lost_reward[0],
+        },
+      };
+      req.body.reward = res.locals.redeemInfo.data.reward;
+      return next();
+    }
   }
 };
 exports.didUserWinWithResponse = (req, res, next) => {
