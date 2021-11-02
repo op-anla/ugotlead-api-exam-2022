@@ -241,6 +241,17 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
         "EmailModel.findById ~ email_notification",
         email_notification
       );
+      // Check for lost reward since we always know what to send in that case
+      if (!didUserWin) {
+        // User lost
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          "anla@onlineplus.dk",
+          subject,
+          replaceContent
+        );
+        res.status(200).send();
+      }
       if (email_notification.reward_mail_for_user == true) {
         emailHelper.sendMail(
           "no-reply@ugotlead.dk",
@@ -248,6 +259,7 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
           subject,
           replaceContent
         );
+        res.status(200).send();
       }
       if (email_notification.reward_notification_for_owner == true) {
         content = res.locals.emailInfo.email_admin_text;
@@ -265,6 +277,8 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
           "U GOT LEAD - En bruger har vundet en præmie!",
           replaceContent
         );
+
+        res.status(200).send();
       }
     }
   });
