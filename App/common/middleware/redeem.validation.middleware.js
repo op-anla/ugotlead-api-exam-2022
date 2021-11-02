@@ -13,7 +13,7 @@ exports.didUserWin = (req, res, next) => {
     return reward.reward_claimed === 0;
   });
   let viableRewards = notClaimedRewards.filter((reward) => {
-    return reward.reward_drawtime !== null && reward.reward_type != 0;
+    return reward.reward_type != 0;
   });
   console.log("viableRewards ~ viableRewards", viableRewards);
   /* We go through each reward and see which is closest to now (drawtime) */
