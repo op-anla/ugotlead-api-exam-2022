@@ -75,6 +75,7 @@ router.get(`/${apiUrl}/get-all-entrydata/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   entry.findAllEntriesForCampaign,
   player.getAllPlayersByAllEntries,
+  logging.getLoggingInfoByEntryData,
   rewards.getRewardInfoByEntryData,
 ]);
 router.get(`/${apiUrl}/campaigns/:campaignId`, [campaigns.findOne]);

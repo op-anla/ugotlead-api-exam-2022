@@ -5,7 +5,40 @@ const Logging = require("../Models/logging.model");
 LOGGING
 -----------------------------------------------
 */
-
+// Retrieve logs for entry
+exports.getLoggingInfoByEntryData = (req, res, next) => {
+  console.log("In LOGGING and entries", res.locals.entries);
+  let entries = res.locals.entries;
+  if (entries.length) {
+    // Array with stuff
+    let itemsProcessed = 0;
+    function afterForeach() {
+      // After foreach
+      console.log("After foreach", entries[0]);
+      return next();
+    }
+    entries.forEach((entry, index, array) => {
+      Logging.getLogById(entry.log_id, (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving campaigns.",
+          });
+        } else {
+          // Success
+          itemsProcessed++;
+          entries[index].logData = data;
+          if (itemsProcessed === array.length) {
+            afterForeach();
+          }
+        }
+      });
+    });
+  } else {
+    //  Empty array
+    res.status(400).send();
+  }
+};
 exports.findLogForUser = (req, res, next) => {
   console.log("FIND USER IN LOGGING", req.params.session_id);
   Logging.findLog(req.params.campaignId, req.params.session_id, (err, data) => {
