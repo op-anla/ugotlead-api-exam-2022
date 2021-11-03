@@ -47,6 +47,46 @@ exports.findRewardsByCampaignId = (req, res) => {
     }
   });
 };
+// Find the specific reward by entryData
+exports.getRewardInfoByEntryData = (req, res) => {
+  console.log("DO WE HAVE ENTRIES?", res.locals.entries[0]);
+  let entries = res.locals.entries;
+  if (entries.length) {
+    // Array with stuff
+    let itemsProcessed = 0;
+    function afterForeach() {
+      // After foreach
+      console.log("After foreach", entries[0]);
+      res.status(200).send(entries);
+    }
+    entries.forEach((entry, index, array) => {
+      Rewards.getSingleRewardById(entry.reward_id, (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving campaigns.",
+          });
+        } else {
+          // Success
+          itemsProcessed++;
+          let formatRewardData = {
+            reward_type: data.reward_type,
+            reward_value: data.reward_value,
+            reward_image_url: data.reward_image_url,
+            reward_name: data.reward_name,
+          };
+          entries[index].rewardData = formatRewardData;
+          if (itemsProcessed === array.length) {
+            afterForeach();
+          }
+        }
+      });
+    });
+  } else {
+    //  Empty array
+    res.status(400).send();
+  }
+};
 // Delete reward
 exports.deleteById = (req, res) => {
   console.log("ID", req.params.reward_id);
