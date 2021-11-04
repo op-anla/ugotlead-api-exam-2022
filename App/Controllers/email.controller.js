@@ -219,32 +219,33 @@ exports.sendEmailToOperators = (req, res) => {
       }
       // We expect that the user has won here otherwise it would have returned above
       if (emailObject.email_notification.reward_mail_for_user == true) {
+        // The reward that the user either won or lost has set to true which means the user should recieve email
         emailHelper.sendMail(
           "no-reply@ugotlead.dk",
           emailObject.toMail,
           emailObject.subject,
           emailObject.replaceContent
         );
-        return res.status(201).send();
       }
       if (
         emailObject.email_notification.reward_notification_for_owner == true
       ) {
+        // The reward has true setting for reward_notification for the owner which means the owner get's email too
+        // We set the content to the admin_text since admin is the one to recieve this email
         emailObject.returnDynamicContentPayload.content =
           res.locals.emailInfo.email_admin_text;
         replaceContent = dynamic_tag_handling.returnDynamicContent(
           emailObject.returnDynamicContentPayload
         );
-        console.log("EmailModel.findById ~ replaceContent", replaceContent);
         emailHelper.sendMail(
           "no-reply@ugotlead.dk",
           "anla@onlineplus.dk",
           "U GOT LEAD - En bruger har vundet en præmie!",
           replaceContent
         );
-
-        return res.status(201).send();
       }
+      // Return created response
+      return res.status(201).send();
     }
   });
 };
