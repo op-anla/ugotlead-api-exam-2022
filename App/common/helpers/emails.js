@@ -12,7 +12,7 @@ exports.sendMail = async (fromMail, toMail, subject, content) => {
       if (err) {
         // Error
         console.log(err);
-        return 400;
+        throw new Error(500);
       } else {
         console.log(info);
         return 200;

@@ -176,6 +176,12 @@ exports.sendEmailToOperators = (req, res) => {
       }
     } else {
       res.locals.emailInfo = data;
+
+      /* 
+      Main promise array which will be used since there is chance for multiple emails to be sent. 
+      We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
+      */
+      let promises = [];
       // Main OBJECT
       let emailObject = {
         returnDynamicContentPayload: {
@@ -220,12 +226,25 @@ exports.sendEmailToOperators = (req, res) => {
       // We expect that the user has won here otherwise it would have returned above
       if (emailObject.email_notification.reward_mail_for_user == true) {
         // The reward that the user either won or lost has set to true which means the user should recieve email
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          emailObject.toMail,
-          emailObject.subject,
-          emailObject.replaceContent
-        );
+
+        const sendingEmailToUser = new Promise((resolve, reject) => {
+          emailHelper
+            .sendMail(
+              "no-reply@ugotlead.dk",
+              emailObject.toMail,
+              emailObject.subject,
+              emailObject.replaceContent
+            )
+            .then((res) => {
+              console.log("sendingEmailToUser ~ res", res);
+              resolve(res);
+            })
+            .catch((e) => {
+              console.log("sendingEmailToUser ~ e", e);
+              reject(e);
+            });
+        });
+        promises.push(sendingEmailToUser);
       }
       if (
         emailObject.email_notification.reward_notification_for_owner == true
@@ -237,15 +256,37 @@ exports.sendEmailToOperators = (req, res) => {
         replaceContent = dynamic_tag_handling.returnDynamicContent(
           emailObject.returnDynamicContentPayload
         );
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          "anla@onlineplus.dk",
-          "U GOT LEAD - En bruger har vundet en præmie!",
-          replaceContent
-        );
+        const sendingEmailToOwner = new Promise((resolve, reject) => {
+          emailHelper
+            .sendMail(
+              "no-reply@ugotlead.dk",
+              "anla@onlineplus.dk",
+              "U GOT LEAD - En bruger har vundet en præmie!",
+              replaceContent
+            )
+            .then((res) => {
+              console.log("sendingEmailToOwner ~ res", res);
+              resolve(res);
+            })
+            .catch((e) => {
+              console.log("sendingEmailToOwner ~ e", e);
+              reject(e);
+            });
+        });
+        promises.push(sendingEmailToOwner);
       }
-      // Return created response
-      return res.status(201).send();
+      // Run through all promises
+      Promise.all(promises)
+        .then((res) => {
+          // All emails were sent correctly
+          console.log("Promise.all ~ res", res);
+
+          // Return created response
+          return res.status(201).send();
+        })
+        .catch((e) => {
+          console.log("Something went wrong with emails", e);
+        });
     }
   });
 };
