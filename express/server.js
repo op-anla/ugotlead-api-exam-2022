@@ -356,11 +356,6 @@ router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   reward_meta.findRewardMetaForRewardUsingMiddleware,
   email.sendEmailToOperators,
 ]);
-router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
-  RequestValidation.validateDomain,
-  reward_meta.findRewardMetaForRewardUsingMiddleware,
-  email.sendEmailToOperatorsForTesting,
-]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,
   email.createMail,
