@@ -204,7 +204,7 @@ exports.updateClaim = (req, res) => {
         res.locals.redeemInfo = {
           won: res.locals.redeemInfo.won,
           data: {
-            reward: res.locals.redeemInfo.data,
+            reward: res.locals.redeemInfo.data.reward,
           },
         };
         return res.status(200).send(res.locals.redeemInfo);

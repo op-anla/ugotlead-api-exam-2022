@@ -183,12 +183,15 @@ exports.sendEmailToOperators = (req, res) => {
       */
       let promises = [];
       // Main OBJECT
+
+      console.log("EmailModel.findById ~ req.body.currentUser", req.body);
       let emailObject = {
         returnDynamicContentPayload: {
           content: "",
           emailInfo: res.locals.emailInfo,
           reward: req.body.redeemInfo.data.reward,
           didUserWin: req.body.redeemInfo.won,
+          userInfo: req.body.currentUser,
         },
         rewardMeta: res.locals.rewardMeta,
         didUserWin: req.body.redeemInfo.won,
@@ -215,34 +218,45 @@ exports.sendEmailToOperators = (req, res) => {
       // Check for lost reward since we always know what to send in that case
       if (!emailObject.didUserWin) {
         // User lost
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          emailObject.toMail,
-          emailObject.subject,
-          emailObject.replaceContent
-        );
-        return res.status(201).send();
+        const sendingLoserEmail = new Promise((resolve, reject) => {
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            emailObject.toMail,
+            emailObject.subject,
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("EmailModel.findById ~ err", err);
+                reject(err);
+              } else {
+                console.log("EmailModel.findById ~ DATA", data);
+                resolve(data);
+              }
+            }
+          );
+        });
+        promises.push(sendingLoserEmail);
       }
       // We expect that the user has won here otherwise it would have returned above
       if (emailObject.email_notification.reward_mail_for_user == true) {
         // The reward that the user either won or lost has set to true which means the user should recieve email
 
         const sendingEmailToUser = new Promise((resolve, reject) => {
-          emailHelper
-            .sendMail(
-              "no-reply@ugotlead.dk",
-              emailObject.toMail,
-              emailObject.subject,
-              emailObject.replaceContent
-            )
-            .then((res) => {
-              console.log("sendingEmailToUser ~ res", res);
-              resolve(res);
-            })
-            .catch((e) => {
-              console.log("sendingEmailToUser ~ e", e);
-              reject(e);
-            });
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            emailObject.toMail,
+            emailObject.subject,
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("sendingEmailToOwner ~ err", err);
+                reject(err);
+              } else {
+                console.log("DATA in sending email to owner", data);
+                resolve(data);
+              }
+            }
+          );
         });
         promises.push(sendingEmailToUser);
       }
@@ -253,39 +267,40 @@ exports.sendEmailToOperators = (req, res) => {
         // We set the content to the admin_text since admin is the one to recieve this email
         emailObject.returnDynamicContentPayload.content =
           res.locals.emailInfo.email_admin_text;
-        replaceContent = dynamic_tag_handling.returnDynamicContent(
+        emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
           emailObject.returnDynamicContentPayload
         );
         const sendingEmailToOwner = new Promise((resolve, reject) => {
-          emailHelper
-            .sendMail(
-              "no-reply@ugotlead.dk",
-              "anla@onlineplus.dk",
-              "U GOT LEAD - En bruger har vundet en præmie!",
-              replaceContent
-            )
-            .then((res) => {
-              console.log("sendingEmailToOwner ~ res", res);
-              resolve(res);
-            })
-            .catch((e) => {
-              console.log("sendingEmailToOwner ~ e", e);
-              reject(e);
-            });
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            "anla@onlineplus.dk",
+            "U GOT LEAD - En bruger har vundet en præmie!",
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("sendingEmailToOwner ~ err", err);
+                reject(err);
+              } else {
+                console.log("DATA in sending email to owner", data);
+                resolve(data);
+              }
+            }
+          );
         });
         promises.push(sendingEmailToOwner);
       }
       // Run through all promises
       Promise.all(promises)
-        .then((res) => {
+        .then((response) => {
           // All emails were sent correctly
-          console.log("Promise.all ~ res", res);
+          console.log("Promise.all ~ res", response);
 
           // Return created response
           return res.status(201).send();
         })
         .catch((e) => {
           console.log("Something went wrong with emails", e);
+          return res.status(500).send();
         });
     }
   });

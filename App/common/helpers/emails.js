@@ -1,7 +1,7 @@
 const mailSetup = require("../../Models/emailsetup");
 
-exports.sendMail = async (fromMail, toMail, subject, content) => {
-  return mailSetup.sendMail(
+exports.sendMail = (fromMail, toMail, subject, content, result) => {
+  mailSetup.sendMail(
     {
       from: fromMail,
       to: toMail,
@@ -12,10 +12,10 @@ exports.sendMail = async (fromMail, toMail, subject, content) => {
       if (err) {
         // Error
         console.log(err);
-        throw new Error(500);
+        result(err, null);
       } else {
         console.log(info);
-        return 200;
+        result(null, info);
       }
     }
   );

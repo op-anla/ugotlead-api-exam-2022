@@ -11,7 +11,7 @@ module.exports = {
       foundTags.forEach((tag) => {
         if (tag.includes("user_name")) {
           // Username check
-          content = content.replace(`{{user_name}}`, payload.userName);
+          content = content.replace(`{{user_name}}`, payload.userInfo.userName);
         }
         if (tag.includes("reward")) {
           // Reward check
