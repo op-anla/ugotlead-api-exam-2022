@@ -176,65 +176,65 @@ exports.sendEmailToOperators = (req, res) => {
       }
     } else {
       res.locals.emailInfo = data;
-      let content = "";
-      if (req.body.redeemInfo.won) {
-        content = res.locals.emailInfo.email_win_text;
-      } else {
-        content = res.locals.emailInfo.email_consolation_text;
-      }
-      let payload = {
-        content: content,
-        emailInfo: res.locals.emailInfo,
-        reward: req.body.redeemInfo.data.reward,
-        didUserWin: req.body.redeemInfo.won,
-      };
-      let rewardMeta = res.locals.rewardMeta;
-      let toMail = req.body.payload.currentUser.email;
-      let didUserWin = req.body.redeemInfo.won;
-      let subject = didUserWin
-        ? "Tillykke ! - Du har vundet !"
-        : "Du vandt desværre ikke...";
-      let replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-
-      console.log("REWARD INFO", rewardMeta);
-      let email_notification = checkMyJson(
-        rewardMeta.reward_email_notification_info
-      )
-        ? JSON.parse(rewardMeta.reward_email_notification_info)
-        : undefined;
-      console.log(
-        "EmailModel.findById ~ email_notification",
-        email_notification
-      );
-      // Check for lost reward since we always know what to send in that case
-      if (!didUserWin) {
-        // User lost
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          toMail,
-          subject,
-          replaceContent
-        );
-        return res.status(200).send();
-      }
-      if (email_notification.reward_mail_for_user == true) {
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          toMail,
-          subject,
-          replaceContent
-        );
-        return res.status(200).send();
-      }
-      if (email_notification.reward_notification_for_owner == true) {
-        content = res.locals.emailInfo.email_admin_text;
-        payload = {
-          content: content,
+      // Main OBJECT
+      let emailObject = {
+        returnDynamicContentPayload: {
+          content: "",
           emailInfo: res.locals.emailInfo,
           reward: req.body.redeemInfo.data.reward,
           didUserWin: req.body.redeemInfo.won,
-        };
-        replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+        },
+        rewardMeta: res.locals.rewardMeta,
+        didUserWin: req.body.redeemInfo.won,
+        toMail: req.body.currentUser.email,
+        subject: req.body.redeemInfo.won
+          ? "Tillykke ! - Du har vundet !"
+          : "Du vandt desværre ikke...",
+        email_notification: checkMyJson(
+          res.locals.rewardMeta.reward_email_notification_info
+        )
+          ? JSON.parse(res.locals.rewardMeta.reward_email_notification_info)
+          : undefined,
+      };
+      if (emailObject.didUserWin) {
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_win_text;
+      } else {
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_consolation_text;
+      }
+      emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
+        emailObject.returnDynamicContentPayload
+      );
+      // Check for lost reward since we always know what to send in that case
+      if (!emailObject.didUserWin) {
+        // User lost
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          emailObject.toMail,
+          emailObject.subject,
+          emailObject.replaceContent
+        );
+        return res.status(201).send();
+      }
+      // We expect that the user has won here otherwise it would have returned above
+      if (emailObject.email_notification.reward_mail_for_user == true) {
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          emailObject.toMail,
+          emailObject.subject,
+          emailObject.replaceContent
+        );
+        return res.status(201).send();
+      }
+      if (
+        emailObject.email_notification.reward_notification_for_owner == true
+      ) {
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_admin_text;
+        replaceContent = dynamic_tag_handling.returnDynamicContent(
+          emailObject.returnDynamicContentPayload
+        );
         console.log("EmailModel.findById ~ replaceContent", replaceContent);
         emailHelper.sendMail(
           "no-reply@ugotlead.dk",
@@ -243,7 +243,7 @@ exports.sendEmailToOperators = (req, res) => {
           replaceContent
         );
 
-        return res.status(200).send();
+        return res.status(201).send();
       }
     }
   });
