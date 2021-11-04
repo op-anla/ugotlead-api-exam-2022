@@ -162,42 +162,89 @@ exports.sendEmailToOperators = (req, res) => {
   We will first get the email information from the database.
   We use this to generate the different emails.
   */
-  console.log("The user has played, so let's see the data", req.body);
-  let campaignId = req.body.payload.campaignInfo.campaign_id;
-  console.log("campaignId", campaignId);
+  let campaignId = req.body.campaignInfo.campaign_id;
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(404).send({
+        return res.status(404).send({
           message: `Not found email with campaign_id id ${campaignId}.`,
         });
       } else {
-        res.status(500).send({
+        return res.status(500).send({
           message: "Error retrieving email with campaign_id id " + campaignId,
         });
       }
     } else {
       res.locals.emailInfo = data;
+      let content = "";
+      if (req.body.redeemInfo.won) {
+        content = res.locals.emailInfo.email_win_text;
+      } else {
+        content = res.locals.emailInfo.email_consolation_text;
+      }
       let payload = {
+        content: content,
         emailInfo: res.locals.emailInfo,
-        toUserMail: req.body.payload.currentUser.email,
-        toUserName: req.body.payload.currentUser.navn,
-        reward: req.body.payload.redeemInfo.reward,
-        didUserWin: req.body.payload.redeemInfo.won,
+        reward: req.body.redeemInfo.data.reward,
+        didUserWin: req.body.redeemInfo.won,
       };
-      let didUserWin = req.body.payload.redeemInfo.won;
+      let rewardMeta = res.locals.rewardMeta;
       let toMail = req.body.payload.currentUser.email;
+      let didUserWin = req.body.redeemInfo.won;
       let subject = didUserWin
         ? "Tillykke ! - Du har vundet !"
         : "Du vandt desværre ikke...";
-      const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-      console.log("replaceContent", replaceContent);
-      emailHelper.sendMail(
-        "no-reply@ugotlead.dk",
-        toMail,
-        subject,
-        replaceContent
+      let replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+
+      console.log("REWARD INFO", rewardMeta);
+      let email_notification = checkMyJson(
+        rewardMeta.reward_email_notification_info
+      )
+        ? JSON.parse(rewardMeta.reward_email_notification_info)
+        : undefined;
+      console.log(
+        "EmailModel.findById ~ email_notification",
+        email_notification
       );
+      // Check for lost reward since we always know what to send in that case
+      if (!didUserWin) {
+        // User lost
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          toMail,
+          subject,
+          replaceContent
+        );
+        return res.status(200).send();
+      }
+      if (email_notification.reward_mail_for_user == true) {
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          toMail,
+          subject,
+          replaceContent
+        );
+        return res.status(200).send();
+      }
+      if (email_notification.reward_notification_for_owner == true) {
+        content = res.locals.emailInfo.email_admin_text;
+        payload = {
+          content: content,
+          emailInfo: res.locals.emailInfo,
+          reward: req.body.redeemInfo.data.reward,
+          didUserWin: req.body.redeemInfo.won,
+        };
+        replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
+        console.log("EmailModel.findById ~ replaceContent", replaceContent);
+        emailHelper.sendMail(
+          "no-reply@ugotlead.dk",
+          "anla@onlineplus.dk",
+          "U GOT LEAD - En bruger har vundet en præmie!",
+          replaceContent
+        );
+
+        return res.status(200).send();
+      }
     }
   });
 };
@@ -210,11 +257,11 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(404).send({
+        return res.status(404).send({
           message: `Not found email with campaign_id id ${campaignId}.`,
         });
       } else {
-        res.status(500).send({
+        return res.status(500).send({
           message: "Error retrieving email with campaign_id id " + campaignId,
         });
       }
@@ -258,7 +305,7 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
           subject,
           replaceContent
         );
-        res.status(200).send();
+        return res.status(200).send();
       }
       if (email_notification.reward_mail_for_user == true) {
         emailHelper.sendMail(
@@ -267,7 +314,7 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
           subject,
           replaceContent
         );
-        res.status(200).send();
+        return res.status(200).send();
       }
       if (email_notification.reward_notification_for_owner == true) {
         content = res.locals.emailInfo.email_admin_text;
@@ -286,7 +333,7 @@ exports.sendEmailToOperatorsForTesting = (req, res) => {
           replaceContent
         );
 
-        res.status(200).send();
+        return res.status(200).send();
       }
     }
   });

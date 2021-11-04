@@ -353,6 +353,7 @@ router.post(`/${apiUrl}/email/sendtest`, [
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   RequestValidation.validateDomain,
+  reward_meta.findRewardMetaForRewardUsingMiddleware,
   email.sendEmailToOperators,
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
