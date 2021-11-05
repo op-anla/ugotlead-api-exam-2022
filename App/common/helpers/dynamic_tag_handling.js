@@ -1,10 +1,11 @@
+const ugotleadEmailHelper = require("./ugotleadEmailHelper");
+
 module.exports = {
   returnDynamicContent: function (payload) {
     let content = payload.content;
-    console.log("content", content);
-
-    let regex = /\{{(.*?)\}}/g;
-    let foundTags = content.match(regex);
+    content = ugotleadEmailHelper.addTemplateContent(content);
+    const regex = /\{{(.*?)\}}/g;
+    const foundTags = content.match(regex);
 
     if (Array.isArray(foundTags) && foundTags.length) {
       // We actually found some tags

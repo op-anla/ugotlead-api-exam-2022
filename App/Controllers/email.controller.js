@@ -4,8 +4,8 @@ const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
+
 const { checkMyJson } = require("../common/helpers/checkmyjson");
-const { response } = require("express");
 exports.createMail = (req, res) => {
   // Validate request
   if (!req.body) {
