@@ -32,6 +32,35 @@ module.exports = {
           `;
           content = content.replace(`{{user_info}}`, userInfoContent);
         }
+        if (tag.includes("user_name")) {
+          // Username
+          content = content.replace(`{{user_name}}`, payload.userInfo.navn);
+        }
+        if (tag.includes("user_email")) {
+          // Email
+          content = content.replace(`{{user_email}}`, payload.userInfo.email);
+        }
+        if (tag.includes("reward_name")) {
+          // Reward name
+          content = content.replace(
+            `{{reward_name}}`,
+            payload.reward.reward_name
+          );
+        }
+        if (tag.includes("reward_description")) {
+          // Reward description
+          content = content.replace(
+            `{{reward_description}}`,
+            payload.reward.reward_description
+          );
+        }
+        if (tag.includes("reward_value")) {
+          // Reward value
+          content = content.replace(
+            `{{reward_value}}`,
+            payload.reward.reward_value
+          );
+        }
       });
       return content;
     } else {
