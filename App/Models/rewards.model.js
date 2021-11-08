@@ -185,7 +185,7 @@ Reward.updateClaimedProp = (id, result) => {
   console.log("🚀 ~ file: rewards.model.js ~ line 59 ~ reward", id);
 
   sql.query(
-    "UPDATE rewards SET  reward_claimed = 0  WHERE reward_id = ?",
+    "UPDATE rewards SET  reward_claimed = 1  WHERE reward_id = ?",
     id,
     (err, res) => {
       if (err) {
