@@ -8,7 +8,25 @@ const EntryModel = function (entry) {
   this.reward_id = entry.reward_id;
   this.entry_date = entry.entry_date;
 };
-
+EntryModel.getAllByCampaignId = (campaignId, result) => {
+  console.log("trying to get all entries in models from cmapaign id");
+  sql.query(
+    "SELECT * FROM entries where campaign_id = ?",
+    campaignId,
+    async (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: entry.model.js ~ line 17 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
+      // Here we have the correct response
+      result(null, res);
+    }
+  );
+};
 EntryModel.getAllEntries = (result) => {
   console.log("trying to get all entries in models");
   sql.query("SELECT * FROM entries", async (err, res) => {

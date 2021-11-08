@@ -38,7 +38,34 @@ Reward.getAllRewards = (result) => {
     }
   );
 };
+Reward.getSingleRewardById = (reward_id, result) => {
+  sql.query(
+    `SELECT * FROM rewards WHERE reward_id = ?`,
+    reward_id,
+    (err, res) => {
+      if (err) {
+        console.log("err", err);
 
+        result(err, null);
+        return;
+      }
+
+      if (res) {
+        console.log("found reward: ", res);
+        result(null, res[0]);
+        return;
+      }
+
+      // not found rewards with the id
+      result(
+        {
+          kind: "not_found",
+        },
+        null
+      );
+    }
+  );
+};
 Reward.findByCampaignId = (campaignId, result) => {
   sql.query(
     `SELECT * FROM rewards WHERE campaign_id = ?`,

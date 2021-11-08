@@ -4,8 +4,8 @@ const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
+
 const { checkMyJson } = require("../common/helpers/checkmyjson");
-const { response } = require("express");
 exports.createMail = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -162,132 +162,146 @@ exports.sendEmailToOperators = (req, res) => {
   We will first get the email information from the database.
   We use this to generate the different emails.
   */
-  console.log("The user has played, so let's see the data", req.body);
-  let campaignId = req.body.payload.campaignInfo.campaign_id;
-  console.log("campaignId", campaignId);
-  EmailModel.findById(campaignId, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found email with campaign_id id ${campaignId}.`,
-        });
-      } else {
-        res.status(500).send({
-          message: "Error retrieving email with campaign_id id " + campaignId,
-        });
-      }
-    } else {
-      res.locals.emailInfo = data;
-      let payload = {
-        emailInfo: res.locals.emailInfo,
-        toUserMail: req.body.payload.currentUser.email,
-        toUserName: req.body.payload.currentUser.navn,
-        reward: req.body.payload.redeemInfo.reward,
-        didUserWin: req.body.payload.redeemInfo.won,
-      };
-      let didUserWin = req.body.payload.redeemInfo.won;
-      let toMail = req.body.payload.currentUser.email;
-      let subject = didUserWin
-        ? "Tillykke ! - Du har vundet !"
-        : "Du vandt desværre ikke...";
-      const replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-      console.log("replaceContent", replaceContent);
-      emailHelper.sendMail(
-        "no-reply@ugotlead.dk",
-        toMail,
-        subject,
-        replaceContent
-      );
-    }
-  });
-};
-exports.sendEmailToOperatorsForTesting = (req, res) => {
-  /* 
-  We will first get the email information from the database.
-  We use this to generate the different emails.
-  */
   let campaignId = req.body.campaignInfo.campaign_id;
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(404).send({
+        return res.status(404).send({
           message: `Not found email with campaign_id id ${campaignId}.`,
         });
       } else {
-        res.status(500).send({
+        return res.status(500).send({
           message: "Error retrieving email with campaign_id id " + campaignId,
         });
       }
     } else {
       res.locals.emailInfo = data;
-      let content = "";
-      if (req.body.redeemInfo.won) {
-        content = res.locals.emailInfo.email_win_text;
-      } else {
-        content = res.locals.emailInfo.email_consolation_text;
-      }
-      let payload = {
-        content: content,
-        emailInfo: res.locals.emailInfo,
-        reward: req.body.redeemInfo.data.reward,
-        didUserWin: req.body.redeemInfo.won,
-      };
-      let rewardMeta = res.locals.rewardMeta;
-      let didUserWin = req.body.redeemInfo.won;
-      let subject = didUserWin
-        ? "Tillykke ! - Du har vundet !"
-        : "Du vandt desværre ikke...";
-      let replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
 
-      console.log("REWARD INFO", rewardMeta);
-      let email_notification = checkMyJson(
-        rewardMeta.reward_email_notification_info
-      )
-        ? JSON.parse(rewardMeta.reward_email_notification_info)
-        : undefined;
-      console.log(
-        "EmailModel.findById ~ email_notification",
-        email_notification
-      );
-      // Check for lost reward since we always know what to send in that case
-      if (!didUserWin) {
-        // User lost
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          "anla@onlineplus.dk",
-          subject,
-          replaceContent
-        );
-        res.status(200).send();
-      }
-      if (email_notification.reward_mail_for_user == true) {
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          "anla@onlineplus.dk",
-          subject,
-          replaceContent
-        );
-        res.status(200).send();
-      }
-      if (email_notification.reward_notification_for_owner == true) {
-        content = res.locals.emailInfo.email_admin_text;
-        payload = {
-          content: content,
+      /* 
+      Main promise array which will be used since there is chance for multiple emails to be sent. 
+      We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
+      */
+      let promises = [];
+      // Main OBJECT
+
+      console.log("EmailModel.findById ~ req.body.currentUser", req.body);
+      let emailObject = {
+        returnDynamicContentPayload: {
+          content: "",
           emailInfo: res.locals.emailInfo,
           reward: req.body.redeemInfo.data.reward,
           didUserWin: req.body.redeemInfo.won,
-        };
-        replaceContent = dynamic_tag_handling.returnDynamicContent(payload);
-        console.log("EmailModel.findById ~ replaceContent", replaceContent);
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          "anla@onlineplus.dk",
-          "U GOT LEAD - En bruger har vundet en præmie!",
-          replaceContent
-        );
-
-        res.status(200).send();
+          userInfo: req.body.currentUser,
+        },
+        rewardMeta: res.locals.rewardMeta,
+        didUserWin: req.body.redeemInfo.won,
+        toMail: req.body.currentUser.email,
+        subject: req.body.redeemInfo.won
+          ? "Tillykke ! - Du har vundet !"
+          : "Du vandt desværre ikke...",
+        email_notification: checkMyJson(
+          res.locals.rewardMeta.reward_email_notification_info
+        )
+          ? JSON.parse(res.locals.rewardMeta.reward_email_notification_info)
+          : undefined,
+      };
+      if (emailObject.didUserWin) {
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_win_text;
+      } else {
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_consolation_text;
       }
+      emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
+        emailObject.returnDynamicContentPayload
+      );
+      // Check for lost reward since we always know what to send in that case
+      if (!emailObject.didUserWin) {
+        // User lost
+        const sendingLoserEmail = new Promise((resolve, reject) => {
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            emailObject.toMail,
+            emailObject.subject,
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("EmailModel.findById ~ err", err);
+                reject(err);
+              } else {
+                console.log("EmailModel.findById ~ DATA", data);
+                resolve(data);
+              }
+            }
+          );
+        });
+        promises.push(sendingLoserEmail);
+      }
+      // We expect that the user has won here otherwise it would have returned above
+      if (emailObject.email_notification.reward_mail_for_user == true) {
+        // The reward that the user either won or lost has set to true which means the user should recieve email
+
+        const sendingEmailToUser = new Promise((resolve, reject) => {
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            emailObject.toMail,
+            emailObject.subject,
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("sendingEmailToOwner ~ err", err);
+                reject(err);
+              } else {
+                console.log("DATA in sending email to owner", data);
+                resolve(data);
+              }
+            }
+          );
+        });
+        promises.push(sendingEmailToUser);
+      }
+      if (
+        emailObject.email_notification.reward_notification_for_owner == true
+      ) {
+        // The reward has true setting for reward_notification for the owner which means the owner get's email too
+        // We set the content to the admin_text since admin is the one to recieve this email
+        emailObject.returnDynamicContentPayload.content =
+          res.locals.emailInfo.email_admin_text;
+        emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
+          emailObject.returnDynamicContentPayload
+        );
+        const sendingEmailToOwner = new Promise((resolve, reject) => {
+          emailHelper.sendMail(
+            "no-reply@ugotlead.dk",
+            "anla@onlineplus.dk",
+            "U GOT LEAD - En bruger har vundet en præmie!",
+            emailObject.replaceContent,
+            (err, data) => {
+              if (err) {
+                console.log("sendingEmailToOwner ~ err", err);
+                reject(err);
+              } else {
+                console.log("DATA in sending email to owner", data);
+                resolve(data);
+              }
+            }
+          );
+        });
+        promises.push(sendingEmailToOwner);
+      }
+      // Run through all promises
+      Promise.all(promises)
+        .then((response) => {
+          // All emails were sent correctly
+          console.log("Promise.all ~ res", response);
+
+          // Return created response
+          return res.status(201).send();
+        })
+        .catch((e) => {
+          console.log("Something went wrong with emails", e);
+          return res.status(500).send();
+        });
     }
   });
 };

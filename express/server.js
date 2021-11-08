@@ -21,6 +21,7 @@ const logging = require("../App/Controllers/logging.controller.js");
 const layoutWidgets = require("../App/Controllers/layout-widgets.controller.js");
 const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
+const player = require("../App/Controllers/player.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 const email = require("../App/Controllers/email.controller.js");
@@ -69,6 +70,13 @@ CAMPAIGNS
 router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findAll,
+]);
+router.get(`/${apiUrl}/get-all-entrydata/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  entry.findAllEntriesForCampaign,
+  player.getAllPlayersByAllEntries,
+  logging.getLoggingInfoByEntryData,
+  rewards.getRewardInfoByEntryData,
 ]);
 router.get(`/${apiUrl}/campaigns/:campaignId`, [campaigns.findOne]);
 router.get(`/${apiUrl}/campaign-stats/:campaignId`, [
@@ -236,6 +244,7 @@ router.get(`/${apiUrl}/checklogging/:campaignId/:session_id`, [
   logging.findLogForUser,
   entry.findEntryFromLog,
 ]);
+
 router.post(`/${apiUrl}/create-logging/:campaignId`, [
   RequestValidation.validateDomain,
   logging.createLogForUser,
@@ -344,12 +353,8 @@ router.post(`/${apiUrl}/email/sendtest`, [
 ]);
 router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
   RequestValidation.validateDomain,
-  email.sendEmailToOperators,
-]);
-router.post(`/${apiUrl}/email/send-mail-for-completing-game-testing`, [
-  RequestValidation.validateDomain,
   reward_meta.findRewardMetaForRewardUsingMiddleware,
-  email.sendEmailToOperatorsForTesting,
+  email.sendEmailToOperators,
 ]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,

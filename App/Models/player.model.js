@@ -9,21 +9,42 @@ const Player = function (player) {
 Player.create = (newPlayer, result) => {
   sql.query("INSERT INTO players SET ?", newPlayer, (err, res) => {
     if (err) {
-      console.log("🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err", err)
+      console.log(
+        "🚀 ~ file: campaign.model.js ~ line 13 ~ sql.query ~ err",
+        err
+      );
       result(err, null);
       return;
     }
 
     console.log("created player: ", {
       id: res.insertId,
-      ...newPlayer
+      ...newPlayer,
     });
 
     result(null, {
       id: res.insertId,
-      ...newPlayer
+      ...newPlayer,
     });
-
   });
+};
+Player.getPlayerById = (player_id, result) => {
+  console.log("trying to get all entries in models from cmapaign id");
+  sql.query(
+    "SELECT * FROM players where player_id = ?",
+    player_id,
+    (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: entry.model.js ~ line 17 ~ sql.query ~ err",
+          err
+        );
+        result(null, err);
+        return;
+      }
+      // Here we have the correct response
+      result(null, res[0]);
+    }
+  );
 };
 module.exports = Player;

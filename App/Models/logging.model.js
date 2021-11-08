@@ -58,6 +58,32 @@ Logging.findLog = (campaignId, session_id, result) => {
     }
   );
 };
+Logging.getLogById = (log_id, result) => {
+  sql.query(`SELECT * FROM logs WHERE log_id = ?`, log_id, (err, res) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: logging.model.js ~ line 31 ~ sql.query ~ err",
+        err
+      );
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found log: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found log with the specific HTTP USER AGENT
+    result(
+      {
+        kind: "not_found",
+      },
+      null
+    );
+  });
+};
 Logging.create = (newLog, result) => {
   sql.query("INSERT INTO logs SET ?", newLog, (err, res) => {
     if (err) {
