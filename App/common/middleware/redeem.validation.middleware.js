@@ -74,7 +74,7 @@ exports.didUserWin = (req, res, next) => {
       "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
       baseNum
     );
-    let testPercentage = 100 - 30;
+    let testPercentage = 90;
     let basePercentage = 100 - percentOfWinning;
     console.log(
       "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
@@ -113,30 +113,27 @@ exports.didUserWin = (req, res, next) => {
   }
 };
 exports.didUserWinWithResponse = (req, res, next) => {
-  console.log(
-    "NOW WE CALCULATE WINNING FOR USER",
-    req.body.rewards.length,
-    "CAMPAIGN INFO",
-    req.body.campaign
-  );
+  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
   */
-  let notClaimedRewards = req.body.rewards.filter((reward) => {
-    return reward.reward_claimed === 0;
-  });
-  let viableRewards = notClaimedRewards.filter((reward) => {
+  const allRewards = req.body.rewards;
+  let allRewardsWithoutConsolationReward = allRewards.filter((reward) => {
     return reward.reward_type != 0;
   });
-  const amountOfViableRewards = viableRewards.length;
-  let lost_reward = req.body.rewards.filter((reward) => {
+  let winnableRewards = allRewardsWithoutConsolationReward.filter((reward) => {
+    return reward.reward_claimed === 0;
+  });
+  const amountOfRewardsForPercentage =
+    allRewardsWithoutConsolationReward.length;
+  let lost_reward = allRewards.filter((reward) => {
     return reward.reward_type === 0;
   });
   const amountOfLeads = req.body.campaign.leads_goal;
-  const percentOfWinning = (amountOfViableRewards / amountOfLeads) * 100;
+  const percentOfWinning = (amountOfRewardsForPercentage / amountOfLeads) * 100;
   console.log("percentOfWinning", percentOfWinning);
-  console.log("viableRewards ~ viableRewards", viableRewards.length);
+  console.log("winnableRewards", winnableRewards.length);
   /* We go through each reward and see which is closest to now (drawtime) */
   /* 
   The chances of each reward depends on what options there is. 
@@ -145,7 +142,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
   First priority is always drawtime though!!!
   */
   const now = new Date();
-  if (!viableRewards.length) {
+  if (!winnableRewards.length) {
     // No available rewards left so the user lose.
     console.log("The user lost because no available rewards");
     res.locals.redeemInfo = {
@@ -154,11 +151,13 @@ exports.didUserWinWithResponse = (req, res, next) => {
         reward: lost_reward[0],
       },
     };
+    req.body.reward = res.locals.redeemInfo.data.reward;
     return res.status(200).send(res.locals.redeemInfo);
   }
   // Use this variable to keep track of the user losing
   let didUserWin = false;
-  viableRewards.forEach((reward) => {
+  //
+  winnableRewards.forEach((reward) => {
     if (reward.reward_drawtime == null) {
       return;
     }
@@ -177,6 +176,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
           reward: reward,
         },
       };
+      req.body.reward = res.locals.redeemInfo.data.reward;
       return res.status(200).send(res.locals.redeemInfo);
     }
   });
@@ -188,8 +188,8 @@ exports.didUserWinWithResponse = (req, res, next) => {
       "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
       baseNum
     );
-    let testPercentage = 100 - 30;
-    let basePercentage = 100 - percentOfWinning;
+    let testPercentage = 90;
+    let basePercentage = 100 - testPercentage;
     console.log(
       "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
       basePercentage
@@ -199,7 +199,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
     // Comment for not testing
     if (baseNum >= basePercentage) {
       let randomRewardToPick =
-        viableRewards[Math.floor(Math.random() * viableRewards.length)];
+        winnableRewards[Math.floor(Math.random() * winnableRewards.length)];
 
       console.log("USER WON");
       // User won
@@ -210,6 +210,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
           reward: randomRewardToPick,
         },
       };
+      req.body.reward = res.locals.redeemInfo.data.reward;
       return res.status(200).send(res.locals.redeemInfo);
     } else {
       console.log("User did not win!");
@@ -220,6 +221,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
           reward: lost_reward[0],
         },
       };
+      req.body.reward = res.locals.redeemInfo.data.reward;
       return res.status(200).send(res.locals.redeemInfo);
     }
   }
