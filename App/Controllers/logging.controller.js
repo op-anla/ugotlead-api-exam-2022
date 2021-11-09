@@ -163,7 +163,9 @@ exports.createLogForUser = (req, res) => {
     req.body
   );
   const _user_agent = req.headers["user-agent"];
-
+  if (_user_agent.includes("Apache-HttpClient")) {
+    return res.status(201).send();
+  }
   const _os = osChecker(_user_agent);
   const _device = deviceChecker(_user_agent);
   const _browser = browserChecker(_user_agent);
