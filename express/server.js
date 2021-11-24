@@ -27,6 +27,7 @@ const AuthorizationController = require("../App/auth/controllers/authorization.c
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
+const campaign_meta_data = require("../App/Controllers/campaign_meta_data.controller.js");
 // const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
 const analytics = require("../App/Controllers/analytics.controller.js");
@@ -94,6 +95,15 @@ router.put(`/${apiUrl}/update-campaign/:campaignId`, [
 router.delete(`/${apiUrl}/delete-campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.delete,
+]);
+/* 
+-----------------------------------------------
+CAMPAIGN META DATA
+EXTENDED CAMPAIGN
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/get_campaign_meta_data/:campaignId`, [
+  campaign_meta_data.findMetaForCampaignId,
 ]);
 
 /* 
