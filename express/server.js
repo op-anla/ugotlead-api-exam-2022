@@ -141,10 +141,7 @@ router.get(`/${apiUrl}/companies`, [
   ValidationMiddleware.validJWTNeeded,
   companies.findAll,
 ]);
-router.get(`/${apiUrl}/companies/:companyId`, [
-  ValidationMiddleware.validJWTNeeded,
-  companies.findOneCompany,
-]);
+router.get(`/${apiUrl}/companies/:companyId`, [companies.findOneCompany]);
 router.put(`/${apiUrl}/update-company/:companyId`, [
   ValidationMiddleware.validJWTNeeded,
   companies.update,

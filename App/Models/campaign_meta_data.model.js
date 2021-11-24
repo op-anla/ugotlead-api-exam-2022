@@ -13,17 +13,13 @@ CampaignMetaData.findById = (campaignId, result) => {
     `SELECT * FROM campaign_meta_data WHERE campaign_id = ?`,
     campaignId,
     (err, res) => {
+      console.log("res", res);
       if (err) {
-        console.log(
-          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-          err
-        );
         result(err, null);
         return;
       }
+
       if (res.length) {
-        console.log("found campaign: ", res[0]);
-        tempCache = res[0];
         result(null, res[0]);
         return;
       }
@@ -36,3 +32,5 @@ CampaignMetaData.findById = (campaignId, result) => {
     }
   );
 };
+
+module.exports = CampaignMetaData;
