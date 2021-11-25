@@ -106,6 +106,11 @@ router.get(`/${apiUrl}/get_campaign_meta_data/:campaignId`, [
   campaign_meta_data.findMetaForCampaignId,
 ]);
 
+router.put(`/${apiUrl}/update-campaign-meta/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaign_meta_data.update,
+]);
+
 /* 
 -----------------------------------------------
 LAYOUT FOR CAMPAIGNS

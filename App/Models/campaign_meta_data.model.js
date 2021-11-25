@@ -33,4 +33,38 @@ CampaignMetaData.findById = (campaignId, result) => {
   );
 };
 
+CampaignMetaData.updateById = (id, campaign, result) => {
+  console.log("campaign in model", campaign);
+  sql.query(
+    "UPDATE campaign_meta_data SET  ?   WHERE campaign_id = ?",
+    [campaign, id],
+    (err, res) => {
+      if (err) {
+        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found campaign with the id
+        result(
+          {
+            kind: "not_found",
+          },
+          null
+        );
+        return;
+      }
+      console.log("updated campaign: ", {
+        id: id,
+        ...campaign,
+      });
+      result(null, {
+        id: id,
+        ...campaign,
+      });
+    }
+  );
+};
+
 module.exports = CampaignMetaData;
