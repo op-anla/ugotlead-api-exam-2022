@@ -20,11 +20,9 @@ CampaignMetaData.create = (newCampaignMeta, result) => {
       }
 
       console.log("created camapignMeta: ", {
-        id: res.insertId,
         ...newCampaignMeta,
       });
       result(null, {
-        id: res.insertId,
         ...newCampaignMeta,
       });
     }
@@ -55,20 +53,20 @@ CampaignMetaData.findById = (campaignId, result) => {
   );
 };
 
-CampaignMetaData.updateById = (id, campaign, result) => {
-  console.log("campaign in model", campaign);
+CampaignMetaData.updateById = (id, campaignMeta, result) => {
+  console.log("campaign in model", campaignMeta);
   sql.query(
     "UPDATE campaign_meta_data SET  ?   WHERE campaign_id = ?",
-    [campaign, id],
+    [campaignMeta, id],
     (err, res) => {
       if (err) {
-        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
+        console.log("🚀 ~ file: campaignMeta.model.js ~ line 74 ~ err", err);
         result(null, err);
         return;
       }
 
       if (res.affectedRows == 0) {
-        // not found campaign with the id
+        // not found campaignMeta with the id
         result(
           {
             kind: "not_found",
@@ -77,13 +75,11 @@ CampaignMetaData.updateById = (id, campaign, result) => {
         );
         return;
       }
-      console.log("updated campaign: ", {
-        id: id,
-        ...campaign,
+      console.log("updated campaignMeta: ", {
+        ...campaignMeta,
       });
       result(null, {
-        id: id,
-        ...campaign,
+        ...campaignMeta,
       });
     }
   );
