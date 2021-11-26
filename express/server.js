@@ -102,6 +102,10 @@ CAMPAIGN META DATA
 EXTENDED CAMPAIGN
 -----------------------------------------------
 */
+router.post(`/${apiUrl}/create-campaign-meta/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaign_meta_data.createCampaignMetaData,
+]);
 router.get(`/${apiUrl}/get_campaign_meta_data/:campaignId`, [
   campaign_meta_data.findMetaForCampaignId,
 ]);

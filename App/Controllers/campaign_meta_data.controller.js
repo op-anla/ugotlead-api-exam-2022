@@ -44,3 +44,31 @@ exports.update = (req, res) => {
     }
   );
 };
+
+exports.createCampaignMetaData = (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  // Create a company
+  const campaignMeta = new CampaignMetaData({
+    campaign_id: req.params.campaignId,
+    campaign_terms_of_service: "",
+    campaign_terms_of_service_url: "",
+  });
+
+  // Save CampaignMetaData in the database
+  CampaignMetaData.create(campaignMeta, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the company.",
+      });
+    } else {
+      res.status(201).send();
+    }
+  });
+};
