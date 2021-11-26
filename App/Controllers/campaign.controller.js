@@ -8,6 +8,10 @@ exports.create = (req, res) => {
     });
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
+  // Get some dates for campaign start and enddate
+  let now = new Date();
+  let start_date = now.setDate(now.getDate() + 1 * 7);
+  let end_date = now.setDate(now.getDate() + 4 * 7);
 
   // Create a Campaign
   const campaign = new Campaign({
@@ -16,6 +20,8 @@ exports.create = (req, res) => {
     campaign_description: req.body.campaign_description,
     campaign_owner_id: req.body.campaign_owner_id,
     campaign_integrations: "",
+    campaign_startdate: new Date(start_date),
+    campaign_enddate: new Date(end_date),
   });
 
   // Save Campaign in the database
