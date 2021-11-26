@@ -8,23 +8,27 @@ const CampaignMetaData = function (campaign_meta_data) {
     campaign_meta_data.campaign_terms_of_service_url;
 };
 CampaignMetaData.create = (newCampaignMeta, result) => {
-  sql.query("INSERT INTO companies SET ?", newCampaignMeta, (err, res) => {
-    if (err) {
-      console.log("sql.query ~ err", err);
+  sql.query(
+    "INSERT INTO campaign_meta_data SET ?",
+    newCampaignMeta,
+    (err, res) => {
+      if (err) {
+        console.log("sql.query ~ err", err);
 
-      result(err, null);
-      return;
+        result(err, null);
+        return;
+      }
+
+      console.log("created camapignMeta: ", {
+        id: res.insertId,
+        ...newCampaignMeta,
+      });
+      result(null, {
+        id: res.insertId,
+        ...newCampaignMeta,
+      });
     }
-
-    console.log("created camapignMeta: ", {
-      id: res.insertId,
-      ...newCampaignMeta,
-    });
-    result(null, {
-      id: res.insertId,
-      ...newCampaignMeta,
-    });
-  });
+  );
 };
 CampaignMetaData.findById = (campaignId, result) => {
   sql.query(
