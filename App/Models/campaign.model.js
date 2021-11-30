@@ -262,12 +262,11 @@ Campaign.updateById = (id, campaign, result) => {
     }
   );
 };
-
-Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
+Campaign.updateIntegrationData = (id, integrationData, result) => {
   console.log(
-    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, mailchimpInfo",
+    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, integrationData",
     id,
-    mailchimpInfo
+    integrationData
   );
   sql.query(
     "SELECT campaign_integrations FROM campaigns WHERE campaign_id = ?",
@@ -301,12 +300,12 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
         }
         integrations.push(integration);
       });
-      updateCampaign(integrations, id, mailchimpInfo);
+      updateCampaign(integrations, id, integrationData);
     }
   );
-  function updateCampaign(arrayIntegrations, campaignId, mailchimpInfo) {
+  function updateCampaign(arrayIntegrations, campaignId, integrationData) {
     let myArray = arrayIntegrations;
-    myArray.push(mailchimpInfo);
+    myArray.push(integrationData);
     console.log("updateCampaign ~ myArray", myArray);
     let string = JSON.stringify(myArray);
     console.log("updateCampaign ~ string", string);
@@ -332,11 +331,11 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
         }
         console.log("updated campaign: ", {
           id: id,
-          mailchimpInfo: mailchimpInfo,
+          integrationData: integrationData,
         });
         result(null, {
           id: id,
-          mailchimpInfo: mailchimpInfo,
+          integrationData: integrationData,
         });
       }
     );

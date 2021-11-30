@@ -1,4 +1,4 @@
-const campaigns = require("./campaign.controller.js");
+const campaign = require("./campaign.controller.js");
 const player = require("./player.controller.js");
 
 const mailchimp = require("@mailchimp/mailchimp_marketing");
@@ -121,7 +121,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   );
   // Waiting to update
 
-  campaigns.updateMailchimp(campaignId, campaignMailchimp);
+  campaign.updateMailchimp(campaignId, campaignMailchimp);
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.

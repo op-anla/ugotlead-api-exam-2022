@@ -230,8 +230,13 @@ This is actually extending the Campaign because each campaign will have auth end
 The heyLoyalty info will also be saved for that specific heyloyalty and not on the specific user. 
 -----------------------------------------------
 */
-router.post(`/${apiUrl}/auth/heyloyalty`, [
+router.get(`/${apiUrl}/auth/heyloyalty/check-status`, [
+  ValidationMiddleware.validJWTNeeded,
   heyLoyaltyController.checkKeyStatus,
+]);
+router.post(`/${apiUrl}/auth/heyloyalty/save-keys`, [
+  ValidationMiddleware.validJWTNeeded,
+  heyLoyaltyController.saveKeysForCampaign,
 ]);
 /* 
 -----------------------------------------------
