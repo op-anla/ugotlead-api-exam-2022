@@ -23,6 +23,7 @@ const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const player = require("../App/Controllers/player.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
+const heyLoyaltyController = require("../App/Controllers/heyLoyaltyController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
@@ -222,7 +223,16 @@ router.get(`/${apiUrl}/getlists`, [
   mailchimpController.getAudienceLists,
 ]);
 router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
-
+/* 
+-----------------------------------------------
+HeyLoyalty 
+This is actually extending the Campaign because each campaign will have auth endpoints for heyloyalty
+The heyLoyalty info will also be saved for that specific heyloyalty and not on the specific user. 
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/auth/heyloyalty`, [
+  heyLoyaltyController.checkKeyStatus,
+]);
 /* 
 -----------------------------------------------
 REWARDS 

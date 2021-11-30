@@ -6,7 +6,6 @@ const fetch = require("node-fetch");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
-// const checkJson = require("../common/helpers/checkmyjson");
 /* 
 Version: 1.0
 */
@@ -63,7 +62,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   if (campaignId === null) {
     // We redirect the user back to our application with the campaign ID they were updating.
     return res.redirect(
-      `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=fail`
+      `http://127.0.0.1:8000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=fail`
     );
   }
   const {
@@ -134,7 +133,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
 
   // We redirect the user back to our application with the campaign ID they were updating.
   res.redirect(
-    `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=success`
+    `http://127.0.0.1:8000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=success`
   );
 };
 

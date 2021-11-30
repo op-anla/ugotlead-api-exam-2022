@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@mailchimp/mailchimp_marketing": "^3.0.47",
+    "base-64": "^1.0.0",
     "cluster-node-cache": "^0.1.5",
     "cors": "^2.8.5",
     "dotenv": "^8.5.1",
