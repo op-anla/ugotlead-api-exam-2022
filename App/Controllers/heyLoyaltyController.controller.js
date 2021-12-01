@@ -114,6 +114,7 @@ exports.addMemberToHeyLoyalty = async (req, res) => {
   const userData = {
     firstname: req.body.userInfo.navn,
     email: req.body.userInfo.email,
+    skipOptIn: 1,
   };
 
   var formBody = [];

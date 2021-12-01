@@ -196,5 +196,5 @@ exports.addMemberToMailchimp = async (req, res) => {
       status: "subscribed",
     }
   );
-  return addMemberResponse;
+  return { id: addMemberResponse.id, status: addMemberResponse.status };
 };
