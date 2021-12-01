@@ -22,6 +22,7 @@ exports.createPlayer = (req, res, next) => {
       });
     } else {
       console.log("DATA IN LOG", data);
+      res.locals.playerData = data;
       next();
     }
   });

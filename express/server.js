@@ -46,8 +46,6 @@ app.use(bodyParser.json());
 app.use("/", router);
 // Setup the Express global error handler.
 app.use(function (error, request, response, next) {
-  console.log(chalk.red.bold("ERROR"));
-  console.log(chalk.red.bold("====="));
   console.log(error);
 
   // Because we hooking post-response processing into the global error handler, we
@@ -238,7 +236,6 @@ router.get(`/${apiUrl}/getlists`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.getAudienceLists,
 ]);
-router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
 /* 
 -----------------------------------------------
 HeyLoyalty 
