@@ -18,6 +18,7 @@ const Campaign = function (campaign) {
   this.brush_image_url = campaign.brush_image_url;
   this.primary_color = campaign.primary_color;
   this.leads_goal = campaign.leads_goal;
+  this.campaign_logo_url = campaign.campaign_logo_url;
 };
 Campaign.flushCache = () => {
   console.log("FLUSHING ");
