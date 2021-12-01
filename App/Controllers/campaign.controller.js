@@ -1,5 +1,6 @@
 const Campaign = require("../Models/campaign.model");
 const mailchimpController = require("./mailchimpController.controller.js");
+const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -188,12 +189,10 @@ exports.addUserToIntegrations = async (req, res, next) => {
     }
     try {
       const integrations = JSON.parse(data.campaign_integrations);
-      console.log("Campaign.findById ~ integrations", integrations);
       let promises = [];
       integrations.forEach((integration) => {
         /* Getting the keys */
         let keys = Object.keys(integration);
-        console.log("res.forEach ~ keys", keys, integration);
         switch (keys[0]) {
           case "mailchimp":
             req.headers = {
@@ -202,7 +201,13 @@ exports.addUserToIntegrations = async (req, res, next) => {
             };
             promises.push(mailchimpController.addMemberToMailchimp(req, res));
             break;
-          case "heyLoaylty":
+          case "heyLoyalty":
+            req.headers = {
+              ...req.headers,
+              heyloyalty: integration["heyLoyalty"],
+            };
+            console.log("Lets do some heyloyalty stuff");
+            promises.push(heyLoyaltyController.addMemberToHeyLoyalty(req, res));
             break;
           default:
             break;
@@ -211,48 +216,14 @@ exports.addUserToIntegrations = async (req, res, next) => {
       //
       const values = await Promise.all(promises);
       console.log("Campaign.findById ~ values", values);
+      // We have added the user to all integrations
+      next();
     } catch (e) {
-      console.log("Campaign.findById ~ e", e);
+      // Something went wrong in this specific flow and we assume we can send 500 error
+      console.log("Something went wrong", e);
+      res.status(500).send(`${e}`);
     }
   });
-
-  // return new Promise((resolve, reject) => {
-  //   Campaign.findById(req.params.campaignId, (err, data) => {
-  //     if (err) {
-  //       reject(err);
-  //     } else {
-  //       resolve(JSON.parse(data.campaign_integrations));
-  //       // Got integrations
-  //     }
-  //   });
-  // })
-  //   .then((response) => {
-  //     response.forEach((integration) => {
-  //       /* Getting the keys */
-  //       let keys = Object.keys(integration);
-  //       console.log("res.forEach ~ keys", keys, integration);
-  //       switch (keys[0]) {
-  //         case "mailchimp":
-  //           req.headers = {
-  //             ...req.headers,
-  //             mailchimpinfo: integration["mailchimp"],
-  //           };
-  //           mailchimpController.addMemberToMailchimp(req, res, (err, data) => {
-  //             console.log("response.forEach ~ err, data MAILCHIMP", err, data);
-  //           });
-  //           break;
-  //         case "heyLoaylty":
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //       return next();
-  //     });
-  //   })
-  //   .catch((e) => {
-  //     console.log("e", e);
-  //     // res.status(404).send("Can't find campaign with id", e);
-  //   });
 };
 /* 
 heyloyalty update

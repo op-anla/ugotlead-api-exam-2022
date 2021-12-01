@@ -2,7 +2,7 @@ const campaign = require("./campaign.controller.js");
 
 const { encrypt, decrypt } = require("../common/middleware/crypto");
 const crypto = require("crypto");
-const heyLoyaltyHOST = "https://api.heyloyalty.com";
+const heyLoyaltyHOST = "https://api.heyloyalty.com/loyalty/v1";
 const fetch = require("node-fetch");
 let base64 = require("base-64");
 exports.checkKeyStatus = async (req, res) => {
@@ -19,7 +19,7 @@ exports.checkKeyStatus = async (req, res) => {
     .update(requestTimestamp)
     .digest("hex");
   hash = new Buffer(hash).toString("base64");
-  const requestURL = `${heyLoyaltyHOST}/loyalty/v1/lists`;
+  const requestURL = `${heyLoyaltyHOST}/lists`;
   let headers = {
     Authorization: `Basic ${base64.encode(API_KEY + ":" + hash)}`,
     "X-Request-Timestamp": requestTimestamp,
@@ -50,7 +50,7 @@ exports.saveKeysForCampaign = async (req, res) => {
     .update(requestTimestamp)
     .digest("hex");
   hash = new Buffer(hash).toString("base64");
-  const requestURL = `${heyLoyaltyHOST}/loyalty/v1/lists`;
+  const requestURL = `${heyLoyaltyHOST}/lists`;
   let headers = {
     Authorization: `Basic ${base64.encode(API_KEY + ":" + hash)}`,
     "X-Request-Timestamp": requestTimestamp,
@@ -89,4 +89,57 @@ exports.saveKeysForCampaign = async (req, res) => {
     console.log("Send error", e);
     res.status(500).send(e);
   }
+};
+
+exports.addMemberToHeyLoyalty = async (req, res) => {
+  /* 
+  This endpoint will add members to the list from request. The information required will normally be
+  fullname and email. 
+  */
+  console.log("REQ BODY IN HEYLOYALTY", req.body);
+  /* 
+    The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
+    It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
+    */
+  let heyLoyaltyObject = req.headers.heyloyalty;
+  heyLoyaltyObject.api_key = decrypt(req.headers.heyloyalty.api_key);
+  heyLoyaltyObject.api_secret = decrypt(req.headers.heyloyalty.api_secret);
+  const requestTimestamp = new Date().toISOString();
+  let hash = crypto
+    .createHmac("SHA256", heyLoyaltyObject.api_secret)
+    .update(requestTimestamp)
+    .digest("hex");
+  hash = new Buffer(hash).toString("base64");
+  const listID = req.headers.heyloyalty.listID;
+  const userData = {
+    firstname: req.body.userInfo.navn,
+    email: req.body.userInfo.email,
+  };
+
+  var formBody = [];
+  for (var property in userData) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(userData[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  const requestURL = `${heyLoyaltyHOST}/lists/${listID}/members`;
+  let headers = {
+    Authorization: `Basic ${base64.encode(
+      heyLoyaltyObject.api_key + ":" + hash
+    )}`,
+    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    "X-Request-Timestamp": requestTimestamp,
+  };
+  const addedMember = await fetch(requestURL, {
+    method: "POST",
+    body: formBody,
+    headers: headers,
+  });
+  const addedMemberResponse = await addedMember.json();
+  console.log("exports.addMemberToHeyLoyalty= ~ list", addedMemberResponse);
+  if (addedMemberResponse.id) {
+    return addedMemberResponse;
+  }
+  throw new Error("Something went wrong with heyloyalty integration");
 };

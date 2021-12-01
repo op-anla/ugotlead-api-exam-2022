@@ -169,27 +169,17 @@ exports.addMemberToMailchimp = async (req, res) => {
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
   */
-  //  We start with basic validation of the request
-  console.log("checking body", req.body.userInfo);
-  console.log("checking headers", req.headers);
+  //  Check some validation
   if (!req.body.userInfo.navn || !req.body.userInfo.email) {
-    return res
-      .status(400)
-      .send("Please provide the correct userInfo in the body");
+    throw new Error("Please provide the correct userInfo in the body");
   }
+  // Check header information
   if (!req.headers.mailchimpinfo) {
-    return res.status(400).send("Please provide the correct mailchimp info");
+    throw new Error("Please provide the correct mailchimp info");
   }
 
-  const mailchimpInfo = req.headers.mailchimpinfo;
-
-  console.log(
-    "We now continue after validation with current variables: ",
-    mailchimpInfo,
-    req.body.userInfo
-  );
+  let mailchimpInfo = req.headers.mailchimpinfo;
   mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
-  console.log("exports.addMemberToMailchimp= ~ access_token", mailchimpInfo);
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,
     server: mailchimpInfo.dc,
@@ -207,12 +197,4 @@ exports.addMemberToMailchimp = async (req, res) => {
     }
   );
   return addMemberResponse;
-
-  let responseCode = error.status;
-  console.log("exports.addMemberToMailchimp= ~ error", error);
-
-  if (responseCode === undefined) {
-    responseCode = 404;
-  }
-  res.status(responseCode).send(error);
 };
