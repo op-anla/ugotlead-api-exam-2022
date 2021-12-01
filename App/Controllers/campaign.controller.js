@@ -178,39 +178,81 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
 /* 
 Add user to all the integrations
 */
-exports.addUserToIntegrations = (req, res, next) => {
+exports.addUserToIntegrations = async (req, res, next) => {
   console.log("What do we have in local?", res.locals);
   console.log("What do we have in req.body?", req.body);
   // Find integrations
-  new Promise((resolve, reject) => {
-    Campaign.findById(req.params.campaignId, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(JSON.parse(data.campaign_integrations));
-        // Got integrations
-      }
-    });
-  }).then((response) => {
-    response.forEach((integration) => {
-      /* Getting the keys */
-      let keys = Object.keys(integration);
-      console.log("res.forEach ~ keys", keys, integration);
-      switch (keys[0]) {
-        case "mailchimp":
-          req.headers = {
-            ...req.headers,
-            mailchimpinfo: integration["mailchimp"],
-          };
-          mailchimpController.addMemberToMailchimp(req, res);
-          break;
-        case "heyLoaylty":
-          break;
-        default:
-          break;
-      }
-    });
+  Campaign.findById(req.params.campaignId, async (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    try {
+      const integrations = JSON.parse(data.campaign_integrations);
+      console.log("Campaign.findById ~ integrations", integrations);
+      let promises = [];
+      integrations.forEach((integration) => {
+        /* Getting the keys */
+        let keys = Object.keys(integration);
+        console.log("res.forEach ~ keys", keys, integration);
+        switch (keys[0]) {
+          case "mailchimp":
+            req.headers = {
+              ...req.headers,
+              mailchimpinfo: integration["mailchimp"],
+            };
+            promises.push(mailchimpController.addMemberToMailchimp(req, res));
+            break;
+          case "heyLoaylty":
+            break;
+          default:
+            break;
+        }
+      });
+      //
+      const values = await Promise.all(promises);
+      console.log("Campaign.findById ~ values", values);
+    } catch (e) {
+      console.log("Campaign.findById ~ e", e);
+    }
   });
+
+  // return new Promise((resolve, reject) => {
+  //   Campaign.findById(req.params.campaignId, (err, data) => {
+  //     if (err) {
+  //       reject(err);
+  //     } else {
+  //       resolve(JSON.parse(data.campaign_integrations));
+  //       // Got integrations
+  //     }
+  //   });
+  // })
+  //   .then((response) => {
+  //     response.forEach((integration) => {
+  //       /* Getting the keys */
+  //       let keys = Object.keys(integration);
+  //       console.log("res.forEach ~ keys", keys, integration);
+  //       switch (keys[0]) {
+  //         case "mailchimp":
+  //           req.headers = {
+  //             ...req.headers,
+  //             mailchimpinfo: integration["mailchimp"],
+  //           };
+  //           mailchimpController.addMemberToMailchimp(req, res, (err, data) => {
+  //             console.log("response.forEach ~ err, data MAILCHIMP", err, data);
+  //           });
+  //           break;
+  //         case "heyLoaylty":
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //       return next();
+  //     });
+  //   })
+  //   .catch((e) => {
+  //     console.log("e", e);
+  //     // res.status(404).send("Can't find campaign with id", e);
+  //   });
 };
 /* 
 heyloyalty update

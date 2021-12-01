@@ -198,23 +198,21 @@ exports.addMemberToMailchimp = async (req, res) => {
     FNAME: req.body.userInfo.navn,
   };
 
-  try {
-    const addMemberResponse = await mailchimp.lists.addListMember(
-      mailchimpInfo.listId,
-      {
-        email_address: req.body.userInfo.email,
-        merge_fields: mergeFields,
-        status: "subscribed",
-      }
-    );
-    return addMemberResponse;
-  } catch (error) {
-    let responseCode = error.status;
-    console.log("exports.addMemberToMailchimp= ~ error", error);
-
-    if (responseCode === undefined) {
-      responseCode = 404;
+  const addMemberResponse = await mailchimp.lists.addListMember(
+    mailchimpInfo.listId,
+    {
+      email_address: req.body.userInfo.email,
+      merge_fields: mergeFields,
+      status: "subscribed",
     }
-    res.status(responseCode).send(error);
+  );
+  return addMemberResponse;
+
+  let responseCode = error.status;
+  console.log("exports.addMemberToMailchimp= ~ error", error);
+
+  if (responseCode === undefined) {
+    responseCode = 404;
   }
+  res.status(responseCode).send(error);
 };
