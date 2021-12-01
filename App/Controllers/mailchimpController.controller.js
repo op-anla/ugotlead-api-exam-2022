@@ -189,7 +189,7 @@ exports.addMemberToMailchimp = async (req, res) => {
   };
 
   const addMemberResponse = await mailchimp.lists.addListMember(
-    mailchimpInfo.listId,
+    mailchimpInfo.listID,
     {
       email_address: req.body.userInfo.email,
       merge_fields: mergeFields,
