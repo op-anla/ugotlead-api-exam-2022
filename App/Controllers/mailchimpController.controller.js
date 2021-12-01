@@ -170,9 +170,9 @@ exports.addMemberToMailchimp = async (req, res) => {
   fullname and email. 
   */
   //  We start with basic validation of the request
-  console.log("checking body", req.body);
+  console.log("checking body", req.body.userInfo);
   console.log("checking headers", req.headers);
-  if (!req.body.navn || !req.body.email) {
+  if (!req.body.userInfo.navn || !req.body.userInfo.email) {
     return res
       .status(400)
       .send("Please provide the correct userInfo in the body");
@@ -181,35 +181,33 @@ exports.addMemberToMailchimp = async (req, res) => {
     return res.status(400).send("Please provide the correct mailchimp info");
   }
 
-  const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
+  const mailchimpInfo = req.headers.mailchimpinfo;
 
   console.log(
     "We now continue after validation with current variables: ",
     mailchimpInfo,
-    req.body
+    req.body.userInfo
   );
   mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
   console.log("exports.addMemberToMailchimp= ~ access_token", mailchimpInfo);
-  // Remember to DECRYPT WHEN FIXED
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,
     server: mailchimpInfo.dc,
   });
   const mergeFields = {
-    FNAME: req.body.navn,
+    FNAME: req.body.userInfo.navn,
   };
 
   try {
-    await mailchimp.lists.addListMember(mailchimpInfo.listId, {
-      email_address: req.body.email,
-      merge_fields: mergeFields,
-      status: "subscribed",
-    });
-
-    /* 
-    Now we will create the player in our DB
-    */
-    player.createPlayer(req, res);
+    const addMemberResponse = await mailchimp.lists.addListMember(
+      mailchimpInfo.listId,
+      {
+        email_address: req.body.userInfo.email,
+        merge_fields: mergeFields,
+        status: "subscribed",
+      }
+    );
+    return addMemberResponse;
   } catch (error) {
     let responseCode = error.status;
     console.log("exports.addMemberToMailchimp= ~ error", error);

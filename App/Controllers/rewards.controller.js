@@ -19,7 +19,7 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
       }
     } else {
       console.log("GOT REWARDS FOR REDEEM - AMOUNT: ", data.length);
-      req.body.rewards = data;
+      res.locals.rewards = data;
       return next();
     }
   });

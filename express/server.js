@@ -227,7 +227,7 @@ router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
 -----------------------------------------------
 HeyLoyalty 
 This is actually extending the Campaign because each campaign will have auth endpoints for heyloyalty
-The heyLoyalty info will also be saved for that specific heyloyalty and not on the specific user. 
+The heyLoyalty info will also be saved for that specific campaign and not on the specific user. 
 -----------------------------------------------
 */
 router.get(`/${apiUrl}/auth/heyloyalty/check-status`, [
@@ -289,6 +289,8 @@ REWARD AND REDEEM
 router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
+  campaigns.addUserToIntegrations,
+  player.createPlayer,
   RedeemValidation.didUserWin,
   entry.createEntry,
   reward_meta.findRewardMetaForRewardUsingMiddleware,
@@ -297,6 +299,8 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
 router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
+  campaigns.addUserToIntegrations,
+  player.createPlayer,
   RedeemValidation.didUserWinWithResponse,
 ]);
 

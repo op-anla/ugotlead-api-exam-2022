@@ -113,12 +113,12 @@ exports.didUserWin = (req, res, next) => {
   }
 };
 exports.didUserWinWithResponse = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards.length);
+  console.log("NOW WE CALCULATE WINNING FOR USER", res.locals.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
   */
-  const allRewards = req.body.rewards;
+  const allRewards = res.locals.rewards;
   let allRewardsWithoutConsolationReward = allRewards.filter((reward) => {
     return reward.reward_type != 0;
   });

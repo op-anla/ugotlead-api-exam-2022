@@ -1,4 +1,5 @@
 const Campaign = require("../Models/campaign.model");
+const mailchimpController = require("./mailchimpController.controller.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -172,6 +173,43 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
     } else {
       return data;
     }
+  });
+};
+/* 
+Add user to all the integrations
+*/
+exports.addUserToIntegrations = (req, res, next) => {
+  console.log("What do we have in local?", res.locals);
+  console.log("What do we have in req.body?", req.body);
+  // Find integrations
+  new Promise((resolve, reject) => {
+    Campaign.findById(req.params.campaignId, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(data.campaign_integrations));
+        // Got integrations
+      }
+    });
+  }).then((response) => {
+    response.forEach((integration) => {
+      /* Getting the keys */
+      let keys = Object.keys(integration);
+      console.log("res.forEach ~ keys", keys, integration);
+      switch (keys[0]) {
+        case "mailchimp":
+          req.headers = {
+            ...req.headers,
+            mailchimpinfo: integration["mailchimp"],
+          };
+          mailchimpController.addMemberToMailchimp(req, res);
+          break;
+        case "heyLoaylty":
+          break;
+        default:
+          break;
+      }
+    });
   });
 };
 /* 
