@@ -316,7 +316,6 @@ router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
   campaigns.addUserToIntegrations,
-  player.createPlayer,
   RedeemValidation.didUserWinWithResponse,
 ]);
 
