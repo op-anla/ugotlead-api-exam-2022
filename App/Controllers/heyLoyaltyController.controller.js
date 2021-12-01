@@ -36,6 +36,39 @@ exports.checkKeyStatus = async (req, res) => {
     res.status(500).send();
   }
 };
+exports.getList = async (req, res) => {
+  console.log("REQ BODY IN HEYLOYALTY", req.body);
+  /* 
+  The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
+  It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
+  */
+  const header = JSON.parse(req.headers.heyloyalty);
+  console.log("exports.getList= ~ header", header);
+  const API_KEY = decrypt(header.api_key);
+  const API_SECRET = decrypt(header.api_secret);
+  const requestTimestamp = new Date().toISOString();
+  let hash = crypto
+    .createHmac("SHA256", API_SECRET)
+    .update(requestTimestamp)
+    .digest("hex");
+  hash = new Buffer(hash).toString("base64");
+  const requestURL = `${heyLoyaltyHOST}/lists`;
+  let headers = {
+    Authorization: `Basic ${base64.encode(API_KEY + ":" + hash)}`,
+    "X-Request-Timestamp": requestTimestamp,
+  };
+
+  try {
+    const listResponse = await fetch(requestURL, {
+      method: "GET",
+      headers: headers,
+    });
+    const list = await listResponse.json();
+    res.status(200).send(list);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
 exports.saveKeysForCampaign = async (req, res) => {
   console.log("REQ BODY IN HEYLOYALTY", req.body);
   /* 
@@ -75,6 +108,7 @@ exports.saveKeysForCampaign = async (req, res) => {
       heyLoyalty: {
         api_key: hashAPI_KEY,
         api_secret: hashAPI_SECRET,
+        listID: list[0].id,
       },
     };
     const stringifyInfo = JSON.stringify(campaignheyLoyalty);

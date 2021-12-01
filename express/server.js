@@ -250,6 +250,10 @@ router.get(`/${apiUrl}/auth/heyloyalty/check-status`, [
   ValidationMiddleware.validJWTNeeded,
   heyLoyaltyController.checkKeyStatus,
 ]);
+router.get(`/${apiUrl}/auth/heyloyalty/get-list`, [
+  ValidationMiddleware.validJWTNeeded,
+  heyLoyaltyController.getList,
+]);
 router.post(`/${apiUrl}/auth/heyloyalty/save-keys`, [
   ValidationMiddleware.validJWTNeeded,
   heyLoyaltyController.saveKeysForCampaign,
