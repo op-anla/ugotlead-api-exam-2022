@@ -402,12 +402,6 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
-router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
-  RequestValidation.validateDomain,
-  RequestValidation.didUserPlayed,
-  reward_meta.findRewardMetaForRewardUsingMiddleware,
-  email.sendEmailToOperators,
-]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,
   email.createMail,

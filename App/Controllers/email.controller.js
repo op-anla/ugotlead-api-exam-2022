@@ -249,10 +249,10 @@ exports.sendEmailToOperators = (req, res) => {
             emailObject.replaceContent,
             (err, data) => {
               if (err) {
-                console.log("sendingEmailToOwner ~ err", err);
+                console.log("sendingEmailToUser ~ err", err);
                 reject(err);
               } else {
-                console.log("DATA in sending email to owner", data);
+                console.log("DATA in sending email to user", data);
                 resolve(data);
               }
             }
