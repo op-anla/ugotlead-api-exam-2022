@@ -63,7 +63,6 @@ exports.createEntry = (req, res, next) => {
       console.log("DATA IN LOG", data);
       res.locals.entryData = data;
       return next();
-      // res.status(201).send(data);
     }
   });
 };
