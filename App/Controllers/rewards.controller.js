@@ -183,9 +183,8 @@ exports.updateClaim = (req, res) => {
     };
     setTimeout(() => {
       console.log("This was executed after 2 seconds", res.locals.redeemInfo);
-
       email.sendEmailToOperators(req, res);
-    }, 2000);
+    }, 5000);
     return res.status(200).send(res.locals.redeemInfo);
   }
   // Validate Request
