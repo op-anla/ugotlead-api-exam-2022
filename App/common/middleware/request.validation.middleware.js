@@ -38,3 +38,10 @@ exports.validateDomain = (req, res, next) => {
     res.status(401).send("Not auth from this domain");
   }
 };
+
+exports.didUserPlayed = (req, res, next) => {
+  /* 
+  This middleware will make sure the current user has actually played in the game.
+  */
+  console.log("What do we have in req.body?", req.body);
+};
