@@ -1,6 +1,7 @@
 const Campaign = require("../Models/campaign.model");
 const mailchimpController = require("./mailchimpController.controller.js");
 const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
+const redisCache = require("./redisCache.controller.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -34,13 +35,20 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the campaign.",
       });
     } else {
+      // Reset campaign cache for all campaigns
+      redisCache.deleteKey("cache_allCampaigns");
       res.status(201).send(data);
     }
   });
 };
 // Retrieve all campaigns from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async (req, res) => {
   console.log("find all");
+  // Before getting data from Database we need to check cache
+  const cachedResponse = await redisCache.getKey("cache_allCampaigns");
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
   Campaign.getAll((err, data) => {
     if (err) {
       res.status(500).send({
@@ -48,6 +56,12 @@ exports.findAll = (req, res) => {
           err.message || "Some error occurred while retrieving campaigns.",
       });
     } else {
+      // If we ended up getting data from DB we add it to cache
+      redisCache.saveKey(
+        "cache_allCampaigns",
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
       res.status(200).send(data);
     }
   });
@@ -66,7 +80,7 @@ exports.findStatsForCampaign = (req, res) => {
         });
       }
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 };

@@ -3,7 +3,6 @@ client.setEx("test", 60, "42");
 //log error to the console if any occurs
 
 exports.getKey = async (keyName) => {
-  console.log("exports.getKey= ~ keyName", keyName);
   try {
     const cachedResponse = await client.get(keyName);
     return cachedResponse;
@@ -17,5 +16,13 @@ exports.saveKey = async (keyName, TTL, data) => {
     return cachedKeyValue;
   } catch (e) {
     console.log("exports.saveKey= ~ e", e);
+  }
+};
+exports.deleteKey = async (keyName) => {
+  try {
+    await client.del(keyName);
+    return;
+  } catch (e) {
+    console.log("exports.deleteKey ~ e", e);
   }
 };

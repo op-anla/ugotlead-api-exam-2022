@@ -99,7 +99,7 @@ router.get(`/${apiUrl}/long-response-test`, async (req, res) => {
     );
     const posts = await postRequest.json();
     // Save in Redis cache
-    redisCache.saveKey("posts", 60, JSON.stringify(posts));
+    redisCache.saveKey("posts", 60 * 60 * 24, JSON.stringify(posts));
     // Continue
     res.status(200).send({
       posts: posts,
