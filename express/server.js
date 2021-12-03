@@ -70,19 +70,7 @@ router.get("/test", (req, res) => {
   );
   res.end();
 });
-router.get("/long-response-test", async (req, res) => {
-  const searchTerm = req.query.search;
-  try {
-    const jobs = await fetch.get(
-      `https://jobs.github.com/positions.json?search=${searchTerm}`
-    );
-    res.status(200).send({
-      jobs: jobs.data,
-    });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-});
+
 /* 
 Version: 1.0
 */
@@ -94,6 +82,32 @@ Routing docs
 https://expressjs.com/en/guide/routing.html
 */
 
+/* 
+-----------------------------------------------
+Testing
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/long-response-test`, async (req, res) => {
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey("posts");
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
+  try {
+    const postRequest = await fetch(
+      `https://jsonplaceholder.typicode.com/posts`
+    );
+    const posts = await postRequest.json();
+    // Save in Redis cache
+    redisCache.saveKey("posts", 60, JSON.stringify(posts));
+    // Continue
+    res.status(200).send({
+      posts: posts,
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
 /* 
 -----------------------------------------------
 CAMPAIGNS
