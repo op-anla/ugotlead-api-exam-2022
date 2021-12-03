@@ -6,12 +6,14 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 const cors = require("cors");
 const http = require("http");
+const fetch = require("node-fetch");
 require("dotenv").config();
 /* 
 -----------------------------------------------
 CONTROLLERS
 -----------------------------------------------
 */
+const redisCache = require("../App/Controllers/redisCache.controller.js");
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const rewards = require("../App/Controllers/rewards.controller.js");
@@ -43,7 +45,7 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use("/", router);
+
 // Setup the Express global error handler.
 app.use(function (error, request, response, next) {
   console.log(error);
@@ -59,14 +61,28 @@ app.use(function (error, request, response, next) {
       .send("Sorry - something went wrong. We're digging into it.");
   }
 });
-// Router
+app.use("/", router);
+
+// Router test
 router.get("/test", (req, res) => {
   res.write(
     "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
   );
   res.end();
 });
-
+router.get("/long-response-test", async (req, res) => {
+  const searchTerm = req.query.search;
+  try {
+    const jobs = await fetch.get(
+      `https://jobs.github.com/positions.json?search=${searchTerm}`
+    );
+    res.status(200).send({
+      jobs: jobs.data,
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
 /* 
 Version: 1.0
 */
