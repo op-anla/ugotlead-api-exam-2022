@@ -1,6 +1,4 @@
 const sql = require("./db.js");
-// const cluster = require("cluster");
-// const myCache = require("cluster-node-cache")(cluster);
 
 // const checkJson = require("../common/helpers/checkmyjson");
 // constructor

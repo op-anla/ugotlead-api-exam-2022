@@ -416,10 +416,7 @@ router.post(`/${apiUrl}/email/update-mail`, [
 Cache
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/cache/flushall`, [
-  ValidationMiddleware.validJWTNeeded,
-  campaigns.flushAllCache,
-]);
+router.get(`/${apiUrl}/cache/flushall`, [ValidationMiddleware.validJWTNeeded]);
 
 /* 
 -----------------------------------------------
