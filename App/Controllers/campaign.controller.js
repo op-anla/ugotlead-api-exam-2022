@@ -85,8 +85,14 @@ exports.findStatsForCampaign = (req, res) => {
   });
 };
 // Find one specific campaign
-exports.findOne = (req, res) => {
-  console.log("Finder 1 kampagne");
+exports.findOne = async (req, res) => {
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_campaign_${req.params.campaignId}`
+  );
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
   Campaign.findById(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -99,7 +105,12 @@ exports.findOne = (req, res) => {
         });
       }
     } else {
-      console.log("Campaign.findById ~ data", data);
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_campaign_${req.params.campaignId}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
       res.status(200).send(data);
     }
   });
