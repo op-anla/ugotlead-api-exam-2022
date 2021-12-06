@@ -6,12 +6,14 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 const cors = require("cors");
 const http = require("http");
+const fetch = require("node-fetch");
 require("dotenv").config();
 /* 
 -----------------------------------------------
 CONTROLLERS
 -----------------------------------------------
 */
+const redisCache = require("../App/Controllers/redisCache.controller.js");
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const rewards = require("../App/Controllers/rewards.controller.js");
@@ -43,7 +45,7 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use("/", router);
+
 // Setup the Express global error handler.
 app.use(function (error, request, response, next) {
   console.log(error);
@@ -59,7 +61,9 @@ app.use(function (error, request, response, next) {
       .send("Sorry - something went wrong. We're digging into it.");
   }
 });
-// Router
+app.use("/", router);
+
+// Router test
 router.get("/test", (req, res) => {
   res.write(
     "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
@@ -78,6 +82,32 @@ Routing docs
 https://expressjs.com/en/guide/routing.html
 */
 
+/* 
+-----------------------------------------------
+Testing
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/long-response-test`, async (req, res) => {
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey("posts");
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
+  try {
+    const postRequest = await fetch(
+      `https://jsonplaceholder.typicode.com/posts`
+    );
+    const posts = await postRequest.json();
+    // Save in Redis cache
+    redisCache.saveKey("posts", 60 * 60 * 24, JSON.stringify(posts));
+    // Continue
+    res.status(200).send({
+      posts: posts,
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
 /* 
 -----------------------------------------------
 CAMPAIGNS
@@ -416,10 +446,7 @@ router.post(`/${apiUrl}/email/update-mail`, [
 Cache
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/cache/flushall`, [
-  ValidationMiddleware.validJWTNeeded,
-  campaigns.flushAllCache,
-]);
+router.get(`/${apiUrl}/cache/flushall`, [ValidationMiddleware.validJWTNeeded]);
 
 /* 
 -----------------------------------------------
