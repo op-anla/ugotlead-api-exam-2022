@@ -69,7 +69,7 @@ Reward.getSingleRewardById = (reward_id, result) => {
 };
 Reward.findByCampaignId = (campaignId, result) => {
   sql.query(
-    `SELECT * FROM rewards WHERE campaign_id = ?`,
+    `SELECT * FROM rewards WHERE campaign_id = ? ORDER BY reward_order_number ASC`,
     campaignId,
     (err, res) => {
       if (err) {

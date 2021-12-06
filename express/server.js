@@ -278,7 +278,6 @@ router.put(`/${apiUrl}/update-reward/:reward_id`, [
   rewards.updateById,
   reward_meta.updateById,
 ]);
-
 router.delete(`/${apiUrl}/delete-reward/:reward_id`, [
   ValidationMiddleware.validJWTNeeded,
   reward_meta.deleteById,
