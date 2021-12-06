@@ -82,7 +82,7 @@ We first check if the user exists in our database
 
 exports.login = async (req, res) => {
   /* Lets do the OAUTH 2.0 Google endpoint to get the access_token */
-  const OAUTH_CALLBACK = "http://127.0.0.1:3000/";
+  const OAUTH_CALLBACK = "http://127.0.0.1:8000/";
   const code = req.body.code;
   console.log("We got the authorization code", code);
   if (code == undefined) {

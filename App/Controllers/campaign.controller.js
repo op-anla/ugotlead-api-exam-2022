@@ -1,4 +1,7 @@
 const Campaign = require("../Models/campaign.model");
+const mailchimpController = require("./mailchimpController.controller.js");
+const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
+const redisCache = require("./redisCache.controller.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -8,6 +11,10 @@ exports.create = (req, res) => {
     });
   }
   console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
+  // Get some dates for campaign start and enddate
+  let now = new Date();
+  let start_date = now.setDate(now.getDate() + 1 * 7);
+  let end_date = now.setDate(now.getDate() + 4 * 7);
 
   // Create a Campaign
   const campaign = new Campaign({
@@ -16,6 +23,8 @@ exports.create = (req, res) => {
     campaign_description: req.body.campaign_description,
     campaign_owner_id: req.body.campaign_owner_id,
     campaign_integrations: "",
+    campaign_startdate: new Date(start_date),
+    campaign_enddate: new Date(end_date),
   });
 
   // Save Campaign in the database
@@ -26,13 +35,20 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the campaign.",
       });
     } else {
+      // Reset campaign cache for all campaigns
+      redisCache.deleteKey("cache_allCampaigns");
       res.status(201).send(data);
     }
   });
 };
 // Retrieve all campaigns from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async (req, res) => {
   console.log("find all");
+  // Before getting data from Database we need to check cache
+  const cachedResponse = await redisCache.getKey("cache_allCampaigns");
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
   Campaign.getAll((err, data) => {
     if (err) {
       res.status(500).send({
@@ -40,6 +56,12 @@ exports.findAll = (req, res) => {
           err.message || "Some error occurred while retrieving campaigns.",
       });
     } else {
+      // If we ended up getting data from DB we add it to cache
+      redisCache.saveKey(
+        "cache_allCampaigns",
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
       res.status(200).send(data);
     }
   });
@@ -58,13 +80,19 @@ exports.findStatsForCampaign = (req, res) => {
         });
       }
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 };
 // Find one specific campaign
-exports.findOne = (req, res) => {
-  console.log("Finder 1 kampagne");
+exports.findOne = async (req, res) => {
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_campaign_${req.params.campaignId}`
+  );
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
   Campaign.findById(req.params.campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -77,26 +105,14 @@ exports.findOne = (req, res) => {
         });
       }
     } else {
-      console.log("Campaign.findById ~ data", data);
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_campaign_${req.params.campaignId}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
       res.status(200).send(data);
     }
-  });
-  // Removing cache
-  // .then((cache) => {
-  //   console.log(
-  //     "🚀 ~ file: campaign.controller.js ~ line 85 ~ Campaign.findById ~ cache",
-  //     cache
-  //   );
-  //   res.status(200).send(cache);
-  // });
-};
-exports.flushAllCache = (res) => {
-  Campaign.flushCache().then((resCode) => {
-    console.log(
-      "🚀 ~ file: campaign.controller.js ~ line 86 ~ Campaign.flushCache.then ~ resCode",
-      resCode
-    );
-    return res.status(resCode).send("Flushed all campaign cache");
   });
 };
 // Update a campaign
@@ -160,10 +176,7 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
     campaignId,
     mailchimpInfo
   );
-  /* 
-  We need to encrypt the mailchimp info before sending it to the database
-  */
-  Campaign.updateMailchimpInfo(campaignId, mailchimpInfo, (err, data) => {
+  Campaign.updateIntegrationData(campaignId, mailchimpInfo, (err, data) => {
     if (err) {
       return err;
     } else {
@@ -171,13 +184,62 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
     }
   });
 };
-exports.updateMailchimpList = (campaignId, mailchimpLists) => {
-  console.log(
-    "🚀 ~ file: campaign.controller.js ~ line 119 ~ campaignId, mailchimpLists",
-    campaignId,
-    mailchimpLists
-  );
-  Campaign.updateMailchimpLists(campaignId, mailchimpLists, (err, data) => {
+/* 
+Add user to all the integrations
+*/
+exports.addUserToIntegrations = async (req, res, next) => {
+  console.log("What do we have in local?", res.locals);
+  console.log("What do we have in req.body?", req.body);
+  // Find integrations
+  Campaign.findById(req.params.campaignId, async (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    try {
+      const integrations = JSON.parse(data.campaign_integrations);
+      let promises = [];
+      integrations.forEach((integration) => {
+        /* Getting the keys */
+        let keys = Object.keys(integration);
+        switch (keys[0]) {
+          case "mailchimp":
+            req.headers = {
+              ...req.headers,
+              mailchimpinfo: integration["mailchimp"],
+            };
+            promises.push(mailchimpController.addMemberToMailchimp(req, res));
+            break;
+          case "heyLoyalty":
+            req.headers = {
+              ...req.headers,
+              heyloyalty: integration["heyLoyalty"],
+            };
+            console.log("Lets do some heyloyalty stuff");
+            promises.push(heyLoyaltyController.addMemberToHeyLoyalty(req, res));
+            break;
+          default:
+            break;
+        }
+      });
+      //
+      const values = await Promise.all(promises);
+      console.log("Campaign.findById ~ values", values);
+      // We have added the user to all integrations
+      next();
+    } catch (e) {
+      // Something went wrong in this specific flow and we assume we can send 500 error
+      console.log("Something went wrong", e);
+      res.status(500).send(`${e}`);
+    }
+  });
+};
+/* 
+heyloyalty update
+*/
+exports.updateheyLoyalty = (campaignId, heyLoyaltyInfo) => {
+  console.log("campaignId, heyLoyaltyInfo", campaignId, heyLoyaltyInfo);
+
+  Campaign.updateIntegrationData(campaignId, heyLoyaltyInfo, (err, data) => {
     if (err) {
       return err;
     } else {

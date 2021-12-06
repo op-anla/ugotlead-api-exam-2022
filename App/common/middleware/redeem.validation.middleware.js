@@ -1,10 +1,12 @@
+const email = require("../../Controllers/email.controller");
+
 exports.didUserWin = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards.length);
+  console.log("NOW WE CALCULATE WINNING FOR USER", res.locals.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
   */
-  const allRewards = req.body.rewards;
+  const allRewards = res.locals.rewards;
   let allRewardsWithoutConsolationReward = allRewards.filter((reward) => {
     return reward.reward_type != 0;
   });
@@ -38,6 +40,7 @@ exports.didUserWin = (req, res, next) => {
       },
     };
     req.body.reward = res.locals.redeemInfo.data.reward;
+
     return next();
   }
   // Use this variable to keep track of the user losing
@@ -113,12 +116,12 @@ exports.didUserWin = (req, res, next) => {
   }
 };
 exports.didUserWinWithResponse = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", req.body.rewards.length);
+  console.log("NOW WE CALCULATE WINNING FOR USER", res.locals.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
   */
-  const allRewards = req.body.rewards;
+  const allRewards = res.locals.rewards;
   let allRewardsWithoutConsolationReward = allRewards.filter((reward) => {
     return reward.reward_type != 0;
   });
@@ -152,6 +155,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
       },
     };
     req.body.reward = res.locals.redeemInfo.data.reward;
+
     return res.status(200).send(res.locals.redeemInfo);
   }
   // Use this variable to keep track of the user losing
@@ -177,6 +181,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
         },
       };
       req.body.reward = res.locals.redeemInfo.data.reward;
+
       return res.status(200).send(res.locals.redeemInfo);
     }
   });
@@ -211,6 +216,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
         },
       };
       req.body.reward = res.locals.redeemInfo.data.reward;
+
       return res.status(200).send(res.locals.redeemInfo);
     } else {
       console.log("User did not win!");
@@ -222,6 +228,7 @@ exports.didUserWinWithResponse = (req, res, next) => {
         },
       };
       req.body.reward = res.locals.redeemInfo.data.reward;
+
       return res.status(200).send(res.locals.redeemInfo);
     }
   }

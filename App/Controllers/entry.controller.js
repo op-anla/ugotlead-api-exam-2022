@@ -48,7 +48,7 @@ exports.createEntry = (req, res, next) => {
   const newEntry = new EntryModel({
     campaign_id: req.body.campaign.campaign_id,
     log_id: req.body.LogId,
-    player_id: req.body.PlayerId,
+    player_id: res.locals.playerData.id,
     reward_id: res.locals.redeemInfo.data.reward.reward_id,
     entry_date: now,
   });
@@ -63,7 +63,6 @@ exports.createEntry = (req, res, next) => {
       console.log("DATA IN LOG", data);
       res.locals.entryData = data;
       return next();
-      // res.status(201).send(data);
     }
   });
 };

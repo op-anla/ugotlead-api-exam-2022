@@ -6,15 +6,11 @@ PLAYER
 -----------------------------------------------
 */
 
-exports.createPlayer = (req, res) => {
-  console.log(
-    "🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs CREATE PLAYER",
-    req.body
-  );
+exports.createPlayer = (req, res, next) => {
   // Create a player
   const newPlayer = new Player({
-    player_name: req.body.navn,
-    player_email: req.body.email,
+    player_name: req.body.userInfo.navn,
+    player_email: req.body.userInfo.email,
   });
 
   // Save player in the database
@@ -26,7 +22,8 @@ exports.createPlayer = (req, res) => {
       });
     } else {
       console.log("DATA IN LOG", data);
-      res.status(201).send(data);
+      res.locals.playerData = data;
+      next();
     }
   });
 };

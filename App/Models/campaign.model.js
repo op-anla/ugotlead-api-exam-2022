@@ -1,7 +1,4 @@
 const sql = require("./db.js");
-// temp remove cache
-// const cluster = require("cluster");
-// const myCache = require("cluster-node-cache")(cluster);
 
 const checkJson = require("../common/helpers/checkmyjson");
 // constructor
@@ -18,13 +15,7 @@ const Campaign = function (campaign) {
   this.brush_image_url = campaign.brush_image_url;
   this.primary_color = campaign.primary_color;
   this.leads_goal = campaign.leads_goal;
-};
-Campaign.flushCache = () => {
-  console.log("FLUSHING ");
-  return new Promise((resolve) => {
-    myCache.flushAll();
-    resolve(200);
-  });
+  this.campaign_logo_url = campaign.campaign_logo_url;
 };
 Campaign.create = (newCampaign, result) => {
   sql.query("INSERT INTO campaigns SET ?", newCampaign, (err, res) => {
@@ -143,7 +134,6 @@ Campaign.findById = (campaignId, result) => {
       }
       if (res.length) {
         console.log("found campaign: ", res[0]);
-        tempCache = res[0];
         result(null, res[0]);
         return;
       }
@@ -155,55 +145,6 @@ Campaign.findById = (campaignId, result) => {
       );
     }
   );
-  // Removing cache temp
-
-  // return myCache
-  //   .get(`findById_${campaignId}`)
-  //   .then(function (results) {
-  //     console.log("results", results);
-  //     if (results.err) {
-  //       console.log("ERR", results.err);
-  //       return;
-  //     } else {
-  //       let key = `findById_${campaignId}`;
-  //       console.log("problems with finding cache");
-  //       if (results.value[key]) {
-  //         console.log("We found a cache");
-  //         return results.value[key];
-  //       } else {
-  //         console.log("No cache found so just normal query");
-  //         return new Promise((resolve, reject) => {
-  //           sql.query(
-  //             `SELECT * FROM campaigns WHERE campaign_id = ?`,
-  //             campaignId,
-  //             (err, res) => {
-  //               if (err) {
-  //                 console.log(
-  //                   "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
-  //                   err
-  //                 );
-  //                 return reject(err);
-  //               }
-
-  //               if (res.length) {
-  //                 console.log("found campaign: ", res[0]);
-  //                 myCache
-  //                   .set(`findById_${campaignId}`, res[0])
-  //                   .then(function (result) {
-  //                     console.log("result err: ", result.err);
-  //                     console.log("Result success: ", result.success);
-  //                   });
-  //                 return resolve(res[0]);
-  //               }
-  //             }
-  //           );
-  //         });
-  //       }
-  //     }
-  //   })
-  //   .catch((e) => {
-  //     console.log("e", e);
-  //   });
 };
 Campaign.remove = (id, result) => {
   sql.query("DELETE FROM campaigns WHERE campaign_id = ?", id, (err, res) => {
@@ -262,12 +203,11 @@ Campaign.updateById = (id, campaign, result) => {
     }
   );
 };
-
-Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
+Campaign.updateIntegrationData = (id, integrationData, result) => {
   console.log(
-    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, mailchimpInfo",
+    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, integrationData",
     id,
-    mailchimpInfo
+    integrationData
   );
   sql.query(
     "SELECT campaign_integrations FROM campaigns WHERE campaign_id = ?",
@@ -301,12 +241,12 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
         }
         integrations.push(integration);
       });
-      updateCampaign(integrations, id, mailchimpInfo);
+      updateCampaign(integrations, id, integrationData);
     }
   );
-  function updateCampaign(arrayIntegrations, campaignId, mailchimpInfo) {
+  function updateCampaign(arrayIntegrations, campaignId, integrationData) {
     let myArray = arrayIntegrations;
-    myArray.push(mailchimpInfo);
+    myArray.push(integrationData);
     console.log("updateCampaign ~ myArray", myArray);
     let string = JSON.stringify(myArray);
     console.log("updateCampaign ~ string", string);
@@ -332,55 +272,17 @@ Campaign.updateMailchimpInfo = (id, mailchimpInfo, result) => {
         }
         console.log("updated campaign: ", {
           id: id,
-          mailchimpInfo: mailchimpInfo,
+          integrationData: integrationData,
         });
         result(null, {
           id: id,
-          mailchimpInfo: mailchimpInfo,
+          integrationData: integrationData,
         });
       }
     );
   }
 };
-Campaign.updateMailchimpLists = (id, mailchimpLists, result) => {
-  console.log(
-    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, mailchimpInfo",
-    id,
-    mailchimpLists
-  );
 
-  sql.query(
-    "UPDATE campaigns SET mailchimp_list = ? WHERE campaign_id = ?",
-    [mailchimpLists, id],
-    (err, res) => {
-      if (err) {
-        console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(null, err);
-        return;
-      }
-
-      if (res.affectedRows == 0) {
-        // not found campaign with the id
-        result(
-          {
-            kind: "not_found",
-          },
-          null
-        );
-        return;
-      }
-
-      console.log("updated campaign: ", {
-        id: id,
-        mailchimpLists: mailchimpLists,
-      });
-      result(null, {
-        id: id,
-        mailchimpLists: mailchimpLists,
-      });
-    }
-  );
-};
 Campaign.getAll = (result) => {
   sql.query("SELECT * FROM campaigns LIMIT 10", async (err, res) => {
     if (err) {

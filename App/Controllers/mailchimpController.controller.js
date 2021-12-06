@@ -1,4 +1,4 @@
-const campaigns = require("./campaign.controller.js");
+const campaign = require("./campaign.controller.js");
 const player = require("./player.controller.js");
 
 const mailchimp = require("@mailchimp/mailchimp_marketing");
@@ -6,7 +6,6 @@ const fetch = require("node-fetch");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
-// const checkJson = require("../common/helpers/checkmyjson");
 /* 
 Version: 1.0
 */
@@ -63,7 +62,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   if (campaignId === null) {
     // We redirect the user back to our application with the campaign ID they were updating.
     return res.redirect(
-      `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=fail`
+      `http://127.0.0.1:8000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=fail`
     );
   }
   const {
@@ -122,7 +121,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   );
   // Waiting to update
 
-  campaigns.updateMailchimp(campaignId, campaignMailchimp);
+  campaign.updateMailchimp(campaignId, campaignMailchimp);
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.
@@ -134,7 +133,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
 
   // We redirect the user back to our application with the campaign ID they were updating.
   res.redirect(
-    `http://127.0.0.1:3000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=success`
+    `http://127.0.0.1:8000/login/dashboard/campaign/${campaignId}#integrationer?mailchimpIntegration=success`
   );
 };
 
@@ -170,54 +169,33 @@ exports.addMemberToMailchimp = async (req, res) => {
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
   */
-  //  We start with basic validation of the request
-  console.log("checking body", req.body);
-  console.log("checking headers", req.headers);
-  if (!req.body.navn || !req.body.email) {
-    return res
-      .status(400)
-      .send("Please provide the correct userInfo in the body");
+  //  Check some validation
+  if (!req.body.userInfo.navn || !req.body.userInfo.email) {
+    throw new Error("Please provide the correct userInfo in the body");
   }
+  // Check header information
   if (!req.headers.mailchimpinfo) {
-    return res.status(400).send("Please provide the correct mailchimp info");
+    throw new Error("Please provide the correct mailchimp info");
   }
 
-  const mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
-
-  console.log(
-    "We now continue after validation with current variables: ",
-    mailchimpInfo,
-    req.body
-  );
+  let mailchimpInfo = req.headers.mailchimpinfo;
+  console.log("exports.addMemberToMailchimp= ~ mailchimpInfo", mailchimpInfo);
   mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
-  console.log("exports.addMemberToMailchimp= ~ access_token", mailchimpInfo);
-  // Remember to DECRYPT WHEN FIXED
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,
     server: mailchimpInfo.dc,
   });
   const mergeFields = {
-    FNAME: req.body.navn,
+    FNAME: req.body.userInfo.navn,
   };
 
-  try {
-    await mailchimp.lists.addListMember(mailchimpInfo.listId, {
-      email_address: req.body.email,
+  const addMemberResponse = await mailchimp.lists.addListMember(
+    mailchimpInfo.listID,
+    {
+      email_address: req.body.userInfo.email,
       merge_fields: mergeFields,
       status: "subscribed",
-    });
-
-    /* 
-    Now we will create the player in our DB
-    */
-    player.createPlayer(req, res);
-  } catch (error) {
-    let responseCode = error.status;
-    console.log("exports.addMemberToMailchimp= ~ error", error);
-
-    if (responseCode === undefined) {
-      responseCode = 404;
     }
-    res.status(responseCode).send(error);
-  }
+  );
+  return { id: addMemberResponse.id, status: addMemberResponse.status };
 };

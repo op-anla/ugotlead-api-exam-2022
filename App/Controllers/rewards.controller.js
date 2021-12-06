@@ -1,4 +1,6 @@
 const Rewards = require("../Models/rewards.model");
+const email = require("./email.controller.js");
+
 exports.getAllRewardsForRedeem = (req, res, next) => {
   console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId);
   Rewards.findByCampaignId(req.params.campaignId, (err, data) => {
@@ -19,7 +21,7 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
       }
     } else {
       console.log("GOT REWARDS FOR REDEEM - AMOUNT: ", data.length);
-      req.body.rewards = data;
+      res.locals.rewards = data;
       return next();
     }
   });
@@ -179,6 +181,10 @@ exports.updateClaim = (req, res) => {
         reward: res.locals.redeemInfo.data.reward,
       },
     };
+    setTimeout(() => {
+      console.log("This was executed after 2 seconds", res.locals.redeemInfo);
+      email.sendEmailToOperators(req, res);
+    }, 5000);
     return res.status(200).send(res.locals.redeemInfo);
   }
   // Validate Request

@@ -6,12 +6,14 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 const cors = require("cors");
 const http = require("http");
+const fetch = require("node-fetch");
 require("dotenv").config();
 /* 
 -----------------------------------------------
 CONTROLLERS
 -----------------------------------------------
 */
+const redisCache = require("../App/Controllers/redisCache.controller.js");
 const campaigns = require("../App/Controllers/campaign.controller.js");
 const companies = require("../App/Controllers/companies.controller.js");
 const rewards = require("../App/Controllers/rewards.controller.js");
@@ -23,10 +25,12 @@ const user = require("../App/Controllers/user.controller.js");
 const entry = require("../App/Controllers/entry.controller.js");
 const player = require("../App/Controllers/player.controller.js");
 const mailchimpController = require("../App/Controllers/mailchimpController.controller.js");
+const heyLoyaltyController = require("../App/Controllers/heyLoyaltyController.controller.js");
 const AuthorizationController = require("../App/auth/controllers/authorization.controller.js");
 const email = require("../App/Controllers/email.controller.js");
 const standard_layout = require("../App/Controllers/standard_layout.controller.js");
 const standard_layout_comp = require("../App/Controllers/standard_layout_comp.controller.js");
+const campaign_meta_data = require("../App/Controllers/campaign_meta_data.controller.js");
 // const GoogleAuth = require("../App/Controllers/GoogleAuth.controller.js");
 
 const analytics = require("../App/Controllers/analytics.controller.js");
@@ -41,9 +45,25 @@ const RequestValidation = require("../App/common/middleware/request.validation.m
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Setup the Express global error handler.
+app.use(function (error, request, response, next) {
+  console.log(error);
+
+  // Because we hooking post-response processing into the global error handler, we
+  // get to leverage unified logging and error handling; but, it means the response
+  // may have already been committed, since we don't know if the error was thrown
+  // PRE or POST response. As such, we have to check to see if the response has
+  // been committed before we attempt to send anything to the user.
+  if (!response.headersSent) {
+    response
+      .status(500)
+      .send("Sorry - something went wrong. We're digging into it.");
+  }
+});
 app.use("/", router);
 
-// Router
+// Router test
 router.get("/test", (req, res) => {
   res.write(
     "<h1>Server is up and running! Make your requests <br> Ugotlead team</h1>"
@@ -62,6 +82,32 @@ Routing docs
 https://expressjs.com/en/guide/routing.html
 */
 
+/* 
+-----------------------------------------------
+Testing
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/long-response-test`, async (req, res) => {
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey("posts");
+  if (cachedResponse != null || cachedResponse != undefined) {
+    return res.status(200).send(JSON.parse(cachedResponse));
+  }
+  try {
+    const postRequest = await fetch(
+      `https://jsonplaceholder.typicode.com/posts`
+    );
+    const posts = await postRequest.json();
+    // Save in Redis cache
+    redisCache.saveKey("posts", 60 * 60 * 24, JSON.stringify(posts));
+    // Continue
+    res.status(200).send({
+      posts: posts,
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
 /* 
 -----------------------------------------------
 CAMPAIGNS
@@ -94,6 +140,24 @@ router.put(`/${apiUrl}/update-campaign/:campaignId`, [
 router.delete(`/${apiUrl}/delete-campaign/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.delete,
+]);
+/* 
+-----------------------------------------------
+CAMPAIGN META DATA
+EXTENDED CAMPAIGN
+-----------------------------------------------
+*/
+router.post(`/${apiUrl}/create-campaign-meta/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaign_meta_data.createCampaignMetaData,
+]);
+router.get(`/${apiUrl}/get_campaign_meta_data/:campaignId`, [
+  campaign_meta_data.findMetaForCampaignId,
+]);
+
+router.put(`/${apiUrl}/update-campaign-meta/:campaignId`, [
+  ValidationMiddleware.validJWTNeeded,
+  campaign_meta_data.update,
 ]);
 
 /* 
@@ -131,10 +195,7 @@ router.get(`/${apiUrl}/companies`, [
   ValidationMiddleware.validJWTNeeded,
   companies.findAll,
 ]);
-router.get(`/${apiUrl}/companies/:companyId`, [
-  ValidationMiddleware.validJWTNeeded,
-  companies.findOneCompany,
-]);
+router.get(`/${apiUrl}/companies/:companyId`, [companies.findOneCompany]);
 router.put(`/${apiUrl}/update-company/:companyId`, [
   ValidationMiddleware.validJWTNeeded,
   companies.update,
@@ -205,8 +266,25 @@ router.get(`/${apiUrl}/getlists`, [
   ValidationMiddleware.validJWTNeeded,
   mailchimpController.getAudienceLists,
 ]);
-router.post(`/${apiUrl}/addmember`, [mailchimpController.addMemberToMailchimp]);
-
+/* 
+-----------------------------------------------
+HeyLoyalty 
+This is actually extending the Campaign because each campaign will have auth endpoints for heyloyalty
+The heyLoyalty info will also be saved for that specific campaign and not on the specific user. 
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/auth/heyloyalty/check-status`, [
+  ValidationMiddleware.validJWTNeeded,
+  heyLoyaltyController.checkKeyStatus,
+]);
+router.get(`/${apiUrl}/auth/heyloyalty/get-list`, [
+  ValidationMiddleware.validJWTNeeded,
+  heyLoyaltyController.getList,
+]);
+router.post(`/${apiUrl}/auth/heyloyalty/save-keys`, [
+  ValidationMiddleware.validJWTNeeded,
+  heyLoyaltyController.saveKeysForCampaign,
+]);
 /* 
 -----------------------------------------------
 REWARDS 
@@ -258,6 +336,8 @@ REWARD AND REDEEM
 router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
+  campaigns.addUserToIntegrations,
+  player.createPlayer,
   RedeemValidation.didUserWin,
   entry.createEntry,
   reward_meta.findRewardMetaForRewardUsingMiddleware,
@@ -266,6 +346,7 @@ router.post(`/${apiUrl}/checkreward/:campaignId`, [
 router.post(`/${apiUrl}/checkreward-justgame/:campaignId`, [
   RequestValidation.validateDomain,
   rewards.getAllRewardsForRedeem,
+  campaigns.addUserToIntegrations,
   RedeemValidation.didUserWinWithResponse,
 ]);
 
@@ -351,11 +432,6 @@ router.post(`/${apiUrl}/email/sendtest`, [
   ValidationMiddleware.validJWTNeeded,
   email.sendTest,
 ]);
-router.post(`/${apiUrl}/email/send-mail-for-completing-game`, [
-  RequestValidation.validateDomain,
-  reward_meta.findRewardMetaForRewardUsingMiddleware,
-  email.sendEmailToOperators,
-]);
 router.post(`/${apiUrl}/email/create-mail`, [
   ValidationMiddleware.validJWTNeeded,
   email.createMail,
@@ -370,10 +446,7 @@ router.post(`/${apiUrl}/email/update-mail`, [
 Cache
 -----------------------------------------------
 */
-router.get(`/${apiUrl}/cache/flushall`, [
-  ValidationMiddleware.validJWTNeeded,
-  campaigns.flushAllCache,
-]);
+router.get(`/${apiUrl}/cache/flushall`, [ValidationMiddleware.validJWTNeeded]);
 
 /* 
 -----------------------------------------------

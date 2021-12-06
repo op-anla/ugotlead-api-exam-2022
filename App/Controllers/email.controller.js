@@ -162,7 +162,7 @@ exports.sendEmailToOperators = (req, res) => {
   We will first get the email information from the database.
   We use this to generate the different emails.
   */
-  let campaignId = req.body.campaignInfo.campaign_id;
+  let campaignId = req.body.campaign.campaign_id;
   EmailModel.findById(campaignId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -184,19 +184,19 @@ exports.sendEmailToOperators = (req, res) => {
       let promises = [];
       // Main OBJECT
 
-      console.log("EmailModel.findById ~ req.body.currentUser", req.body);
+      console.log("EmailModel.findById ~ req.body.currentUser", res.locals);
       let emailObject = {
         returnDynamicContentPayload: {
           content: "",
           emailInfo: res.locals.emailInfo,
-          reward: req.body.redeemInfo.data.reward,
-          didUserWin: req.body.redeemInfo.won,
-          userInfo: req.body.currentUser,
+          reward: res.locals.redeemInfo.data.reward,
+          didUserWin: res.locals.redeemInfo.won,
+          userInfo: res.locals.playerData,
         },
         rewardMeta: res.locals.rewardMeta,
-        didUserWin: req.body.redeemInfo.won,
-        toMail: req.body.currentUser.email,
-        subject: req.body.redeemInfo.won
+        didUserWin: res.locals.redeemInfo.won,
+        toMail: res.locals.playerData.player_email,
+        subject: res.locals.redeemInfo.won
           ? "Tillykke ! - Du har vundet !"
           : "Du vandt desværre ikke...",
         email_notification: checkMyJson(
@@ -249,10 +249,10 @@ exports.sendEmailToOperators = (req, res) => {
             emailObject.replaceContent,
             (err, data) => {
               if (err) {
-                console.log("sendingEmailToOwner ~ err", err);
+                console.log("sendingEmailToUser ~ err", err);
                 reject(err);
               } else {
-                console.log("DATA in sending email to owner", data);
+                console.log("DATA in sending email to user", data);
                 resolve(data);
               }
             }
