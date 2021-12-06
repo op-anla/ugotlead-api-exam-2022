@@ -1,4 +1,5 @@
 const Layout = require("../Models/layout.model");
+const redisCache = require("./redisCache.controller.js");
 
 /* 
 -----------------------------------------------
