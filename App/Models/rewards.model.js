@@ -12,6 +12,7 @@ const Reward = function (reward) {
   this.reward_type = reward.reward_type;
   this.reward_claimed = reward.reward_claimed;
   this.reward_drawtime = reward.reward_drawtime;
+  this.reward_order_number = reward.reward_order_number;
 };
 
 Reward.getAllRewards = (result) => {
