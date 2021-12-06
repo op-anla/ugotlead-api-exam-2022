@@ -57,11 +57,7 @@ exports.findAll = async (req, res) => {
       });
     } else {
       // If we ended up getting data from DB we add it to cache
-      redisCache.saveKey(
-        "cache_allCampaigns",
-        60 * 60 * 24,
-        JSON.stringify(data)
-      );
+      redisCache.saveKey("cache_allCampaigns", 60 * 30, JSON.stringify(data));
       res.status(200).send(data);
     }
   });
@@ -142,6 +138,8 @@ exports.update = (req, res) => {
           });
         }
       } else {
+        // Delete cache for this specific campaign
+        redisCache.deleteKey(`cache_campaign_${req.params.campaignId}`);
         res.send(data);
       }
     }
@@ -161,6 +159,8 @@ exports.delete = (req, res) => {
         });
       }
     } else {
+      // Delete cache for this specific campaign
+      redisCache.deleteKey(`cache_campaign_${req.params.campaignId}`);
       res.send({
         message: `Campaign was deleted successfully!`,
       });
