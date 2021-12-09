@@ -203,7 +203,7 @@ exports.sendEmailToOperators = (req, res) => {
           res.locals.rewardMeta.reward_email_notification_info
         )
           ? JSON.parse(res.locals.rewardMeta.reward_email_notification_info)
-          : undefined,
+          : {},
       };
       if (emailObject.didUserWin) {
         emailObject.returnDynamicContentPayload.content =
