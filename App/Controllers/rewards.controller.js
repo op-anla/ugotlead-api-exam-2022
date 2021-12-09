@@ -164,11 +164,6 @@ exports.create = (req, res, next) => {
 };
 // Update reward by id
 exports.updateClaim = (req, res) => {
-  console.log(
-    "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
-    req.body
-  );
-  console.log("Let's see what we have in locals", res.locals);
   /* 
   If the user hasn't won anything we wont update the claim prop!
   IMPORTANT
@@ -182,7 +177,7 @@ exports.updateClaim = (req, res) => {
       },
     };
     setTimeout(() => {
-      console.log("This was executed after 2 seconds", res.locals.redeemInfo);
+      console.log("This was executed after 5 seconds", res.locals.redeemInfo);
       email.sendEmailToOperators(req, res);
     }, 5000);
     return res.status(200).send(res.locals.redeemInfo);
@@ -213,6 +208,13 @@ exports.updateClaim = (req, res) => {
             reward: res.locals.redeemInfo.data.reward,
           },
         };
+        setTimeout(() => {
+          console.log(
+            "This was executed after 5 seconds",
+            res.locals.redeemInfo
+          );
+          email.sendEmailToOperators(req, res);
+        }, 5000);
         return res.status(200).send(res.locals.redeemInfo);
       }
     }
