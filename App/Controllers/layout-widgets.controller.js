@@ -19,7 +19,6 @@ exports.findAllWidgets = (req, res) => {
   });
 };
 exports.createwidget = (req, res) => {
-  console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);
   const newWidget = new LayoutWidgetModel({
     name: req.body.name,
     content: req.body.content,

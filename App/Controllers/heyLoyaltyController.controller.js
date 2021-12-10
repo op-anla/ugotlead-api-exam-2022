@@ -6,7 +6,6 @@ const heyLoyaltyHOST = "https://api.heyloyalty.com/loyalty/v1";
 const fetch = require("node-fetch");
 let base64 = require("base-64");
 exports.checkKeyStatus = async (req, res) => {
-  console.log("REQ BODY IN HEYLOYALTY", req.body);
   /* 
   The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
   It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
@@ -37,7 +36,6 @@ exports.checkKeyStatus = async (req, res) => {
   }
 };
 exports.getList = async (req, res) => {
-  console.log("REQ BODY IN HEYLOYALTY", req.body);
   /* 
   The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
   It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
@@ -70,7 +68,6 @@ exports.getList = async (req, res) => {
   }
 };
 exports.saveKeysForCampaign = async (req, res) => {
-  console.log("REQ BODY IN HEYLOYALTY", req.body);
   /* 
     The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
     It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
@@ -130,7 +127,6 @@ exports.addMemberToHeyLoyalty = async (req, res) => {
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
   */
-  console.log("REQ BODY IN HEYLOYALTY", req.body);
   /* 
     The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
     It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
@@ -166,15 +162,17 @@ exports.addMemberToHeyLoyalty = async (req, res) => {
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
     "X-Request-Timestamp": requestTimestamp,
   };
-  const addedMember = await fetch(requestURL, {
-    method: "POST",
-    body: formBody,
-    headers: headers,
-  });
-  const addedMemberResponse = await addedMember.json();
-  console.log("exports.addMemberToHeyLoyalty= ~ list", addedMemberResponse);
-  if (addedMemberResponse.id) {
-    return addedMemberResponse;
+  try {
+    const addedMember = await fetch(requestURL, {
+      method: "POST",
+      body: formBody,
+      headers: headers,
+    });
+    const addedMemberResponse = await addedMember.json();
+    if (addedMemberResponse.id) {
+      return addedMemberResponse;
+    }
+  } catch (e) {
+    throw e;
   }
-  throw new Error("Something went wrong with heyloyalty integration");
 };

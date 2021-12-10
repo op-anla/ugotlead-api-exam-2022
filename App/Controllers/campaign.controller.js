@@ -188,8 +188,6 @@ exports.updateMailchimp = (campaignId, mailchimpInfo) => {
 Add user to all the integrations
 */
 exports.addUserToIntegrations = async (req, res, next) => {
-  console.log("What do we have in local?", res.locals);
-  console.log("What do we have in req.body?", req.body);
   // Submit user func
   const submitUserToIntegrations = async (req, res, data) => {
     const integrations = JSON.parse(data.campaign_integrations);
@@ -230,7 +228,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
     setTimeout(async () => {
-      console.log("WE WAIT 5 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+      console.log("WE WAIT 10 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
       const integrationResponse = await submitUserToIntegrations(
         req,
         res,
@@ -256,7 +254,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
         JSON.stringify(data)
       );
       setTimeout(async () => {
-        console.log("WE WAIT 5 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+        console.log("WE WAIT 10 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
         const integrationResponse = await submitUserToIntegrations(
           req,
           res,

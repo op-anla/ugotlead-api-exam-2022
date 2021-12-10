@@ -219,10 +219,8 @@ exports.sendEmailToOperators = async (req, res) => {
           emailObject.replaceContent,
           (err, data) => {
             if (err) {
-              console.log("EmailModel.findById ~ err", err);
               reject(err);
             } else {
-              console.log("EmailModel.findById ~ DATA", data);
               resolve(data);
             }
           }
@@ -242,10 +240,8 @@ exports.sendEmailToOperators = async (req, res) => {
           emailObject.replaceContent,
           (err, data) => {
             if (err) {
-              console.log("sendingEmailToUser ~ err", err);
               reject(err);
             } else {
-              console.log("DATA in sending email to user", data);
               resolve(data);
             }
           }
@@ -269,10 +265,8 @@ exports.sendEmailToOperators = async (req, res) => {
           emailObject.replaceContent,
           (err, data) => {
             if (err) {
-              console.log("sendingEmailToOwner ~ err", err);
               reject(err);
             } else {
-              console.log("DATA in sending email to owner", data);
               resolve(data);
             }
           }

@@ -33,17 +33,9 @@ exports.findEntryFromLog = (req, res) => {
   });
 };
 exports.createEntry = (req, res, next) => {
-  console.log(
-    "🚀 ~ file: entry.controller.js ~ line 9 ~ REWARD",
-    res.locals.redeemInfo
-  );
   const datenow = Date.now();
   const now = new Date(datenow);
   const utcstring = now.toUTCString();
-  console.log(
-    "🚀 ~ file: entry.controller.js ~ line 14 ~ utcstring",
-    utcstring
-  );
   // Create an entry
   const newEntry = new EntryModel({
     campaign_id: req.body.campaign.campaign_id,
@@ -60,7 +52,6 @@ exports.createEntry = (req, res, next) => {
         message: err.message || "Some error occurred while creating the entry.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       res.locals.entryData = data;
       return next();
     }
