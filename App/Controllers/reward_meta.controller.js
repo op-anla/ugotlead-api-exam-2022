@@ -66,6 +66,10 @@ exports.updateById = (req, res) => {
           });
         }
       } else {
+        // Delete cache for this reward meta
+        redisCache.deleteKey(
+          `cache_reward_meta_for_reward_${req.body.reward.reward_id}`
+        );
         res.status(200).send("Updated reward and reward meta");
       }
     }
@@ -91,6 +95,10 @@ exports.deleteById = (req, res, next) => {
         });
       }
     } else {
+      // Delete cache for this reward meta
+      redisCache.deleteKey(
+        `cache_reward_meta_for_reward_${req.params.reward_id}`
+      );
       return next();
     }
   });
@@ -120,8 +128,16 @@ exports.findRewardMetaForReward = (req, res) => {
 };
 
 // Find the specific rewards meta for one reward - USED FOR EVERY ENDPOINT NEEDING THE NEXT MIDDLEWARE
-exports.findRewardMetaForRewardUsingMiddleware = (req, res, next) => {
+exports.findRewardMetaForRewardUsingMiddleware = async (req, res, next) => {
   let reward_id = req.body.reward.reward_id;
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_reward_meta_for_reward_${reward_id}`
+  );
+  if (cachedResponse != null || cachedResponse != undefined) {
+    res.locals.rewardMeta = JSON.parse(cachedResponse);
+    return next();
+  }
   RewardMeta.findByRewardId(reward_id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -132,6 +148,12 @@ exports.findRewardMetaForRewardUsingMiddleware = (req, res, next) => {
         });
       }
     } else {
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_reward_meta_for_reward_${reward_id}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
       res.locals.rewardMeta = data;
       return next();
     }

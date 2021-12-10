@@ -196,7 +196,10 @@ exports.addUserToIntegrations = async (req, res, next) => {
     `cache_campaign_${req.params.campaignId}`
   );
   if (cachedResponse != null || cachedResponse != undefined) {
-    const integrationResponse = await submitUserToIntegrations(cachedResponse);
+    let formattedResponse = JSON.parse(cachedResponse);
+    const integrationResponse = await submitUserToIntegrations(
+      formattedResponse
+    );
     console.log("Campaign.findById ~ integrationResponse", integrationResponse);
     return next();
   }
