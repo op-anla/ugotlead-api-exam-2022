@@ -1,4 +1,5 @@
 const RewardMeta = require("../Models/reward_meta.model");
+const redisCache = require("./redisCache.controller.js");
 // Create and Save a new reward meta
 exports.create = (req, res) => {
   // Validate request

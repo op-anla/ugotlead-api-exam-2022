@@ -2,6 +2,7 @@
 const mailSetup = require("../Models/emailsetup");
 const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
+const redisCache = require("./redisCache.controller.js");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
 
@@ -167,45 +168,14 @@ exports.sendEmailToOperators = async (req, res) => {
   We check redis cache for this data first though before trying database
   We use this to generate the different emails.
   */
-  // Check redis cache
-  const cachedResponse = await redisCache.getKey(
-    `cache_email_data_for_campaign_${req.params.campaignId}`
-  );
-  if (cachedResponse != null || cachedResponse != undefined) {
-    let formattedResponse = JSON.parse(cachedResponse);
-    await sendEmailFunction(req, res, formattedResponse);
-    return res.status(201).send();
-  }
-  let campaignId = req.body.campaign.campaign_id;
-  EmailModel.findById(campaignId, async (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        return res.status(404).send({
-          message: `Not found email with campaign_id id ${campaignId}.`,
-        });
-      } else {
-        return res.status(500).send({
-          message: "Error retrieving email with campaign_id id " + campaignId,
-        });
-      }
-    } else {
-      // Save in Redis cache
-      redisCache.saveKey(
-        `cache_email_data_for_campaign_${req.params.campaignId}`,
-        60 * 60 * 24,
-        JSON.stringify(data)
-      );
-      await sendEmailFunction(req, res, data);
-      return res.status(201).send();
-    }
-  });
+  //  Function first
   const sendEmailFunction = async (req, res, data) => {
     res.locals.emailInfo = data;
 
     /* 
-    Main promise array which will be used since there is chance for multiple emails to be sent. 
-    We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
-    */
+  Main promise array which will be used since there is chance for multiple emails to be sent. 
+  We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
+  */
     let promises = [];
     // Main OBJECT
 
@@ -326,4 +296,36 @@ exports.sendEmailToOperators = async (req, res) => {
         return res.status(500).send();
       });
   };
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_email_data_for_campaign_${req.params.campaignId}`
+  );
+  if (cachedResponse != null || cachedResponse != undefined) {
+    let formattedResponse = JSON.parse(cachedResponse);
+    await sendEmailFunction(req, res, formattedResponse);
+    return res.status(201).send();
+  }
+  let campaignId = req.body.campaign.campaign_id;
+  EmailModel.findById(campaignId, async (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        return res.status(404).send({
+          message: `Not found email with campaign_id id ${campaignId}.`,
+        });
+      } else {
+        return res.status(500).send({
+          message: "Error retrieving email with campaign_id id " + campaignId,
+        });
+      }
+    } else {
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_email_data_for_campaign_${req.params.campaignId}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
+      await sendEmailFunction(req, res, data);
+      return res.status(201).send();
+    }
+  });
 };
