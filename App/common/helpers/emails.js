@@ -22,7 +22,7 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
     }
   );
 };
-exports.retryEmailAfterError = async (
+exports.retryEmailAfterError = (
   fromMail,
   toMail,
   subject,
@@ -33,7 +33,7 @@ exports.retryEmailAfterError = async (
     "We got an error before and now we try sending an email again - current num count: ",
     numOfTries
   );
-  await mailSetup.sendMail(
+  mailSetup.sendMail(
     {
       from: fromMail,
       to: toMail,
@@ -42,6 +42,7 @@ exports.retryEmailAfterError = async (
     },
     (err, info) => {
       if (err) {
+        let currentNum = numOfTries++;
         // Error
         console.log(
           "We still got an error trying to send emails",
@@ -49,7 +50,6 @@ exports.retryEmailAfterError = async (
           "Our current try count is: ",
           numOfTries
         );
-        let currentNum = numOfTries++;
         if (currentNum >= 100) {
           throw new Error(
             "We tried sending emails 100 times, now it's time to stop the madness...",
