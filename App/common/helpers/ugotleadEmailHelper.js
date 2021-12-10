@@ -1,6 +1,5 @@
 module.exports = {
   addTemplateContent(content) {
-    console.log("addTemplateContent ~ content", content);
     /* 
     Variabler
     */

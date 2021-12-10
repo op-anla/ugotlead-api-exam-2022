@@ -171,7 +171,6 @@ exports.sendEmailToOperators = async (req, res) => {
   //  Function first
   const sendEmailFunction = async (req, res, data) => {
     res.locals.emailInfo = data;
-
     /* 
   Main promise array which will be used since there is chance for multiple emails to be sent. 
   We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
@@ -179,7 +178,6 @@ exports.sendEmailToOperators = async (req, res) => {
     let promises = [];
     // Main OBJECT
 
-    console.log("EmailModel.findById ~ req.body.currentUser", res.locals);
     let emailObject = {
       returnDynamicContentPayload: {
         content: "",
@@ -285,15 +283,11 @@ exports.sendEmailToOperators = async (req, res) => {
     // Run through all promises
     Promise.all(promises)
       .then((response) => {
-        // All emails were sent correctly
-        console.log("Promise.all ~ res", response);
-
-        // Return created response
-        return res.status(201).send();
+        console.log("All emails were sent correctly");
       })
       .catch((e) => {
         console.log("Something went wrong with emails", e);
-        return res.status(500).send();
+        throw e;
       });
   };
   // Check redis cache
@@ -303,20 +297,11 @@ exports.sendEmailToOperators = async (req, res) => {
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
     await sendEmailFunction(req, res, formattedResponse);
-    return res.status(201).send();
   }
   let campaignId = req.body.campaign.campaign_id;
   EmailModel.findById(campaignId, async (err, data) => {
     if (err) {
-      if (err.kind === "not_found") {
-        return res.status(404).send({
-          message: `Not found email with campaign_id id ${campaignId}.`,
-        });
-      } else {
-        return res.status(500).send({
-          message: "Error retrieving email with campaign_id id " + campaignId,
-        });
-      }
+      throw err;
     } else {
       // Save in Redis cache
       redisCache.saveKey(
@@ -325,7 +310,6 @@ exports.sendEmailToOperators = async (req, res) => {
         JSON.stringify(data)
       );
       await sendEmailFunction(req, res, data);
-      return res.status(201).send();
     }
   });
 };

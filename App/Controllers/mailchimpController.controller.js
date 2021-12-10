@@ -188,14 +188,17 @@ exports.addMemberToMailchimp = async (req, res) => {
   const mergeFields = {
     FNAME: req.body.userInfo.navn,
   };
-
-  const addMemberResponse = await mailchimp.lists.addListMember(
-    mailchimpInfo.listID,
-    {
-      email_address: req.body.userInfo.email,
-      merge_fields: mergeFields,
-      status: "subscribed",
-    }
-  );
-  return { id: addMemberResponse.id, status: addMemberResponse.status };
+  try {
+    const addMemberResponse = await mailchimp.lists.addListMember(
+      mailchimpInfo.listID,
+      {
+        email_address: req.body.userInfo.email,
+        merge_fields: mergeFields,
+        status: "subscribed",
+      }
+    );
+    return { id: addMemberResponse.id, status: addMemberResponse.status };
+  } catch (err) {
+    throw err;
+  }
 };

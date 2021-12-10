@@ -177,7 +177,9 @@ exports.updateClaim = (req, res) => {
       },
     };
     setTimeout(() => {
-      console.log("This was executed after 5 seconds", res.locals.redeemInfo);
+      console.log(
+        "This was executed after 5 seconds and right before sending emails"
+      );
       email.sendEmailToOperators(req, res);
     }, 5000);
     return res.status(200).send(res.locals.redeemInfo);
@@ -210,8 +212,7 @@ exports.updateClaim = (req, res) => {
         };
         setTimeout(() => {
           console.log(
-            "This was executed after 5 seconds",
-            res.locals.redeemInfo
+            "This was executed after 5 seconds and right before sending emails"
           );
           email.sendEmailToOperators(req, res);
         }, 5000);
