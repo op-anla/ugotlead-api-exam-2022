@@ -1,6 +1,5 @@
 const campaign = require("./campaign.controller.js");
-const player = require("./player.controller.js");
-
+const emailHelper = require("../common/helpers/emails");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 const fetch = require("node-fetch");
 const querystring = require("querystring");
@@ -198,6 +197,13 @@ exports.addMemberToMailchimp = async (req, res) => {
     );
     return { id: addMemberResponse.id, status: addMemberResponse.status };
   } catch (err) {
+    let message = `${err}`;
+    await emailHelper.sendMail(
+      "no-reply@ugotlead.dk",
+      "anla@onlineplus.dk",
+      "Error in mailchimp",
+      message
+    );
     throw err;
   }
 };
