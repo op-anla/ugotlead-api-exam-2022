@@ -40,7 +40,12 @@ exports.retryEmailAfterError = async (
     (err, info) => {
       if (err) {
         // Error
-        console.log("We still got an error trying to send emails", err);
+        console.log(
+          "We still got an error trying to send emails",
+          err.responseCode,
+          "Our current try count is: ",
+          numOfTries
+        );
         let currentNum = numOfTries++;
         if (currentNum >= 100) {
           throw new Error(
