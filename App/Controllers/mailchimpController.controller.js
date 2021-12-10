@@ -198,21 +198,6 @@ exports.addMemberToMailchimp = async (req, res) => {
     return { id: addMemberResponse.id, status: addMemberResponse.status };
   } catch (err) {
     let message = `${err}`;
-    const sendingEmailToUser = new Promise((resolve, reject) => {
-      emailHelper.sendMail(
-        "no-reply@ugotlead.dk",
-        emailObject.toMail,
-        emailObject.subject,
-        emailObject.replaceContent,
-        (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(data);
-          }
-        }
-      );
-    });
     const errorEmail = new Promise((resolve, reject) => {
       emailHelper.sendMail(
         "no-reply@ugotlead.dk",
