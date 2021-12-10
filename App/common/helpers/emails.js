@@ -1,6 +1,6 @@
 const mailSetup = require("../../Models/emailsetup");
 
-exports.sendMail = (fromMail, toMail, subject, content, result) => {
+exports.sendMail = async (fromMail, toMail, subject, content, result) => {
   mailSetup.sendMail(
     {
       from: fromMail,
@@ -8,7 +8,7 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
       subject: subject,
       html: content,
     },
-    (err, info) => {
+    async (err, info) => {
       if (err) {
         // Error
         console.log("We have an issue with sending emails - ", err);
@@ -22,7 +22,7 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
     }
   );
 };
-exports.retryEmailAfterError = (
+exports.retryEmailAfterError = async (
   fromMail,
   toMail,
   subject,
@@ -33,7 +33,7 @@ exports.retryEmailAfterError = (
     "We got an error before and now we try sending an email again - current num count: ",
     numOfTries
   );
-  mailSetup.sendMail(
+  await mailSetup.sendMail(
     {
       from: fromMail,
       to: toMail,
@@ -50,13 +50,16 @@ exports.retryEmailAfterError = (
           "Our current try count is: ",
           numOfTries
         );
-        if (currentNum >= 100) {
+        if (currentNum >= 10) {
           throw new Error(
-            "We tried sending emails 100 times, now it's time to stop the madness...",
+            "We tried sending emails 10 times, now it's time to stop the madness...",
             err
           );
         } else {
           setTimeout(() => {
+            console.log(
+              "This was executed after 10 seconds because we got error on error in email. We try sending email again every 10 seconds !"
+            );
             this.retryEmailAfterError(
               fromMail,
               toMail,
@@ -64,7 +67,7 @@ exports.retryEmailAfterError = (
               content,
               currentNum
             );
-          }, 0);
+          }, 10000);
         }
       } else {
         console.log("We tried after email error and now it works!");
