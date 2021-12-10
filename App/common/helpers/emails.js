@@ -29,7 +29,10 @@ exports.retryEmailAfterError = async (
   content,
   numOfTries
 ) => {
-  console.log("We got an error before and now we try sending an email again");
+  console.log(
+    "We got an error before and now we try sending an email again - current num count: ",
+    numOfTries
+  );
   await mailSetup.sendMail(
     {
       from: fromMail,
