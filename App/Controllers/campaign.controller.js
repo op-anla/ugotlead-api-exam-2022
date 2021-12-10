@@ -223,7 +223,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
     setTimeout(async () => {
-      console.log("WE WAIT 10 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+      console.log("WE WAIT 30 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
       const integrationResponse = await submitUserToIntegrations(
         req,
         res,
@@ -233,7 +233,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
         "Campaign.findById ~ integrationResponse",
         integrationResponse
       );
-    }, 10000);
+    }, 30000);
 
     return next();
   }
@@ -249,7 +249,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
         JSON.stringify(data)
       );
       setTimeout(async () => {
-        console.log("WE WAIT 10 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+        console.log("WE WAIT 30 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
         const integrationResponse = await submitUserToIntegrations(
           req,
           res,
@@ -259,7 +259,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
           "Campaign.findById ~ integrationResponse",
           integrationResponse
         );
-      }, 10000);
+      }, 30000);
 
       return next();
     } catch (e) {
