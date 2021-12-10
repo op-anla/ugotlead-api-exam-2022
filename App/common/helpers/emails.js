@@ -13,7 +13,7 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
         // Error
         console.log("We have an issue with sending emails - ", err);
         setTimeout(() => {
-          this.retryEmailAfterError(fromMail, toMail, subject, content);
+          this.retryEmailAfterError(fromMail, toMail, subject, content, 0);
         }, 0);
         result(err, null);
       } else {
@@ -22,7 +22,13 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
     }
   );
 };
-exports.retryEmailAfterError = async (fromMail, toMail, subject, content) => {
+exports.retryEmailAfterError = async (
+  fromMail,
+  toMail,
+  subject,
+  content,
+  numOfTries
+) => {
   console.log("We got an error before and now we try sending an email again");
   await mailSetup.sendMail(
     {
@@ -35,9 +41,23 @@ exports.retryEmailAfterError = async (fromMail, toMail, subject, content) => {
       if (err) {
         // Error
         console.log("We still got an error trying to send emails", err);
-        setTimeout(() => {
-          this.retryEmailAfterError(fromMail, toMail, subject, content);
-        }, 0);
+        let currentNum = numOfTries++;
+        if (currentNum >= 100) {
+          throw new Error(
+            "We tried sending emails 100 times, now it's time to stop the madness...",
+            err
+          );
+        } else {
+          setTimeout(() => {
+            this.retryEmailAfterError(
+              fromMail,
+              toMail,
+              subject,
+              content,
+              currentNum
+            );
+          }, 0);
+        }
       } else {
         console.log("We tried after email error and now it works!");
       }
