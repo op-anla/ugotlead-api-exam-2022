@@ -191,11 +191,38 @@ exports.addUserToIntegrations = async (req, res, next) => {
   console.log("What do we have in local?", res.locals);
   console.log("What do we have in req.body?", req.body);
   // Find integrations
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_campaign_${req.params.campaignId}`
+  );
+  if (cachedResponse != null || cachedResponse != undefined) {
+    const integrationResponse = await submitUserToIntegrations(cachedResponse);
+    console.log("Campaign.findById ~ integrationResponse", integrationResponse);
+    return next();
+  }
   Campaign.findById(req.params.campaignId, async (err, data) => {
     if (err) {
       res.status(500).send(err);
     }
     try {
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_campaign_${req.params.campaignId}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
+      const integrationResponse = await submitUserToIntegrations(data);
+      console.log(
+        "Campaign.findById ~ integrationResponse",
+        integrationResponse
+      );
+      return next();
+    } catch (e) {
+      // Something went wrong in this specific flow and we assume we can send 500 error
+      console.log("Something went wrong", e);
+      res.status(500).send(`${e}`);
+    }
+    const submitUserToIntegrations = async (data) => {
       const integrations = JSON.parse(data.campaign_integrations);
       let promises = [];
       integrations.forEach((integration) => {
@@ -223,14 +250,9 @@ exports.addUserToIntegrations = async (req, res, next) => {
       });
       //
       const values = await Promise.all(promises);
-      console.log("Campaign.findById ~ values", values);
       // We have added the user to all integrations
-      next();
-    } catch (e) {
-      // Something went wrong in this specific flow and we assume we can send 500 error
-      console.log("Something went wrong", e);
-      res.status(500).send(`${e}`);
-    }
+      return values;
+    };
   });
 };
 /* 
