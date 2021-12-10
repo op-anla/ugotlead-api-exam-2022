@@ -229,12 +229,19 @@ exports.addUserToIntegrations = async (req, res, next) => {
 
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
-    const integrationResponse = await submitUserToIntegrations(
-      req,
-      res,
-      formattedResponse
-    );
-    console.log("Campaign.findById ~ integrationResponse", integrationResponse);
+    setImmediate(async () => {
+      console.log("WE WAIT 5 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+      const integrationResponse = await submitUserToIntegrations(
+        req,
+        res,
+        formattedResponse
+      );
+      console.log(
+        "Campaign.findById ~ integrationResponse",
+        integrationResponse
+      );
+    });
+
     return next();
   }
   Campaign.findById(req.params.campaignId, async (err, data) => {
@@ -248,15 +255,19 @@ exports.addUserToIntegrations = async (req, res, next) => {
         60 * 60 * 24,
         JSON.stringify(data)
       );
-      const integrationResponse = await submitUserToIntegrations(
-        req,
-        res,
-        data
-      );
-      console.log(
-        "Campaign.findById ~ integrationResponse",
-        integrationResponse
-      );
+      setImmediate(async () => {
+        console.log("WE WAIT 5 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
+        const integrationResponse = await submitUserToIntegrations(
+          req,
+          res,
+          formattedResponse
+        );
+        console.log(
+          "Campaign.findById ~ integrationResponse",
+          integrationResponse
+        );
+      });
+
       return next();
     } catch (e) {
       // Something went wrong in this specific flow and we assume we can send 500 error
