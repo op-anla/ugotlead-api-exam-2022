@@ -190,42 +190,74 @@ Add user to all the integrations
 exports.addUserToIntegrations = async (req, res, next) => {
   console.log("What do we have in local?", res.locals);
   console.log("What do we have in req.body?", req.body);
-  // Find integrations
+  // Submit user func
+  const submitUserToIntegrations = async (req, res, data) => {
+    const integrations = JSON.parse(data.campaign_integrations);
+    let promises = [];
+    integrations.forEach((integration) => {
+      /* Getting the keys */
+      let keys = Object.keys(integration);
+      switch (keys[0]) {
+        case "mailchimp":
+          req.headers = {
+            ...req.headers,
+            mailchimpinfo: integration["mailchimp"],
+          };
+          promises.push(mailchimpController.addMemberToMailchimp(req, res));
+          break;
+        case "heyLoyalty":
+          req.headers = {
+            ...req.headers,
+            heyloyalty: integration["heyLoyalty"],
+          };
+          console.log("Lets do some heyloyalty stuff");
+          promises.push(heyLoyaltyController.addMemberToHeyLoyalty(req, res));
+          break;
+        default:
+          break;
+      }
+    });
+    //
+    const values = await Promise.all(promises);
+    // We have added the user to all integrations
+    return values;
+  };
+  // Check redis cache
+  const cachedResponse = await redisCache.getKey(
+    `cache_campaign_${req.params.campaignId}`
+  );
+
+  if (cachedResponse != null || cachedResponse != undefined) {
+    let formattedResponse = JSON.parse(cachedResponse);
+    const integrationResponse = await submitUserToIntegrations(
+      req,
+      res,
+      formattedResponse
+    );
+    console.log("Campaign.findById ~ integrationResponse", integrationResponse);
+    return next();
+  }
   Campaign.findById(req.params.campaignId, async (err, data) => {
     if (err) {
       res.status(500).send(err);
     }
     try {
-      const integrations = JSON.parse(data.campaign_integrations);
-      let promises = [];
-      integrations.forEach((integration) => {
-        /* Getting the keys */
-        let keys = Object.keys(integration);
-        switch (keys[0]) {
-          case "mailchimp":
-            req.headers = {
-              ...req.headers,
-              mailchimpinfo: integration["mailchimp"],
-            };
-            promises.push(mailchimpController.addMemberToMailchimp(req, res));
-            break;
-          case "heyLoyalty":
-            req.headers = {
-              ...req.headers,
-              heyloyalty: integration["heyLoyalty"],
-            };
-            console.log("Lets do some heyloyalty stuff");
-            promises.push(heyLoyaltyController.addMemberToHeyLoyalty(req, res));
-            break;
-          default:
-            break;
-        }
-      });
-      //
-      const values = await Promise.all(promises);
-      console.log("Campaign.findById ~ values", values);
-      // We have added the user to all integrations
-      next();
+      // Save in Redis cache
+      redisCache.saveKey(
+        `cache_campaign_${req.params.campaignId}`,
+        60 * 60 * 24,
+        JSON.stringify(data)
+      );
+      const integrationResponse = await submitUserToIntegrations(
+        req,
+        res,
+        data
+      );
+      console.log(
+        "Campaign.findById ~ integrationResponse",
+        integrationResponse
+      );
+      return next();
     } catch (e) {
       // Something went wrong in this specific flow and we assume we can send 500 error
       console.log("Something went wrong", e);
