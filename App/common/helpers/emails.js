@@ -13,9 +13,8 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
         // Error
         console.log("We have an issue with sending emails - ", err);
         setTimeout(() => {
-          console.log("timeout 10 seconds in emails");
           this.retryEmailAfterError(fromMail, toMail, subject, content);
-        }, 10000);
+        }, 0);
         result(err, null);
       } else {
         result(null, info);
@@ -36,6 +35,9 @@ exports.retryEmailAfterError = async (fromMail, toMail, subject, content) => {
       if (err) {
         // Error
         console.log("We still got an error trying to send emails", err);
+        setTimeout(() => {
+          this.retryEmailAfterError(fromMail, toMail, subject, content);
+        }, 0);
       } else {
         console.log("We tried after email error and now it works!");
       }
