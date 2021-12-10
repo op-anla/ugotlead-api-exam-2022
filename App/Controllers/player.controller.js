@@ -21,7 +21,6 @@ exports.createPlayer = (req, res, next) => {
           err.message || "Some error occurred while creating the player.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       res.locals.playerData = data;
       next();
     }

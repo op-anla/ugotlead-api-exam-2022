@@ -14,7 +14,6 @@ exports.createMail = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("req.body", req.body);
 
   // Create a Campaign
   const email = new EmailModel({
@@ -49,7 +48,6 @@ exports.updateMail = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("body in updateMail", req.body);
   const email = new EmailModel({
     campaign_id: req.body.campaignid,
     email_logo_url: req.body.email_logo_url ? req.body.email_logo_url : "",
@@ -154,11 +152,9 @@ exports.sendTest = (req, res) => {
 
   sendTest()
     .then((data) => {
-      console.log(".then ~ data", data);
       return res.status(200).send("Working");
     })
     .catch((e) => {
-      console.log("e", e);
       return res.status(400).send("Didn't work");
     });
 };

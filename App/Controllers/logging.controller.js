@@ -192,7 +192,6 @@ exports.createLogForUser = (req, res) => {
           err.message || "Some error occurred while creating the campaign.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       res.status(201).send(data);
     }
   });

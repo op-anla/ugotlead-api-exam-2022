@@ -171,11 +171,6 @@ exports.delete = (req, res) => {
 Mailchimp update
 */
 exports.updateMailchimp = (campaignId, mailchimpInfo) => {
-  console.log(
-    "🚀 ~ file: campaign.controller.js ~ line 111 ~ campaignId, mailchimpInfo",
-    campaignId,
-    mailchimpInfo
-  );
   Campaign.updateIntegrationData(campaignId, mailchimpInfo, (err, data) => {
     if (err) {
       return err;

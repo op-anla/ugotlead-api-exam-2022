@@ -78,7 +78,6 @@ exports.createStandardLayout = (req, res) => {
           "Some error occurred while creating the standard layout.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       res.status(201).send({
         message: "Added standard layout",
         data: data,

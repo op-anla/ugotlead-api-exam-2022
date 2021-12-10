@@ -11,10 +11,9 @@ exports.sendMail = (fromMail, toMail, subject, content, result) => {
     (err, info) => {
       if (err) {
         // Error
-        console.log(err);
+        console.log("We have an issue with sending emails - ", err);
         result(err, null);
       } else {
-        console.log(info);
         result(null, info);
       }
     }
