@@ -179,7 +179,6 @@ exports.addMemberToMailchimp = async (req, res) => {
   }
 
   let mailchimpInfo = req.headers.mailchimpinfo;
-  console.log("exports.addMemberToMailchimp= ~ mailchimpInfo", mailchimpInfo);
   mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,

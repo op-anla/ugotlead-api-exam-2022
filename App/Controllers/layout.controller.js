@@ -121,7 +121,6 @@ exports.createNewComponentForCampaign = (req, res) => {
           err.message || "Some error occurred while creating the widget.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       // Delete cache for this specific campaign
       redisCache.deleteKey(
         `cache_layout_for_campaign_${req.params.campaignId}`

@@ -37,7 +37,6 @@ exports.createwidget = (req, res) => {
           err.message || "Some error occurred while creating the widget.",
       });
     } else {
-      console.log("DATA IN LOG", data);
       res.status(201).send({
         message: "Added widget",
         data: data,
