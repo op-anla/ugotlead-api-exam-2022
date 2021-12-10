@@ -17,10 +17,7 @@ Player.create = (newPlayer, result) => {
       return;
     }
 
-    console.log("created player: ", {
-      id: res.insertId,
-      ...newPlayer,
-    });
+    console.log("created player");
 
     result(null, {
       id: res.insertId,

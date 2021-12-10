@@ -104,7 +104,6 @@ exports.removeWidgetFromCampaign = (req, res) => {
 };
 // Create new component in layout
 exports.createNewComponentForCampaign = (req, res) => {
-  console.log("🚀 ~ file: entry.controller.js ~ line 9 ~ req", req.body);
   const newWidget = new Layout({
     layout_component_content: req.body.content,
     layout_component_options: req.body.options,
