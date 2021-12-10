@@ -58,7 +58,7 @@ exports.retryEmailAfterError = async (
         } else {
           setTimeout(() => {
             console.log(
-              "This was executed after 10 seconds because we got error on error in email. We try sending email again every 10 seconds !"
+              "This was executed after 60 seconds because we got error on error in email. We try sending email again every 60 seconds !"
             );
             this.retryEmailAfterError(
               fromMail,
@@ -67,7 +67,7 @@ exports.retryEmailAfterError = async (
               content,
               currentNum
             );
-          }, 10000);
+          }, 60000);
         }
       } else {
         console.log("We tried after email error and now it works!");
