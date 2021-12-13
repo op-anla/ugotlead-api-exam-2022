@@ -81,7 +81,6 @@ EntryModel.findEntry = (log, result) => {
   });
 };
 EntryModel.create = (newEntry, result) => {
-  console.log("🚀 ~ file: entry.model.js ~ line 14 ~ newEntry", newEntry);
   sql.query("INSERT INTO entries SET ?", newEntry, (err, res) => {
     if (err) {
       console.log(
@@ -91,12 +90,6 @@ EntryModel.create = (newEntry, result) => {
       result(err, null);
       return;
     }
-
-    console.log("created entry: ", {
-      id: res.insertId,
-      ...newEntry,
-    });
-
     result(null, {
       id: res.insertId,
       ...newEntry,

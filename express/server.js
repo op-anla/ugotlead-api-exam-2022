@@ -299,7 +299,14 @@ router.post(`/${apiUrl}/create-logging/:campaignId`, [
   RequestValidation.validateDomain,
   logging.createLogForUser,
 ]);
-
+/* 
+-----------------------------------------------
+THROTTLE AND INTEGRATIONS
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/throttle-requests`, [], (req, res) => {
+  console.log("OKAY HAHA LOL");
+});
 /* 
 -----------------------------------------------
 REWARD AND REDEEM 
