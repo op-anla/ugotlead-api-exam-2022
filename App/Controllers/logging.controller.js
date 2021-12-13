@@ -40,13 +40,7 @@ exports.getLoggingInfoByEntryData = (req, res, next) => {
   }
 };
 exports.findLogForUser = (req, res, next) => {
-  console.log("FIND USER IN LOGGING", req.params.session_id);
   Logging.findLog(req.params.campaignId, req.params.session_id, (err, data) => {
-    console.log(
-      "🚀 ~ file: logging.controller.js ~ line 17 ~ Logging.findLog ~ err",
-      err,
-      data
-    );
     if (err) {
       /* 
       If the user is not in the logs they will be created later.
