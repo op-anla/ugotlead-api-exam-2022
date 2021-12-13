@@ -1,6 +1,4 @@
 const Campaign = require("../Models/campaign.model");
-const mailchimpController = require("./mailchimpController.controller.js");
-const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
 const redisCache = require("./redisCache.controller.js");
 const queueController = require("./queue.controller.js");
 // Create and Save a new campaign

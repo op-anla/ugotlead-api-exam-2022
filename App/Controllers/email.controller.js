@@ -271,9 +271,10 @@ exports.sendEmailToOperators = async (req, res) => {
       promises.push(sendingEmailToOwner);
     }
     // Run through all promises
-    Promise.all(promises)
+    return Promise.all(promises)
       .then((response) => {
         console.log("All emails were sent correctly");
+        return response;
       })
       .catch((e) => {
         console.log("Something went wrong with emails", e);
