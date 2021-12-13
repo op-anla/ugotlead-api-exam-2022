@@ -1,6 +1,4 @@
 exports.validateDomain = (req, res, next) => {
-  console.log("VALIDATE DOMAIN", req.headers, req.body);
-  console.log("CAMPAIGN ROUTE PARAMS", req.params);
   const user_agent = req.headers["user-agent"];
   if (user_agent.includes("Postman")) {
     return next();
