@@ -2,6 +2,7 @@ const Campaign = require("../Models/campaign.model");
 const mailchimpController = require("./mailchimpController.controller.js");
 const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
 const redisCache = require("./redisCache.controller.js");
+const queueController = require("./queue.controller.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request
@@ -196,15 +197,22 @@ exports.addUserToIntegrations = async (req, res, next) => {
             ...req.headers,
             mailchimpinfo: integration["mailchimp"],
           };
-          promises.push(mailchimpController.addMemberToMailchimp(req, res));
+          queueController.addUserToMailchimpQueue({
+            req: req,
+            res: res,
+            msDelay: 150,
+          });
           break;
         case "heyLoyalty":
           req.headers = {
             ...req.headers,
             heyloyalty: integration["heyLoyalty"],
           };
-          console.log("Lets do some heyloyalty stuff");
-          promises.push(heyLoyaltyController.addMemberToHeyLoyalty(req, res));
+          queueController.addUserToHeyloyaltyQueue({
+            req: req,
+            res: res,
+            msDelay: 50,
+          });
           break;
         default:
           break;
@@ -222,18 +230,12 @@ exports.addUserToIntegrations = async (req, res, next) => {
 
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
-    setTimeout(async () => {
-      console.log("WE WAIT 30 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
-      const integrationResponse = await submitUserToIntegrations(
-        req,
-        res,
-        formattedResponse
-      );
-      console.log(
-        "Campaign.findById ~ integrationResponse",
-        integrationResponse
-      );
-    }, 30000);
+    const integrationResponse = await submitUserToIntegrations(
+      req,
+      res,
+      formattedResponse
+    );
+    console.log("Campaign.findById ~ integrationResponse", integrationResponse);
 
     return next();
   }
@@ -248,18 +250,16 @@ exports.addUserToIntegrations = async (req, res, next) => {
         60 * 60 * 24,
         JSON.stringify(data)
       );
-      setTimeout(async () => {
-        console.log("WE WAIT 30 SECONDS BEFORE ADDING THEM TO INTEGRATIONS");
-        const integrationResponse = await submitUserToIntegrations(
-          req,
-          res,
-          formattedResponse
-        );
-        console.log(
-          "Campaign.findById ~ integrationResponse",
-          integrationResponse
-        );
-      }, 30000);
+      const integrationResponse = await submitUserToIntegrations(
+        req,
+        res,
+        formattedResponse
+      );
+
+      console.log(
+        "Campaign.findById ~ integrationResponse",
+        integrationResponse
+      );
 
       return next();
     } catch (e) {

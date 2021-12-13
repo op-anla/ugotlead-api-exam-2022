@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@mailchimp/mailchimp_marketing": "^3.0.47",
+    "async": "^3.2.2",
     "base-64": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.5.1",
