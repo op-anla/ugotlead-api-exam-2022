@@ -180,7 +180,7 @@ exports.updateClaim = (req, res) => {
     queueController.addEmailToEmailQueue({
       req: req,
       res: res,
-      msDelay: 100,
+      msDelay: 150,
     });
     return res.status(200).send(res.locals.redeemInfo);
   }
@@ -213,7 +213,7 @@ exports.updateClaim = (req, res) => {
         queueController.addEmailToEmailQueue({
           req: req,
           res: res,
-          msDelay: 100,
+          msDelay: 150,
         });
         return res.status(200).send(res.locals.redeemInfo);
       }
