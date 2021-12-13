@@ -69,7 +69,6 @@ exports.findLogForUser = (req, res, next) => {
 
 //Operativ systemer
 osChecker = (ua) => {
-  console.log("🚀 ~ file: logging.controller.js ~ line 46 ~ ua", ua);
   let os = "Ukendt";
   try {
     if (ua.includes("Windows NT")) {
@@ -83,16 +82,12 @@ osChecker = (ua) => {
     } else if (ua.includes("Linux")) {
       os = "Linux";
     }
-    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ osChecker", os);
     return os;
-  } catch (error) {
-    console.log("🚀 ~ file: logging.controller.js ~ line 62 ~ error", error);
-  }
+  } catch (error) {}
 };
 
 //Devices
 deviceChecker = (ua) => {
-  console.log("🚀 ~ file: logging.controller.js ~ line 50 ~ ua", ua);
   let deviceType = "Ukendt";
   try {
     if (ua.includes("Windows")) {
@@ -108,19 +103,14 @@ deviceChecker = (ua) => {
     } else if (ua.includes("iPad")) {
       deviceType = "Apple iPad";
     }
-    console.log(
-      "🚀 ~ file: logging.controller.js ~ line 62 ~ deviceChecker",
-      deviceType
-    );
     return deviceType;
   } catch (error) {
-    console.log("🚀 ~ file: logging.controller.js ~ line 90 ~ error", error);
+    console.log("error", error);
   }
 };
 
 //Webbrowsers
 browserChecker = (ua) => {
-  console.log("🚀 ~ file: logging.controller.js ~ line 54 ~ ua", ua);
   let browser = "Ukendt";
   try {
     if (ua.includes("Firefox")) {
@@ -140,10 +130,6 @@ browserChecker = (ua) => {
     } else if (ua.includes("PostmanRuntime")) {
       browser = "Postman";
     }
-    console.log(
-      "🚀 ~ file: logging.controller.js ~ line 62 ~ browserChecker",
-      browser
-    );
     return browser;
   } catch (error) {
     console.log("🚀 ~ file: logging.controller.js ~ line 121 ~ error", error);
@@ -151,11 +137,6 @@ browserChecker = (ua) => {
 };
 
 exports.createLogForUser = (req, res) => {
-  console.log(
-    "🚀 ~ file: logging.controller.js ~ line 5 ~ reqs CREATE LOG FOR USER",
-    req.headers,
-    req.body
-  );
   const _user_agent = req.headers["user-agent"];
   // if (_user_agent.includes("Apache-HttpClient")) {
   //   return res.status(201).send();
