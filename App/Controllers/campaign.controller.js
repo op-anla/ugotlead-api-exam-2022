@@ -198,7 +198,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
           queueController.addUserToMailchimpQueue({
             req: req,
             res: res,
-            msDelay: 150,
+            msDelay: 50,
           });
           break;
         case "heyLoyalty":

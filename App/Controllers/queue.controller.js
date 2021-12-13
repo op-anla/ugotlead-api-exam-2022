@@ -7,7 +7,7 @@ const emailController = require("./email.controller.js");
 const mailchimpQueue = async.queue((task, executed) => {
   setTimeout(() => {
     // Number of tasks remaining and to be processed
-    const tasksRemaining = heyloyalty.length();
+    const tasksRemaining = mailchimpQueue.length();
 
     mailchimpController
       .addMemberToMailchimp(task.req, task.res)
@@ -21,7 +21,7 @@ const mailchimpQueue = async.queue((task, executed) => {
         mailchimpQueue.unshift(task);
       });
   }, task.msDelay);
-});
+}, 2);
 // Executes when the queue is done processing all the items
 mailchimpQueue.drain(() => {
   console.log("Successfully processed all users for Mailchimp!");
@@ -44,7 +44,7 @@ const heyloyalty = async.queue((task, executed) => {
         heyloyalty.unshift(task);
       });
   }, task.msDelay);
-}, 1); // concurrency value = 1
+}, 2); // concurrency value = 1
 // Executes when the queue is done processing all the items
 heyloyalty.drain(() => {
   console.log("Successfully processed all users for Heyloyalty!");
@@ -67,7 +67,7 @@ const emailQueue = async.queue((task, executed) => {
         emailQueue.unshift(task);
       });
   }, task.msDelay);
-}, 1); // concurrency value = 1
+}, 2); // concurrency value = 1
 // Executes when the queue is done processing all the items
 emailQueue.drain(() => {
   console.log("Successfully processed all emails");
