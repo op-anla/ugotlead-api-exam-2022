@@ -9,7 +9,6 @@ exports.create = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ req", req.body);
   // Get some dates for campaign start and enddate
   let now = new Date();
   let start_date = now.setDate(now.getDate() + 1 * 7);
@@ -42,7 +41,6 @@ exports.create = (req, res) => {
 };
 // Retrieve all campaigns from the database.
 exports.findAll = async (req, res) => {
-  console.log("find all");
   // Before getting data from Database we need to check cache
   const cachedResponse = await redisCache.getKey("cache_allCampaigns");
   if (cachedResponse != null || cachedResponse != undefined) {
@@ -118,7 +116,6 @@ exports.update = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(req.body);
   if (req.body.campaignInfo) {
     req.body = req.body.campaignInfo;
   }
@@ -226,7 +223,6 @@ exports.addUserToIntegrations = async (req, res, next) => {
       res,
       formattedResponse
     );
-    console.log("Campaign.findById ~ integrationResponse", integrationResponse);
 
     return next();
   }
@@ -247,11 +243,6 @@ exports.addUserToIntegrations = async (req, res, next) => {
         formattedResponse
       );
 
-      console.log(
-        "Campaign.findById ~ integrationResponse",
-        integrationResponse
-      );
-
       return next();
     } catch (e) {
       // Something went wrong in this specific flow and we assume we can send 500 error
@@ -264,8 +255,6 @@ exports.addUserToIntegrations = async (req, res, next) => {
 heyloyalty update
 */
 exports.updateheyLoyalty = (campaignId, heyLoyaltyInfo) => {
-  console.log("campaignId, heyLoyaltyInfo", campaignId, heyLoyaltyInfo);
-
   Campaign.updateIntegrationData(campaignId, heyLoyaltyInfo, (err, data) => {
     if (err) {
       return err;

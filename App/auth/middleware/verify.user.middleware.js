@@ -17,7 +17,6 @@ exports.hasAuthValidFields = (req, res, next) => {
     if (!req.body.password) {
       errors.push("Missing password field");
     }
-    console.log("Is there any errors?", errors);
     if (errors.length) {
       return res.status(400).send({
         errors: errors.join(","),
@@ -26,7 +25,6 @@ exports.hasAuthValidFields = (req, res, next) => {
       /* 
       Calling the next function
       */
-      console.log("Calling next function");
       return next();
     }
   } else {
@@ -40,10 +38,8 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
   /* 
   This will check if the username and password that the request contains is in the database
   */
-  console.log("Is password and user match");
   UserModel.findByUsername(req.body.username)
     .then((user) => {
-      console.log("User", req.body);
       if (!user) {
         res.status(404).send({});
       } else {
@@ -59,7 +55,6 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           .digest("base64");
 
         if (hash === passwordFields[1]) {
-          console.log("SUCCESS");
           req.body = {
             userId: user.user_id,
             userName: user.username,

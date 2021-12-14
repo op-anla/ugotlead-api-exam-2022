@@ -13,8 +13,6 @@ CampaignMetaData.create = (newCampaignMeta, result) => {
     newCampaignMeta,
     (err, res) => {
       if (err) {
-        console.log("sql.query ~ err", err);
-
         result(err, null);
         return;
       }
@@ -33,7 +31,6 @@ CampaignMetaData.findById = (campaignId, result) => {
     `SELECT * FROM campaign_meta_data WHERE campaign_id = ?`,
     campaignId,
     (err, res) => {
-      console.log("res", res);
       if (err) {
         result(err, null);
         return;

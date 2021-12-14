@@ -7,7 +7,6 @@ CampaignMetaData
 */
 
 exports.findMetaForCampaignId = (req, res, next) => {
-  console.log("FIND META DATA", req.params.campaignId);
   CampaignMetaData.findById(req.params.campaignId, (err, data) => {
     if (err) {
       return res.status(500).send();
@@ -23,7 +22,6 @@ exports.update = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(req.body);
   CampaignMetaData.updateById(
     req.params.campaignId,
     new CampaignMetaData(req.body),

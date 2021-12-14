@@ -14,12 +14,9 @@ exports.saveKey = async (keyName, TTL, data) => {
   try {
     const cachedKeyValue = await client.setEx(keyName, TTL, data);
     return cachedKeyValue;
-  } catch (e) {
-    console.log("exports.saveKey= ~ e", e);
-  }
+  } catch (e) {}
 };
 exports.deleteKey = async (keyName) => {
-  console.log("Deleting this cache key", keyName);
   try {
     await client.del(keyName);
     return;
@@ -29,10 +26,8 @@ exports.deleteKey = async (keyName) => {
 };
 
 exports.flushAll = async (req, res) => {
-  console.log("Flush all cache we have");
   try {
     const response = await client.flushAll();
-    console.log("exports.flushAll= ~ response", response);
     if (response == "OK") {
       return res.status(200).send();
     } else {
@@ -44,7 +39,6 @@ exports.flushAll = async (req, res) => {
   }
 };
 exports.flushSingleCampaign = async (req, res) => {
-  console.log("Flush cache for single campaign with id", req.params.campaignId);
   try {
     await this.deleteKey(`cache_allCampaigns`);
     await this.deleteKey(`cache_campaign_${req.params.campaignId}`);

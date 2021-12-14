@@ -5,7 +5,6 @@ const Logging = require("../Models/logging.model");
 const Reward = require("../Models/rewards.model");
 
 exports.getAllVisitors = (req, res) => {
-  console.log("We are getting all logs from DB here");
   Logging.getAllLogs((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -22,7 +21,6 @@ exports.getAllVisitors = (req, res) => {
 };
 
 exports.getAllLeads = (req, res) => {
-  console.log("We are getting all entries from DB here");
   EntryModel.getAllEntries((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -39,9 +37,6 @@ exports.getAllLeads = (req, res) => {
 };
 
 exports.getTop5 = (req, res) => {
-  console.log(
-    "We are getting all entries, sorted by playerID's with highest count and limited to 5"
-  );
   EntryModel.findTop5Campaigns((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -58,7 +53,6 @@ exports.getTop5 = (req, res) => {
 };
 
 exports.getCountPlayers = (req, res) => {
-  console.log("We are getting amount of players from DB here");
   EntryModel.getCountEntries((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -75,7 +69,6 @@ exports.getCountPlayers = (req, res) => {
 };
 
 exports.getAllRewards = (req, res) => {
-  console.log("We are getting all rewards from DB here");
   Reward.getAllRewards((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -92,7 +85,6 @@ exports.getAllRewards = (req, res) => {
 };
 
 exports.getAllCampaigns = (req, res) => {
-  console.log("We are getting all campaigns from DB here");
   Campaign.getAllCampaigns((err, data) => {
     //Kan ændres til .getAll så snart pagination er oprettet
     if (err) {
@@ -110,7 +102,6 @@ exports.getAllCampaigns = (req, res) => {
 };
 
 exports.getCountCampaigns = (req, res) => {
-  console.log("We are getting count of campaigns from DB here");
   Campaign.countAll((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -127,7 +118,6 @@ exports.getCountCampaigns = (req, res) => {
 };
 
 exports.getAllCompanies = (req, res) => {
-  console.log("We are getting all companies from DB here");
   Company.getAll((err, data) => {
     if (err) {
       if (err.kind === "not_found") {
@@ -144,7 +134,6 @@ exports.getAllCompanies = (req, res) => {
 };
 
 exports.getCountCompanies = (req, res) => {
-  console.log("We are getting count of companies from DB here");
   Company.countAll((err, data) => {
     if (err) {
       if (err.kind === "not_found") {

@@ -52,7 +52,6 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  console.log("find all companies");
   Company.getAll((err, data) => {
     if (err) {
       res.status(500).send({
@@ -73,7 +72,6 @@ exports.update = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("BODY IN COMPANY", req.body);
   Company.updateById(
     req.params.companyId,
     new Company(req.body),
@@ -97,7 +95,6 @@ exports.update = (req, res) => {
 // Delete Company
 exports.delete = (req, res) => {
   Company.remove(req.params.companyId, (err, data) => {
-    console.log("Company.remove ~ data", data);
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({

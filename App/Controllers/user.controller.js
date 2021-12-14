@@ -63,18 +63,15 @@ exports.getById = (req, res) => {
 };
 // Find one specific user by token
 exports.getByToken = (req, res) => {
-  console.log(req.headers["authorization"]);
   let token = req.headers["authorization"];
   let authorization = token.split(" ")[1],
     decoded;
   try {
     decoded = jwt.verify(authorization, jwtSecret);
-    console.log("decoded", decoded);
   } catch (e) {
     return res.status(401).send("unauthorized");
   }
   let userId = decoded.userId;
-  console.log("userId", userId);
 
   User.findById(userId, (err, data) => {
     if (err) {

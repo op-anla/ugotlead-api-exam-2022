@@ -44,7 +44,6 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("TRYING TO UPDATE LAYOUT", req.body, req.params.campaignId);
   Layout.updateLayoutByCampaignId(
     req.params.campaignId,
     req.body.id,
@@ -58,7 +57,6 @@ exports.updateLayoutForSpecificCampaign = (req, res) => {
     }),
     (err, data) => {
       if (err) {
-        console.log("🚀 ~ file: layout.controller.js ~ line 34 ~ err", err);
         if (err.kind === "not_found") {
           res.status(404).send({
             message: `Not found layout with id ${req.body.layout_id}.`,

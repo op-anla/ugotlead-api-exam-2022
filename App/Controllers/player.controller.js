@@ -28,14 +28,12 @@ exports.createPlayer = (req, res, next) => {
 };
 // Retrieve all players from entry
 exports.getAllPlayersByAllEntries = (req, res, next) => {
-  console.log("In players and entries", res.locals.entries);
   let entries = res.locals.entries;
   if (entries.length) {
     // Array with stuff
     let itemsProcessed = 0;
     function afterForeach() {
       // After foreach
-      console.log("After foreach", entries[0]);
       return next();
     }
     entries.forEach((entry, index, array) => {
