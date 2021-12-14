@@ -57,7 +57,8 @@ const emailQueue = async.queue((emailTask, executed) => {
     emailTask.content,
     (err, data) => {
       if (err) {
-        throw err;
+        console.log("emailQueue ~ err", err);
+        emailQueue.unshift(emailTask);
       } else {
         console.log("We just sent an email!", data);
         executed(null, { emailTask, tasksRemaining });
@@ -72,32 +73,32 @@ emailQueue.drain(() => {
 /* 
 Functions
 */
-exports.addUserToMailchimpQueue = (userTask) => {
-  mailchimpQueue.push(userTask, (error, { userTask, tasksRemaining }) => {
+exports.addUserToMailchimpQueue = (task) => {
+  mailchimpQueue.push(task, (error, { task, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${userTask}`);
+      console.log(`An error occurred while processing task ${task}`);
     } else {
-      console.log(`Finished processing task ${userTask}. ${tasksRemaining}
+      console.log(`Finished processing task ${task}. ${tasksRemaining}
                     tasks remaining`);
     }
   });
 };
-exports.addUserToHeyloyaltyQueue = (userTask) => {
-  heyloyalty.push(userTask, (error, { userTask, tasksRemaining }) => {
+exports.addUserToHeyloyaltyQueue = (task) => {
+  heyloyalty.push(task, (error, { task, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${userTask}`);
+      console.log(`An error occurred while processing task ${task}`);
     } else {
-      console.log(`Finished processing task ${userTask}. ${tasksRemaining}
+      console.log(`Finished processing task ${task}. ${tasksRemaining}
                       tasks remaining`);
     }
   });
 };
-exports.addEmailToEmailQueue = (emailTask) => {
-  emailQueue.push(emailTask, (error, { emailTask, tasksRemaining }) => {
+exports.addEmailToEmailQueue = (task) => {
+  emailQueue.push(task, (error, { task, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${emailTask}`);
+      console.log(`An error occurred while processing task ${task}`);
     } else {
-      console.log(`Finished processing task ${emailTask}. ${tasksRemaining}
+      console.log(`Finished processing task ${task}. ${tasksRemaining}
                         tasks remaining`);
     }
   });
