@@ -7,14 +7,12 @@ LOGGING
 */
 // Retrieve logs for entry
 exports.getLoggingInfoByEntryData = (req, res, next) => {
-  console.log("In LOGGING and entries", res.locals.entries);
   let entries = res.locals.entries;
   if (entries.length) {
     // Array with stuff
     let itemsProcessed = 0;
     function afterForeach() {
       // After foreach
-      console.log("After foreach", entries[0]);
       return next();
     }
     entries.forEach((entry, index, array) => {

@@ -1,7 +1,6 @@
 const email = require("../../Controllers/email.controller");
 
 exports.didUserWin = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", res.locals.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
@@ -20,8 +19,6 @@ exports.didUserWin = (req, res, next) => {
   });
   const amountOfLeads = req.body.campaign.leads_goal;
   const percentOfWinning = (amountOfRewardsForPercentage / amountOfLeads) * 100;
-  console.log("percentOfWinning", percentOfWinning);
-  console.log("winnableRewards", winnableRewards.length);
   /* We go through each reward and see which is closest to now (drawtime) */
   /* 
   The chances of each reward depends on what options there is. 
@@ -32,7 +29,6 @@ exports.didUserWin = (req, res, next) => {
   const now = new Date();
   if (!winnableRewards.length) {
     // No available rewards left so the user lose.
-    console.log("The user lost because no available rewards");
     res.locals.redeemInfo = {
       won: false,
       data: {
@@ -51,11 +47,6 @@ exports.didUserWin = (req, res, next) => {
       return;
     }
     let drawTime = new Date(reward.reward_drawtime);
-    console.log("viableRewards.forEach ~ drawTime", drawTime, now);
-    console.log(
-      "comparing - If true then user has won (meaning date now is later than drawtime == win)",
-      now >= drawTime
-    );
     if (now >= drawTime) {
       // User won
       didUserWin = true;
@@ -73,16 +64,8 @@ exports.didUserWin = (req, res, next) => {
     // Checking automatic winning percentage
     // Here we use automatic percentage to calculate winning
     let baseNum = Math.random() * 100;
-    console.log(
-      "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
-      baseNum
-    );
     let testPercentage = 90;
     let basePercentage = 100 - percentOfWinning;
-    console.log(
-      "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
-      basePercentage
-    );
 
     //   Test percentage
     // Comment for not testing
@@ -90,7 +73,6 @@ exports.didUserWin = (req, res, next) => {
       let randomRewardToPick =
         winnableRewards[Math.floor(Math.random() * winnableRewards.length)];
 
-      console.log("USER WON");
       // User won
       didUserWin = true;
       res.locals.redeemInfo = {
@@ -102,7 +84,6 @@ exports.didUserWin = (req, res, next) => {
       req.body.reward = res.locals.redeemInfo.data.reward;
       return next();
     } else {
-      console.log("User did not win!");
       // User lost
       res.locals.redeemInfo = {
         won: false,
@@ -116,7 +97,6 @@ exports.didUserWin = (req, res, next) => {
   }
 };
 exports.didUserWinWithResponse = (req, res, next) => {
-  console.log("NOW WE CALCULATE WINNING FOR USER", res.locals.rewards.length);
   /* 
   We use drawtime on each reward to calculate whether or not the user has won anything. 
   First we get the array of rewards that's actually not claimed yet
@@ -135,8 +115,6 @@ exports.didUserWinWithResponse = (req, res, next) => {
   });
   const amountOfLeads = req.body.campaign.leads_goal;
   const percentOfWinning = (amountOfRewardsForPercentage / amountOfLeads) * 100;
-  console.log("percentOfWinning", percentOfWinning);
-  console.log("winnableRewards", winnableRewards.length);
   /* We go through each reward and see which is closest to now (drawtime) */
   /* 
   The chances of each reward depends on what options there is. 
@@ -147,7 +125,6 @@ exports.didUserWinWithResponse = (req, res, next) => {
   const now = new Date();
   if (!winnableRewards.length) {
     // No available rewards left so the user lose.
-    console.log("The user lost because no available rewards");
     res.locals.redeemInfo = {
       won: false,
       data: {
@@ -166,11 +143,6 @@ exports.didUserWinWithResponse = (req, res, next) => {
       return;
     }
     let drawTime = new Date(reward.reward_drawtime);
-    console.log("viableRewards.forEach ~ drawTime", drawTime, now);
-    console.log(
-      "comparing - If true then user has won (meaning date now is later than drawtime == win)",
-      now >= drawTime
-    );
     if (now >= drawTime) {
       // User won
       didUserWin = true;
@@ -189,16 +161,8 @@ exports.didUserWinWithResponse = (req, res, next) => {
     // Checking automatic winning percentage
     // Here we use automatic percentage to calculate winning
     let baseNum = Math.random() * 100;
-    console.log(
-      "🚀 ~ file: redeem.validation.middleware.js ~ line 11 ~ baseNum",
-      baseNum
-    );
     let testPercentage = 90;
     let basePercentage = 100 - testPercentage;
-    console.log(
-      "🚀 ~ file: redeem.validation.middleware.js ~ line 13 ~ basePercentage",
-      basePercentage
-    );
 
     //   Test percentage
     // Comment for not testing
@@ -206,7 +170,6 @@ exports.didUserWinWithResponse = (req, res, next) => {
       let randomRewardToPick =
         winnableRewards[Math.floor(Math.random() * winnableRewards.length)];
 
-      console.log("USER WON");
       // User won
       didUserWin = true;
       res.locals.redeemInfo = {
@@ -219,7 +182,6 @@ exports.didUserWinWithResponse = (req, res, next) => {
 
       return res.status(200).send(res.locals.redeemInfo);
     } else {
-      console.log("User did not win!");
       // User lost
       res.locals.redeemInfo = {
         won: false,

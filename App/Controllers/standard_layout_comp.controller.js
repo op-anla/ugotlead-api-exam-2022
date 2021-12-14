@@ -7,10 +7,6 @@ exports.createStandardLayoutComponent = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(
-    "🚀 ~ file: standard_layout_comp.controller.js ~ line 6 ~ req.body",
-    req.body
-  );
 
   // Create a standard layout comp
   const newStandardLayoutComp = new StandardLayoutCompModel({
@@ -37,10 +33,6 @@ exports.createStandardLayoutComponent = (req, res) => {
 };
 // Retrieve all standard layouts comp from the database.
 exports.getAllStandardLayoutComponentsFromLayoutId = (req, res) => {
-  console.log(
-    "find all standard layouts comp from ",
-    req.params.standardLayoutId
-  );
   StandardLayoutCompModel.getAllFromLayoutId(
     req.params.standardLayoutId,
     (err, data) => {
@@ -66,7 +58,6 @@ exports.updateStandardLayoutComponent = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("req body from updateStandardLayoutComponent", req.body);
   // Create a standard layout comp
   const newStandardLayoutComp = new StandardLayoutCompModel({
     standard_layout_id: req.body.standard_layout_id,

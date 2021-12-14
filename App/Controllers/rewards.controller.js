@@ -2,7 +2,6 @@ const Rewards = require("../Models/rewards.model");
 const email = require("./email.controller.js");
 
 exports.getAllRewardsForRedeem = (req, res, next) => {
-  console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId);
   Rewards.findByCampaignId(req.params.campaignId, (err, data) => {
     if (err) {
       console.log(
@@ -20,7 +19,6 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
         });
       }
     } else {
-      console.log("GOT REWARDS FOR REDEEM - AMOUNT: ", data.length);
       res.locals.rewards = data;
       return next();
     }
@@ -51,14 +49,12 @@ exports.findRewardsByCampaignId = (req, res) => {
 };
 // Find the specific reward by entryData
 exports.getRewardInfoByEntryData = (req, res) => {
-  console.log("DO WE HAVE ENTRIES?", res.locals.entries[0]);
   let entries = res.locals.entries;
   if (entries.length) {
     // Array with stuff
     let itemsProcessed = 0;
     function afterForeach() {
       // After foreach
-      console.log("After foreach", entries[0]);
       res.status(200).send(entries);
     }
     entries.forEach((entry, index, array) => {
@@ -91,7 +87,6 @@ exports.getRewardInfoByEntryData = (req, res) => {
 };
 // Delete reward
 exports.deleteById = (req, res) => {
-  console.log("ID", req.params.reward_id);
   Rewards.remove(req.params.reward_id, (err, data) => {
     if (err) {
       console.log(
@@ -120,7 +115,6 @@ exports.create = (req, res, next) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs", req.body);
 
   // Create a reward
   const rewardVar = new Rewards({
@@ -144,7 +138,6 @@ exports.create = (req, res, next) => {
           err.message || "Some error occurred while creating the reward.",
       });
     } else {
-      console.log("DATA", data);
       /* 
       We first make the reward in the database and then we create the reward meta in the database using next. 
       Next will call the next function in line in our server.js

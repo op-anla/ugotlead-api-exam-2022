@@ -62,7 +62,6 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
           reject(err);
         }
         if (res.length) {
-          console.log("found logs: ", res[0]);
           // Send the actual number of logs to resolve (then)
           resolve(res[0]["COUNT(*)"]);
         }
@@ -73,7 +72,6 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
   logs.then((res) => {
     // Set our empty object with first variable (logs)
     campaignStats.logs = res;
-    console.log("STATS", campaignStats);
     // When we have the logs we now retrieve the entries for this campaign
     // Again we use promise based variables so we can resolve and reject the response
     const entries = new Promise((resolve, reject) => {
@@ -89,7 +87,6 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
             reject(err);
           }
           if (res.length) {
-            console.log("found ENTRIES: ", res[0]);
             // Send the actual number to stats
             resolve(res[0]["COUNT(*)"]);
           }
@@ -116,10 +113,7 @@ Campaign.findStatsForCampaign = (campaignId, result) => {
     });
   });
 };
-const process = require("process");
 Campaign.findById = (campaignId, result) => {
-  console.log("Testing some process", process.pid);
-  console.log("this find is executed by PID: ", process.pid);
   sql.query(
     `SELECT * FROM campaigns WHERE campaign_id = ?`,
     campaignId,
@@ -133,7 +127,6 @@ Campaign.findById = (campaignId, result) => {
         return;
       }
       if (res.length) {
-        console.log("found campaign: ", res[0]);
         result(null, res[0]);
         return;
       }
@@ -171,7 +164,6 @@ Campaign.remove = (id, result) => {
   });
 };
 Campaign.updateById = (id, campaign, result) => {
-  console.log("campaign in model", campaign);
   sql.query(
     "UPDATE campaigns SET  ?   WHERE campaign_id = ?",
     [campaign, id],
@@ -204,11 +196,6 @@ Campaign.updateById = (id, campaign, result) => {
   );
 };
 Campaign.updateIntegrationData = (id, integrationData, result) => {
-  console.log(
-    "🚀 ~ file: campaign.model.js ~ line 124 ~ id, integrationData",
-    id,
-    integrationData
-  );
   sql.query(
     "SELECT campaign_integrations FROM campaigns WHERE campaign_id = ?",
     id,
@@ -217,7 +204,6 @@ Campaign.updateIntegrationData = (id, integrationData, result) => {
         console.log("err", err);
         return result(null, err);
       }
-      console.log("got campaign_integrations", res[0].campaign_integrations);
       /* 
       Checking if the response is an empty string ie. empty integrations
       If it is we just let us iterate an empty array and populate it later
@@ -227,7 +213,6 @@ Campaign.updateIntegrationData = (id, integrationData, result) => {
       if (jsonCheck) {
         iterableIntegration = JSON.parse(res[0].campaign_integrations);
       }
-      console.log("iterableIntegration", iterableIntegration);
       let integrations = [];
       iterableIntegration.forEach((integration) => {
         let jsonCheck = checkJson.checkMyJson(integration);
@@ -235,7 +220,6 @@ Campaign.updateIntegrationData = (id, integrationData, result) => {
           integration = JSON.parse(integration);
         }
 
-        console.log("res.forEach ~ integration", integration);
         if (integration === "") {
           return;
         }
@@ -247,9 +231,7 @@ Campaign.updateIntegrationData = (id, integrationData, result) => {
   function updateCampaign(arrayIntegrations, campaignId, integrationData) {
     let myArray = arrayIntegrations;
     myArray.push(integrationData);
-    console.log("updateCampaign ~ myArray", myArray);
     let string = JSON.stringify(myArray);
-    console.log("updateCampaign ~ string", string);
     sql.query(
       "UPDATE campaigns SET campaign_integrations = ? WHERE campaign_id = ?",
       [string, campaignId],

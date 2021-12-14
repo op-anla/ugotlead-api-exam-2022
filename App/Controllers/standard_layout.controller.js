@@ -13,11 +13,9 @@ exports.updateStandardLayoutInfo = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log("TRYING TO UPDATE LAYOUT", req.body, req.params.campaignId);
 };
 // Retrieve all standard layouts from the database.
 exports.getAllStandardLayouts = (req, res) => {
-  console.log("find all standard layouts");
   StandardLayoutModel.getAll((err, data) => {
     if (err) {
       res.status(500).send({
@@ -38,7 +36,6 @@ exports.updateStandardLayout = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(req.body);
   if (req.body.campaignInfo) {
     req.body = req.body.campaignInfo;
   }
@@ -64,10 +61,6 @@ exports.updateStandardLayout = (req, res) => {
 };
 // Create new component in layout
 exports.createStandardLayout = (req, res) => {
-  console.log(
-    "🚀 ~ file: standard_layout.controller.js ~ line 21 ~ req",
-    req.body
-  );
   const standardLayout = new StandardLayoutModel(req.body.standardLayout);
   // Save standard layout in DB
   StandardLayoutModel.create(standardLayout, (err, data) => {
