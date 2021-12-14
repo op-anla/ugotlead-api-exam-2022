@@ -7,7 +7,6 @@ LAYOUTWIDGET
 */
 // Retrieve all widgets from the database.
 exports.findAllWidgets = (req, res) => {
-  console.log("find all");
   LayoutWidgetModel.getAll((err, data) => {
     if (err) {
       res.status(500).send({
@@ -47,10 +46,6 @@ exports.createwidget = (req, res) => {
 
 // Update reward by id
 exports.updateWidget = (req, res) => {
-  console.log(
-    "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
-    req.body
-  );
   // Validate Request
   if (!req.body) {
     res.status(400).send({
@@ -61,7 +56,6 @@ exports.updateWidget = (req, res) => {
     req.params.widgetId,
     new LayoutWidgetModel(req.body),
     (err, data) => {
-      console.log("data", data);
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -80,7 +74,6 @@ exports.updateWidget = (req, res) => {
 // Delete campaign
 exports.deleteSelectedWidget = (req, res) => {
   LayoutWidgetModel.remove(req.params.widgetId, (err, data) => {
-    console.log("LayoutWidgetModel.remove ~ data", data);
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({

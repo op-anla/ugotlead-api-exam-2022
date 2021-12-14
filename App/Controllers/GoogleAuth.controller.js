@@ -11,7 +11,6 @@ exports.checkUser = async (req, res) => {
   If not then we create that specific user. 
   https://www.googleapis.com/oauth2/v3/userinfo
   */
-  console.log("Okay test this", req.headers["authorization"]);
   let myHeader = {
     Authorization: req.headers["authorization"],
   };
@@ -32,7 +31,6 @@ exports.checkUser = async (req, res) => {
     }
   };
   const userInfo = await userInfoFunction();
-  console.log("exports.login= ~ userInfo", userInfo);
   /* 
 Inside the variable userInfo should now be information about the user.
 We first check if the user exists in our database
@@ -61,7 +59,6 @@ We first check if the user exists in our database
           email: userInfo.email,
         });
         User.create(user, (err, data) => {
-          console.log("User.create ~ data", data);
           if (err) {
             console.log("ERR", err);
           }
@@ -84,7 +81,6 @@ exports.login = async (req, res) => {
   /* Lets do the OAUTH 2.0 Google endpoint to get the access_token */
   const OAUTH_CALLBACK = "http://127.0.0.1:8000/";
   const code = req.body.code;
-  console.log("We got the authorization code", code);
   if (code == undefined) {
     return res.status(500).send();
   }
@@ -116,7 +112,6 @@ exports.login = async (req, res) => {
     }
   };
   const tokenResponse = await token();
-  console.log("exports.login= ~ tokenResponse", tokenResponse);
   async function verify() {
     const ticket = await client.verifyIdToken({
       idToken: tokenResponse.id_token,
@@ -125,7 +120,6 @@ exports.login = async (req, res) => {
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
     const payload = ticket.getPayload();
-    console.log("verify ~ payload", payload);
     // const userid = payload["sub"];
     // If request specified a G Suite domain:
     // const domain = payload['hd'];

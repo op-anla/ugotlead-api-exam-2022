@@ -11,7 +11,6 @@ const mailchimpQueue = async.queue((userTask, executed) => {
   mailchimpController
     .addMemberToMailchimp(userTask)
     .then((res) => {
-      console.log("mailchimp member added : ", res);
       executed(null, { userTask, tasksRemaining });
     })
     .catch((e) => {

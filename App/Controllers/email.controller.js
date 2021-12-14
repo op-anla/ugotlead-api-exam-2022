@@ -106,7 +106,6 @@ exports.getEmailInfoForCampaign = (req, res) => {
 exports.sendTest = (req, res) => {
   // async..await is not allowed in global scope, must use a wrapper
   async function sendTest() {
-    console.log("Do we have any inputs to take care of?", req.body);
     let toMail = "anla@onlineplus.dk";
     let content = `
     <p>Hej ${toMail}, <br><br>
@@ -129,7 +128,6 @@ exports.sendTest = (req, res) => {
     if (req.body.mailInfo.subject !== "") {
       subject = req.body.mailInfo.subject;
     }
-    console.log("Lets send the mail with these params", toMail, content);
     mailSetup
       .sendMail(
         {
@@ -139,7 +137,6 @@ exports.sendTest = (req, res) => {
           html: content,
         },
         (err, info) => {
-          console.log(info);
           console.log(err);
         }
       )
@@ -224,7 +221,6 @@ exports.sendEmailToOperators = async (req, res) => {
         subject: emailObject.subject,
         content: emailObject.replaceContent,
       };
-      console.log("sendEmailFunction ~ currentEmailTask", currentEmailTask);
       queueController.addEmailToEmailQueue(currentEmailTask);
     }
     if (emailObject.email_notification.reward_notification_for_owner == true) {

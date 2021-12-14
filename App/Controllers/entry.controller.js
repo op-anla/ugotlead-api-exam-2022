@@ -6,8 +6,6 @@ ENTRY
 -----------------------------------------------
 */
 exports.findEntryFromLog = (req, res) => {
-  console.log("Find entry from log id", res.locals.loggingData);
-
   EntryModel.findEntry(res.locals.loggingData.log_id, (err, data) => {
     if (err) {
       /* 
@@ -60,7 +58,6 @@ exports.createEntry = (req, res, next) => {
 
 // Retrieve all entries with campaign_id from the database.
 exports.findAllEntriesForCampaign = (req, res, next) => {
-  console.log("find all entries for campaign");
   EntryModel.getAllByCampaignId(req.params.campaignId, (err, data) => {
     if (err) {
       res.status(500).send({

@@ -55,10 +55,6 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
       campaignId = splitCookie[1].replace(/[^\d].*/, "");
     }
   }
-  console.log(
-    "exports.updateCampaignWithMailchimpInfo= ~ campaignId",
-    campaignId
-  );
   if (campaignId === null) {
     // We redirect the user back to our application with the campaign ID they were updating.
     return res.redirect(
@@ -68,7 +64,6 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
   const {
     query: { code },
   } = req;
-  console.log("Mailchimp login", code);
   // Here we're exchanging the temporary code for the user's access token.
 
   const tokenResponse = await fetch(
@@ -115,10 +110,7 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
     },
   };
   const stringifyInfo = JSON.stringify(campaignMailchimp);
-  console.log(
-    "🚀 ~ file: server.js ~ line 192 ~ router.get ~ stringifyInfo",
-    stringifyInfo
-  );
+
   // Waiting to update
 
   campaign.updateMailchimp(campaignId, campaignMailchimp);
@@ -141,19 +133,12 @@ exports.getAudienceLists = async (req, res) => {
   /* 
   Here we get lists available from Mailchimp with the access token og DC.
   */
-  console.log(
-    "🚀 ~ file: server.js ~ line 257 ~ router.get ~ req",
-    req.headers
-  );
   let mailchimpInfo = "";
   if (req.headers.mailchimpinfo) {
-    console.log("Included mailchimpinfo");
     mailchimpInfo = JSON.parse(req.headers.mailchimpinfo);
   } else {
-    console.log("Didn't include mailchimp info");
     res.status(400).send("You didn't include any Mailchimp Info in the header");
   }
-  console.log("exports.getAudienceLists= ~ mailchimpInfo", mailchimpInfo);
   mailchimp.setConfig({
     accessToken: decrypt(mailchimpInfo.access_token),
     server: mailchimpInfo.dc,
@@ -205,7 +190,6 @@ exports.addMemberToMailchimp = async (userTask) => {
       subject: "Error in mailchimp",
       content: message,
     };
-    console.log("exports.addMemberToMailchimp= ~ emailTask", emailTask);
     queueController.addEmailToEmailQueue(emailTask);
     throw err;
   }

@@ -8,10 +8,6 @@ exports.create = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-  console.log(
-    "🚀 ~ file: campaign.controller.js ~ line 5 ~ reqs",
-    res.locals.reward_meta
-  );
 
   // Create a reward meta
   const newRewardMeta = new RewardMeta({
@@ -29,7 +25,6 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the campaign.",
       });
     } else {
-      console.log("DATA IN REWARD META", data);
       res.status(200).send({
         data: data,
       });

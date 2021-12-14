@@ -41,7 +41,6 @@ exports.getList = async (req, res) => {
   It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
   */
   const header = JSON.parse(req.headers.heyloyalty);
-  console.log("exports.getList= ~ header", header);
   const API_KEY = decrypt(header.api_key);
   const API_SECRET = decrypt(header.api_secret);
   const requestTimestamp = new Date().toISOString();
@@ -91,7 +90,6 @@ exports.saveKeysForCampaign = async (req, res) => {
       headers: headers,
     });
     const list = await listResponse.json();
-    console.log("exports.saveKeysForCampaign= ~ list", list);
     if (list.code && list.code != 200) {
       throw list.message;
     }
@@ -109,12 +107,7 @@ exports.saveKeysForCampaign = async (req, res) => {
       },
     };
     const stringifyInfo = JSON.stringify(campaignheyLoyalty);
-    console.log(
-      "🚀 ~ file: server.js ~ line 192 ~ router.get ~ stringifyInfo",
-      stringifyInfo
-    );
     campaign.updateheyLoyalty(req.body.campaign_id, campaignheyLoyalty);
-    console.log("send 200 status");
     res.status(200).send();
   } catch (e) {
     console.log("Send error", e);
