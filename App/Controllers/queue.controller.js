@@ -52,23 +52,23 @@ const emailQueue = async.queue((thisTask, executed) => {
   const tasksRemaining = emailQueue.length();
   console.log("emailQueue ~ tasksRemaining", tasksRemaining);
 
-  executed(null, { thisTask, tasksRemaining });
+  // executed(null, { thisTask, tasksRemaining });
   //Stress testing so we comment this
-  // emailHelper.sendMail(
-  //   thisTask.from,
-  //   thisTask.to,
-  //   thisTask.subject,
-  //   thisTask.content,
-  //   (err, data) => {
-  //     if (err) {
-  //       console.log("emailQueue ~ err", err);
-  //       emailQueue.unshift(thisTask);
-  //     } else {
-  //       console.log("We just sent an email!", data);
-  //       executed(null, { thisTask, tasksRemaining });
-  //     }
-  //   }
-  // );
+  emailHelper.sendMailThroughMailgun(
+    thisTask.from,
+    thisTask.to,
+    thisTask.subject,
+    thisTask.content,
+    (err, data) => {
+      if (err) {
+        console.log("emailQueue ~ err", err);
+        emailQueue.unshift(thisTask);
+      } else {
+        console.log("We just sent an email!", data);
+        executed(null, { thisTask, tasksRemaining });
+      }
+    }
+  );
 }, 3); // Setting email concurrent limit to 3
 // Executes when the queue is done processing all the items
 emailQueue.drain(() => {
