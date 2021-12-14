@@ -122,7 +122,7 @@ exports.saveKeysForCampaign = async (req, res) => {
   }
 };
 
-exports.addMemberToHeyLoyalty = async (req, res) => {
+exports.addMemberToHeyLoyalty = async (userTask) => {
   /* 
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
@@ -131,19 +131,19 @@ exports.addMemberToHeyLoyalty = async (req, res) => {
     The request signature is generated using the API Secret and the value of the X-Request-Timestamp header. 
     It's important that the timestamp used to generate the signature is exactly the same as that sent in the header.
     */
-  let heyLoyaltyObject = req.headers.heyloyalty;
-  heyLoyaltyObject.api_key = decrypt(req.headers.heyloyalty.api_key);
-  heyLoyaltyObject.api_secret = decrypt(req.headers.heyloyalty.api_secret);
+  let heyLoyaltyObject = userTask.heyloyalty;
+  heyLoyaltyObject.api_key = decrypt(userTask.heyloyalty.api_key);
+  heyLoyaltyObject.api_secret = decrypt(userTask.heyloyalty.api_secret);
   const requestTimestamp = new Date().toISOString();
   let hash = crypto
     .createHmac("SHA256", heyLoyaltyObject.api_secret)
     .update(requestTimestamp)
     .digest("hex");
   hash = new Buffer(hash).toString("base64");
-  const listID = req.headers.heyloyalty.listID;
+  const listID = userTask.heyloyalty.listID;
   const userData = {
-    firstname: req.body.userInfo.navn,
-    email: req.body.userInfo.email,
+    firstname: userTask.userInfo.navn,
+    email: userTask.userInfo.email,
     skipOptIn: 1,
   };
 
