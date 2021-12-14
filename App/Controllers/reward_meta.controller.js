@@ -34,17 +34,12 @@ exports.create = (req, res) => {
 
 // Update reward by id
 exports.updateById = (req, res) => {
-  console.log(
-    "🚀 ~ file: rewards.controller.js ~ line 56 ~ req.body",
-    req.body.reward_meta
-  );
   // Validate Request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
   }
-  console.log("Update reward meta id by id = ", req.body.reward_meta);
   RewardMeta.updateById(
     req.body.reward.reward_id,
     new RewardMeta(req.body.reward_meta),
@@ -101,7 +96,6 @@ exports.deleteById = (req, res, next) => {
 };
 // Find the specific rewards meta for one reward
 exports.findRewardMetaForReward = (req, res) => {
-  console.log("GOT BODY", req.body, req.params.rewardId);
   RewardMeta.findByRewardId(req.params.rewardId, (err, data) => {
     if (err) {
       console.log(
