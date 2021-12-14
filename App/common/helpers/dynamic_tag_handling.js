@@ -12,7 +12,10 @@ module.exports = {
       foundTags.forEach((tag) => {
         if (tag.includes("user_name")) {
           // Username check
-          content = content.replace(`{{user_name}}`, payload.userInfo.navn);
+          content = content.replace(
+            `{{user_name}}`,
+            payload.userInfo.player_name
+          );
         }
         if (tag.includes("reward")) {
           // Reward check
@@ -27,18 +30,24 @@ module.exports = {
         if (tag.includes("user_info")) {
           // Userinfo
           let userInfoContent = `
-          <p><strong>Navn: </strong>${payload.userInfo.navn}</p>
-          <p><strong>Email: </strong>${payload.userInfo.email}</p>
+          <p><strong>Navn: </strong>${payload.userInfo.player_name}</p>
+          <p><strong>Email: </strong>${payload.userInfo.player_email}</p>
           `;
           content = content.replace(`{{user_info}}`, userInfoContent);
         }
         if (tag.includes("user_name")) {
           // Username
-          content = content.replace(`{{user_name}}`, payload.userInfo.navn);
+          content = content.replace(
+            `{{user_name}}`,
+            payload.userInfo.player_name
+          );
         }
         if (tag.includes("user_email")) {
           // Email
-          content = content.replace(`{{user_email}}`, payload.userInfo.email);
+          content = content.replace(
+            `{{user_email}}`,
+            payload.userInfo.player_email
+          );
         }
         if (tag.includes("reward_name")) {
           // Reward name

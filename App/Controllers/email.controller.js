@@ -163,8 +163,8 @@ exports.sendEmailToOperators = async (req, res) => {
   We use this to generate the different emails.
   */
   //  Function first
-  const sendEmailFunction = (res, data) => {
-    res.locals.emailInfo = data;
+  const sendEmailFunction = (inputRes, data) => {
+    inputRes.locals.emailInfo = data;
     /* 
   Main promise array which will be used since there is chance for multiple emails to be sent. 
   We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
@@ -174,36 +174,38 @@ exports.sendEmailToOperators = async (req, res) => {
     let emailObject = {
       returnDynamicContentPayload: {
         content: "",
-        emailInfo: res.locals.emailInfo,
-        reward: res.locals.redeemInfo.data.reward,
-        didUserWin: res.locals.redeemInfo.won,
-        userInfo: res.locals.playerData,
+        emailInfo: inputRes.locals.emailInfo,
+        reward: inputRes.locals.redeemInfo.data.reward,
+        didUserWin: inputRes.locals.redeemInfo.won,
+        userInfo: inputRes.locals.playerData,
       },
-      rewardMeta: res.locals.rewardMeta,
-      didUserWin: res.locals.redeemInfo.won,
-      toMail: res.locals.playerData.player_email,
-      subject: res.locals.redeemInfo.won
+      rewardMeta: inputRes.locals.rewardMeta,
+      didUserWin: inputRes.locals.redeemInfo.won,
+      toMail: inputRes.locals.playerData.player_email,
+      subject: inputRes.locals.redeemInfo.won
         ? "Tillykke ! - Du har vundet !"
         : "Du vandt desværre ikke...",
       email_notification: checkMyJson(
-        res.locals.rewardMeta.reward_email_notification_info
+        inputRes.locals.rewardMeta.reward_email_notification_info
       )
-        ? JSON.parse(res.locals.rewardMeta.reward_email_notification_info)
+        ? JSON.parse(inputRes.locals.rewardMeta.reward_email_notification_info)
         : {},
     };
     if (emailObject.didUserWin) {
       emailObject.returnDynamicContentPayload.content =
-        res.locals.emailInfo.email_win_text;
+        inputRes.locals.emailInfo.email_win_text;
     } else {
       emailObject.returnDynamicContentPayload.content =
-        res.locals.emailInfo.email_consolation_text;
+        inputRes.locals.emailInfo.email_consolation_text;
     }
     emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
       emailObject.returnDynamicContentPayload
     );
+
     // Check for lost reward since we always know what to send in that case
     if (!emailObject.didUserWin) {
       // User lost
+      console.log("sendEmailFunction ~ emailObject", emailObject);
       currentEmailTask = {
         from: "no-reply@ugotlead.dk",
         to: emailObject.toMail,
@@ -227,7 +229,7 @@ exports.sendEmailToOperators = async (req, res) => {
       // The reward has true setting for reward_notification for the owner which means the owner get's email too
       // We set the content to the admin_text since admin is the one to recieve this email
       emailObject.returnDynamicContentPayload.content =
-        res.locals.emailInfo.email_admin_text;
+        inputRes.locals.emailInfo.email_admin_text;
       emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
         emailObject.returnDynamicContentPayload
       );
