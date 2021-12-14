@@ -52,7 +52,7 @@ const emailQueue = async.queue((thisTask, executed) => {
   const tasksRemaining = emailQueue.length();
   console.log("emailQueue ~ tasksRemaining", tasksRemaining);
 
-  executed(null, { thisTask, tasksRemaining });
+  // executed(null, { thisTask, tasksRemaining });
   // Stress testing so we comment this
   emailHelper.sendMailThroughMailgun(
     thisTask.from,
@@ -62,7 +62,8 @@ const emailQueue = async.queue((thisTask, executed) => {
     (err, data) => {
       if (err) {
         console.log("emailQueue ~ err", err);
-        emailQueue.unshift(thisTask);
+        throw err;
+        // emailQueue.unshift(thisTask);
       } else {
         console.log("We just sent an email!", data);
         executed(null, { thisTask, tasksRemaining });
