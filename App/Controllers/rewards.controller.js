@@ -1,6 +1,5 @@
 const Rewards = require("../Models/rewards.model");
 const email = require("./email.controller.js");
-const queueController = require("./queue.controller.js");
 
 exports.getAllRewardsForRedeem = (req, res, next) => {
   console.log("FIND ALL REWARDS FOR REDEEM", req.params.campaignId);
@@ -177,11 +176,7 @@ exports.updateClaim = (req, res) => {
         reward: res.locals.redeemInfo.data.reward,
       },
     };
-    queueController.addEmailToEmailQueue({
-      req: req,
-      res: res,
-      msDelay: 150,
-    });
+    email.sendEmailToOperators(req, res);
     return res.status(200).send(res.locals.redeemInfo);
   }
   // Validate Request
@@ -210,11 +205,8 @@ exports.updateClaim = (req, res) => {
             reward: res.locals.redeemInfo.data.reward,
           },
         };
-        queueController.addEmailToEmailQueue({
-          req: req,
-          res: res,
-          msDelay: 150,
-        });
+
+        email.sendEmailToOperators(req, res);
         return res.status(200).send(res.locals.redeemInfo);
       }
     }
