@@ -2,6 +2,7 @@ const campaign = require("./campaign.controller.js");
 const emailHelper = require("../common/helpers/emails");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 const fetch = require("node-fetch");
+const queueController = require("./queue.controller.js");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
@@ -198,24 +199,14 @@ exports.addMemberToMailchimp = async (userTask) => {
     return { id: addMemberResponse.id, status: addMemberResponse.status };
   } catch (err) {
     let message = `${err}`;
-    const errorEmail = new Promise((resolve, reject) => {
-      emailHelper.sendMail(
-        "no-reply@ugotlead.dk",
-        "anla@onlineplus.dk",
-        "Error in mailchimp",
-        message,
-        (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(data);
-          }
-        }
-      );
-    });
-    errorEmail.then(() => {
-      console.log("We just sent you an email andreas with email error!");
-    });
+    let emailTask = {
+      from: "no-reply@ugotlead.dk",
+      to: "anla@onlineplus.dk",
+      subject: "Error in mailchimp",
+      content: message,
+    };
+    console.log("exports.addMemberToMailchimp= ~ emailTask", emailTask);
+    queueController.addEmailToEmailQueue(emailTask);
     throw err;
   }
 };

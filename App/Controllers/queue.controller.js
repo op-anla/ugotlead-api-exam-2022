@@ -2,8 +2,6 @@
 const async = require("async");
 const mailchimpController = require("./mailchimpController.controller.js");
 const heyLoyaltyController = require("./heyLoyaltyController.controller.js");
-const emailController = require("./email.controller.js");
-const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
 // Initializing the queue
 const mailchimpQueue = async.queue((userTask, executed) => {
@@ -52,20 +50,20 @@ const emailQueue = async.queue((emailTask, executed) => {
   // Number of tasks remaining and to be processed
   const tasksRemaining = emailQueue.length();
 
-  // emailHelper.sendMail(
-  //   emailTask.from,
-  //   emailTask.to,
-  //   emailTask.subject,
-  //   emailTask.content,
-  //   (err, data) => {
-  //     if (err) {
-  //       throw err;
-  //     } else {
-  //       console.log("We just sent an email!", data);
-  //       executed(null, { userTask, tasksRemaining });
-  //     }
-  //   }
-  // );
+  emailHelper.sendMail(
+    emailTask.from,
+    emailTask.to,
+    emailTask.subject,
+    emailTask.content,
+    (err, data) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log("We just sent an email!", data);
+        executed(null, { emailTask, tasksRemaining });
+      }
+    }
+  );
 }, 3); // Setting email concurrent limit to 3
 // Executes when the queue is done processing all the items
 emailQueue.drain(() => {
@@ -74,33 +72,32 @@ emailQueue.drain(() => {
 /* 
 Functions
 */
-exports.addUserToMailchimpQueue = (user) => {
-  mailchimpQueue.push(user, (error, { task, tasksRemaining }) => {
+exports.addUserToMailchimpQueue = (userTask) => {
+  mailchimpQueue.push(userTask, (error, { userTask, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${task}`);
+      console.log(`An error occurred while processing task ${userTask}`);
     } else {
-      console.log(`Finished processing task ${task}. ${tasksRemaining}
+      console.log(`Finished processing task ${userTask}. ${tasksRemaining}
                     tasks remaining`);
     }
   });
 };
-exports.addUserToHeyloyaltyQueue = (user) => {
-  heyloyalty.push(user, (error, { task, tasksRemaining }) => {
+exports.addUserToHeyloyaltyQueue = (userTask) => {
+  heyloyalty.push(userTask, (error, { userTask, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${task}`);
+      console.log(`An error occurred while processing task ${userTask}`);
     } else {
-      console.log(`Finished processing task ${task}. ${tasksRemaining}
+      console.log(`Finished processing task ${userTask}. ${tasksRemaining}
                       tasks remaining`);
     }
   });
 };
 exports.addEmailToEmailQueue = (emailTask) => {
-  console.log("emailTask", emailTask);
-  emailQueue.push(emailTask, (error, { task, tasksRemaining }) => {
+  emailQueue.push(emailTask, (error, { emailTask, tasksRemaining }) => {
     if (error) {
-      console.log(`An error occurred while processing task ${task}`);
+      console.log(`An error occurred while processing task ${emailTask}`);
     } else {
-      console.log(`Finished processing task ${task}. ${tasksRemaining}
+      console.log(`Finished processing task ${emailTask}. ${tasksRemaining}
                         tasks remaining`);
     }
   });

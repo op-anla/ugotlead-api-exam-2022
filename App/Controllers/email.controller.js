@@ -224,6 +224,7 @@ exports.sendEmailToOperators = async (req, res) => {
         subject: emailObject.subject,
         content: emailObject.replaceContent,
       };
+      console.log("sendEmailFunction ~ currentEmailTask", currentEmailTask);
       queueController.addEmailToEmailQueue(currentEmailTask);
     }
     if (emailObject.email_notification.reward_notification_for_owner == true) {
