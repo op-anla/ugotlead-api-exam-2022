@@ -205,7 +205,6 @@ exports.sendEmailToOperators = async (req, res) => {
     // Check for lost reward since we always know what to send in that case
     if (!emailObject.didUserWin) {
       // User lost
-      console.log("sendEmailFunction ~ emailObject", emailObject);
       currentEmailTask = {
         from: "no-reply@ugotlead.dk",
         to: emailObject.toMail,
