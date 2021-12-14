@@ -1,7 +1,7 @@
-const mailSetup = require("../../Models/emailsetup");
+const emailSetup = require("../../Models/emailsetup");
 
 exports.sendMail = (fromMail, toMail, subject, content, result) => {
-  mailSetup.sendMail(
+  emailSetup.outlookTransporter(
     {
       from: fromMail,
       to: toMail,
