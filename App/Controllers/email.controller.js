@@ -3,6 +3,7 @@ const mailSetup = require("../Models/emailsetup");
 const EmailModel = require("../Models/emails.model");
 const emailHelper = require("../common/helpers/emails");
 const redisCache = require("./redisCache.controller.js");
+const queueController = require("./queue.controller.js");
 
 const dynamic_tag_handling = require("../common/helpers/dynamic_tag_handling");
 
@@ -165,15 +166,14 @@ exports.sendEmailToOperators = async (req, res) => {
   We use this to generate the different emails.
   */
   //  Function first
-  const sendEmailFunction = async (req, res, data) => {
+  const sendEmailFunction = (res, data) => {
     res.locals.emailInfo = data;
     /* 
   Main promise array which will be used since there is chance for multiple emails to be sent. 
   We don't want to send a response after the first email that was sent correctly since it should show the user an error. 
   */
-    let promises = [];
     // Main OBJECT
-
+    let currentEmailTask = {};
     let emailObject = {
       returnDynamicContentPayload: {
         content: "",
@@ -207,43 +207,24 @@ exports.sendEmailToOperators = async (req, res) => {
     // Check for lost reward since we always know what to send in that case
     if (!emailObject.didUserWin) {
       // User lost
-      const sendingLoserEmail = new Promise((resolve, reject) => {
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          emailObject.toMail,
-          emailObject.subject,
-          emailObject.replaceContent,
-          (err, data) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(data);
-            }
-          }
-        );
-      });
-      promises.push(sendingLoserEmail);
+      currentEmailTask = {
+        from: "no-reply@ugotlead.dk",
+        to: emailObject.toMail,
+        subject: emailObject.subject,
+        content: emailObject.replaceContent,
+      };
+      queueController.addEmailToEmailQueue(currentEmailTask);
     }
     // We expect that the user has won here otherwise it would have returned above
     if (emailObject.email_notification.reward_mail_for_user == true) {
       // The reward that the user either won or lost has set to true which means the user should recieve email
-
-      const sendingEmailToUser = new Promise((resolve, reject) => {
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          emailObject.toMail,
-          emailObject.subject,
-          emailObject.replaceContent,
-          (err, data) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(data);
-            }
-          }
-        );
-      });
-      promises.push(sendingEmailToUser);
+      currentEmailTask = {
+        from: "no-reply@ugotlead.dk",
+        to: emailObject.toMail,
+        subject: emailObject.subject,
+        content: emailObject.replaceContent,
+      };
+      queueController.addEmailToEmailQueue(currentEmailTask);
     }
     if (emailObject.email_notification.reward_notification_for_owner == true) {
       // The reward has true setting for reward_notification for the owner which means the owner get's email too
@@ -253,32 +234,14 @@ exports.sendEmailToOperators = async (req, res) => {
       emailObject.replaceContent = dynamic_tag_handling.returnDynamicContent(
         emailObject.returnDynamicContentPayload
       );
-      const sendingEmailToOwner = new Promise((resolve, reject) => {
-        emailHelper.sendMail(
-          "no-reply@ugotlead.dk",
-          "anla@onlineplus.dk",
-          "U GOT LEAD - En bruger har vundet en præmie!",
-          emailObject.replaceContent,
-          (err, data) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(data);
-            }
-          }
-        );
-      });
-      promises.push(sendingEmailToOwner);
+      currentEmailTask = {
+        from: "no-reply@ugotlead.dk",
+        to: "anla@onlineplus.dk",
+        subject: "U GOT LEAD - En bruger har vundet en præmie!",
+        content: emailObject.replaceContent,
+      };
+      queueController.addEmailToEmailQueue(currentEmailTask);
     }
-    // Run through all promises
-    Promise.all(promises)
-      .then((response) => {
-        return response;
-      })
-      .catch((e) => {
-        console.log("Something went wrong with emails", e);
-        throw e;
-      });
   };
   // Check redis cache
   const cachedResponse = await redisCache.getKey(
@@ -286,7 +249,7 @@ exports.sendEmailToOperators = async (req, res) => {
   );
   if (cachedResponse != null || cachedResponse != undefined) {
     let formattedResponse = JSON.parse(cachedResponse);
-    await sendEmailFunction(req, res, formattedResponse);
+    sendEmailFunction(res, formattedResponse);
   }
   let campaignId = req.body.campaign.campaign_id;
   EmailModel.findById(campaignId, async (err, data) => {
@@ -299,7 +262,7 @@ exports.sendEmailToOperators = async (req, res) => {
         60 * 60 * 24,
         JSON.stringify(data)
       );
-      await sendEmailFunction(req, res, data);
+      sendEmailFunction(res, data);
     }
   });
 };

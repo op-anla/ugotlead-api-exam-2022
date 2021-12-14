@@ -163,34 +163,34 @@ exports.getAudienceLists = async (req, res) => {
     lists,
   });
 };
-exports.addMemberToMailchimp = async (req, res) => {
+exports.addMemberToMailchimp = async (userTask) => {
   /* 
   This endpoint will add members to the list from request. The information required will normally be
   fullname and email. 
   */
   //  Check some validation
-  if (!req.body.userInfo.navn || !req.body.userInfo.email) {
+  if (!userTask.userInfo.navn || !userTask.userInfo.email) {
     throw new Error("Please provide the correct userInfo in the body");
   }
   // Check header information
-  if (!req.headers.mailchimpinfo) {
+  if (!userTask.mailchimpinfo) {
     throw new Error("Please provide the correct mailchimp info");
   }
 
-  let mailchimpInfo = req.headers.mailchimpinfo;
+  let mailchimpInfo = userTask.mailchimpinfo;
   mailchimpInfo.access_token = decrypt(mailchimpInfo.access_token);
   mailchimp.setConfig({
     accessToken: mailchimpInfo.access_token,
     server: mailchimpInfo.dc,
   });
   const mergeFields = {
-    FNAME: req.body.userInfo.navn,
+    FNAME: userTask.userInfo.navn,
   };
   try {
     const addMemberResponse = await mailchimp.lists.addListMember(
       mailchimpInfo.listID,
       {
-        email_address: req.body.userInfo.email,
+        email_address: userTask.userInfo.email,
         merge_fields: mergeFields,
         status: "subscribed",
       }

@@ -189,28 +189,21 @@ exports.addUserToIntegrations = async (req, res, next) => {
     integrations.forEach((integration) => {
       /* Getting the keys */
       let keys = Object.keys(integration);
+      let userTask = {};
       switch (keys[0]) {
         case "mailchimp":
-          req.headers = {
-            ...req.headers,
+          userTask = {
             mailchimpinfo: integration["mailchimp"],
+            userInfo: req.body.userInfo,
           };
-          queueController.addUserToMailchimpQueue({
-            req: req,
-            res: res,
-            msDelay: 50,
-          });
+          queueController.addUserToMailchimpQueue(userTask);
           break;
         case "heyLoyalty":
-          req.headers = {
-            ...req.headers,
+          userTask = {
             heyloyalty: integration["heyLoyalty"],
+            userInfo: req.body.userInfo,
           };
-          queueController.addUserToHeyloyaltyQueue({
-            req: req,
-            res: res,
-            msDelay: 50,
-          });
+          queueController.addUserToHeyloyaltyQueue(userTask);
           break;
         default:
           break;
