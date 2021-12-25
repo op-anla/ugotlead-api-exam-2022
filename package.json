@@ -1,6 +1,6 @@
 {
   "name": "UGOTLEAD-Express-API",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This is an Express Server created for UGOTLEAD Product ",
   "main": "./cluster.js",
   "scripts": {
