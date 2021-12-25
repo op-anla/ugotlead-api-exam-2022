@@ -133,7 +133,7 @@ User.updateById = (id, user, result) => {
           );
           return;
         } else {
-          result(null, err);
+          result(err, null);
           return;
         }
       }
@@ -171,7 +171,7 @@ User.getAll = (result) => {
   sql.query("SELECT * FROM user", async (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 116 ~ sql.query ~ err", err);
-      result(null, err);
+      result(err, nul);
       return;
     }
 
@@ -184,7 +184,7 @@ User.remove = (id, result) => {
   sql.query("DELETE FROM user WHERE user_id = ?", id, (err, res) => {
     if (err) {
       console.log("🚀 ~ file: user.model.js ~ line 129 ~ sql.query ~ err", err);
-      result(null, err);
+      result(err, null);
       return;
     }
 

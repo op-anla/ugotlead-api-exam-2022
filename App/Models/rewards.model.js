@@ -27,7 +27,7 @@ Reward.getAllRewards = (result) => {
           "🚀 ~ file: reward.model.js ~ line 21 ~ sql.query ~ err",
           err
         );
-        result(null, err);
+        result(err, null);
         return;
       }
       // Here we have the correct response
@@ -52,7 +52,6 @@ Reward.getSingleRewardById = (reward_id, result) => {
       }
 
       if (res) {
-        console.log("found reward: ", res);
         result(null, res[0]);
         return;
       }
@@ -68,6 +67,36 @@ Reward.getSingleRewardById = (reward_id, result) => {
   );
 };
 Reward.findByCampaignId = (campaignId, result) => {
+  sql.query(
+    `SELECT rewards.campaign_id, rewards.large_reward_image_url,rewards.reward_order_number,rewards.reward_description,rewards.reward_type,rewards.reward_value_type,rewards.reward_value,rewards.reward_image_url,rewards.reward_name FROM rewards WHERE campaign_id = ? ORDER BY reward_order_number ASC`,
+    campaignId,
+    (err, res) => {
+      if (err) {
+        console.log(
+          "🚀 ~ file: campaign.model.js ~ line 31 ~ sql.query ~ err",
+          err
+        );
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        console.log("found rewards: ", res.length);
+        result(null, res);
+        return;
+      }
+
+      // not found rewards with the id
+      result(
+        {
+          kind: "not_found",
+        },
+        null
+      );
+    }
+  );
+};
+Reward.findByCampaignIdFullData = (campaignId, result) => {
   sql.query(
     `SELECT * FROM rewards WHERE campaign_id = ? ORDER BY reward_order_number ASC`,
     campaignId,
@@ -156,7 +185,7 @@ Reward.updateById = (id, reward, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -191,7 +220,7 @@ Reward.updateClaimedProp = (id, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

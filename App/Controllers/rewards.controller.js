@@ -8,16 +8,7 @@ exports.getAllRewardsForRedeem = (req, res, next) => {
         "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
         err
       );
-
-      if (err.kind === "not_found") {
-        res.status(200).send({
-          empty: true,
-        });
-      } else {
-        res.status(500).send({
-          message: "Error retrieving rewards with id " + req.params.campaignId,
-        });
-      }
+      return res.status(500).send();
     } else {
       res.locals.rewards = data;
       return next();
@@ -47,6 +38,30 @@ exports.findRewardsByCampaignId = (req, res) => {
     }
   });
 };
+// Find the specific rewards for one campaign
+exports.findRewardsByCampaignIdFullData = (req, res) => {
+  Rewards.findByCampaignIdFullData(req.params.campaignId, (err, data) => {
+    if (err) {
+      console.log(
+        "🚀 ~ file: rewards.controller.js ~ line 7 ~ Rewards.findByCampaignId ~ err",
+        err
+      );
+
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          empty: true,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving rewards with id " + req.params.campaignId,
+        });
+      }
+    } else {
+      res.status(200).send(data);
+    }
+  });
+};
+
 // Find the specific reward by entryData
 exports.getRewardInfoByEntryData = (req, res) => {
   let entries = res.locals.entries;
@@ -62,7 +77,7 @@ exports.getRewardInfoByEntryData = (req, res) => {
         if (err) {
           res.status(500).send({
             message:
-              err.message || "Some error occurred while retrieving campaigns.",
+              err.message || "Some error occurred while retrieving rewards.",
           });
         } else {
           // Success

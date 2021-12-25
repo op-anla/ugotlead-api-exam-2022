@@ -17,7 +17,7 @@ RewardMeta.updateById = (id, rewardMeta, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: reward.model.js ~ line 74 ~ err", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -53,7 +53,7 @@ RewardMeta.remove = (id, result) => {
           "🚀 ~ file: campaign.model.js ~ line 51 ~ sql.query ~ err",
           err
         );
-        result(null, err);
+        result(err, null);
         return;
       }
 

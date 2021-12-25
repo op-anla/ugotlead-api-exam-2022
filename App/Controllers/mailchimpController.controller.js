@@ -6,6 +6,7 @@ const queueController = require("./queue.controller.js");
 const querystring = require("querystring");
 const { URLSearchParams } = require("url");
 const { encrypt, decrypt } = require("../common/middleware/crypto");
+const db = require("../Models/db.js");
 /* 
 Version: 1.0
 */
@@ -109,11 +110,9 @@ exports.updateCampaignWithMailchimpInfo = async (req, res) => {
       access_token: hashAccess_token,
     },
   };
-  const stringifyInfo = JSON.stringify(campaignMailchimp);
 
   // Waiting to update
-
-  campaign.updateMailchimp(campaignId, campaignMailchimp);
+  await campaign.updateMailchimpAfterIntegration(campaignId, campaignMailchimp);
 
   // Below, we're using the access token and server prefix to make an
   // authenticated request on behalf of the user who just granted OAuth access.

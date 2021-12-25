@@ -20,7 +20,7 @@ exports.getLoggingInfoByEntryData = (req, res, next) => {
         if (err) {
           res.status(500).send({
             message:
-              err.message || "Some error occurred while retrieving campaigns.",
+              err.message || "Some error occurred while retrieving logs.",
           });
         } else {
           // Success
@@ -136,9 +136,7 @@ browserChecker = (ua) => {
 
 exports.createLogForUser = (req, res) => {
   const _user_agent = req.headers["user-agent"];
-  // if (_user_agent.includes("Apache-HttpClient")) {
-  //   return res.status(201).send();
-  // }
+
   const _os = osChecker(_user_agent);
   const _device = deviceChecker(_user_agent);
   const _browser = browserChecker(_user_agent);
@@ -158,14 +156,18 @@ exports.createLogForUser = (req, res) => {
   });
 
   // Save log in the database
-  Logging.create(newLog, (err, data) => {
+  Logging.createLog(newLog, (err, data) => {
     if (err) {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the campaign.",
+        message: "Some error occurred while creating the campaign.",
       });
     } else {
-      res.status(201).send(data);
+      // This is a non-auth endpoint which means we are careful what to send to the user
+      // We only send back the log id which was created.
+      let formattedId = {
+        log_id: data.log_id,
+      };
+      res.status(201).send(formattedId);
     }
   });
 };
