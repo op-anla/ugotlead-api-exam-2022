@@ -20,7 +20,6 @@ on:
 
 jobs:
   automerge:
-    needs: [autoapprove]
     if: github.event.pull_request.user.login == 'ugotlead-bot'
     runs-on: ubuntu-latest
     steps:
