@@ -62,6 +62,7 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           // Go next function
           return next();
         } else {
+          console.log("Wrong password!");
           return res.status(400).send({
             errors: ["Invalid password"],
           });
