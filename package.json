@@ -1,6 +1,6 @@
 {
   "name": "ugotlead-api-exam-2022",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "This is an Express Server created for UGOTLEAD Product. This is specifically made for exam 2022",
   "main": "./cluster.js",
   "scripts": {
