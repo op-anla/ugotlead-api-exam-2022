@@ -17,7 +17,7 @@ LayoutWidgetModel.getAll = (result) => {
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
         err
       );
-      result(err, null);
+      result(null, err);
       return;
     }
     result(null, res);
@@ -59,7 +59,7 @@ LayoutWidgetModel.updateById = (id, widget, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: layoutwidget.model.js ~ line 51 ~ err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 
@@ -95,7 +95,7 @@ LayoutWidgetModel.remove = (id, result) => {
           "🚀 ~ file: layoutwidget.model.js ~ line 88 ~ sql.query ~ err",
           err
         );
-        result(err, null);
+        result(null, err);
         return;
       }
 

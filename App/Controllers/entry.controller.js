@@ -55,29 +55,14 @@ exports.createEntry = (req, res, next) => {
     }
   });
 };
-exports.findEntryCount = (req, res) => {
-  let campaignId = req.params.campaignId;
-  EntryModel.getAllEntryRowCount(campaignId, (err, data) => {
-    if (err) {
-      res
-        .status(400)
-        .send("Something went wrong with trying to get all entries count");
-    }
-    res.send(JSON.stringify(data));
-  });
-};
+
 // Retrieve all entries with campaign_id from the database.
 exports.findAllEntriesForCampaign = (req, res, next) => {
-  console.log("Finding all entries with params", req.params);
-  let payload = {
-    indexStart: Number(req.params.indexStart),
-    limitNum: Number(req.params.limitQuery),
-    campaignId: req.params.campaignId,
-  };
-  EntryModel.getAllByCampaignId(payload, (err, data) => {
+  EntryModel.getAllByCampaignId(req.params.campaignId, (err, data) => {
     if (err) {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving entries.",
+        message:
+          err.message || "Some error occurred while retrieving campaigns.",
       });
     } else {
       res.locals.entries = data;

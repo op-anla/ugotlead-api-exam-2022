@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 const cors = require("cors");
 const http = require("http");
+const fetch = require("node-fetch");
 require("dotenv").config();
 /* 
 -----------------------------------------------
@@ -89,20 +90,12 @@ router.get(`/${apiUrl}/campaigns`, [
   ValidationMiddleware.validJWTNeeded,
   campaigns.findAll,
 ]);
-router.get(`/${apiUrl}/get-entry-row-count/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
-  entry.findEntryCount,
-]);
-router.get(`/${apiUrl}/get-all-entrydata/:campaignId/:indexStart/:limitQuery`, [
+router.get(`/${apiUrl}/get-all-entrydata/:campaignId`, [
   ValidationMiddleware.validJWTNeeded,
   entry.findAllEntriesForCampaign,
   player.getAllPlayersByAllEntries,
   logging.getLoggingInfoByEntryData,
   rewards.getRewardInfoByEntryData,
-]);
-router.get(`/${apiUrl}/campaigns/fulldata/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
-  campaigns.findOneFullData,
 ]);
 router.get(`/${apiUrl}/campaigns/:campaignId`, [campaigns.findOne]);
 router.get(`/${apiUrl}/campaign-stats/:campaignId`, [
@@ -271,10 +264,6 @@ REWARDS
 -----------------------------------------------
 */
 router.get(`/${apiUrl}/rewards/:campaignId`, [rewards.findRewardsByCampaignId]);
-router.get(`/${apiUrl}/rewards/fulldata/:campaignId`, [
-  ValidationMiddleware.validJWTNeeded,
-  rewards.findRewardsByCampaignIdFullData,
-]);
 router.get(`/${apiUrl}/rewards-meta/:rewardId`, [
   ValidationMiddleware.validJWTNeeded,
   reward_meta.findRewardMetaForReward,
@@ -312,12 +301,19 @@ router.post(`/${apiUrl}/create-logging/:campaignId`, [
 ]);
 /* 
 -----------------------------------------------
+THROTTLE AND INTEGRATIONS
+-----------------------------------------------
+*/
+router.get(`/${apiUrl}/throttle-requests`, [], (req, res) => {
+  console.log("OKAY HAHA LOL");
+});
+/* 
+-----------------------------------------------
 REWARD AND REDEEM 
 -----------------------------------------------
 */
 router.post(`/${apiUrl}/checkreward/:campaignId`, [
   RequestValidation.validateDomain,
-  player.checkPlayerParticipation,
   rewards.getAllRewardsForRedeem,
   campaigns.addUserToIntegrations,
   player.createPlayer,

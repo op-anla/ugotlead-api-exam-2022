@@ -68,7 +68,7 @@ EmailModel.updateById = (id, email, result) => {
     (err, res) => {
       if (err) {
         console.log("err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 

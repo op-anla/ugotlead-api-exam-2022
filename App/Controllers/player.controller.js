@@ -1,48 +1,20 @@
-const PlayerModel = require("../Models/player.model");
+const Player = require("../Models/player.model");
 
 /* 
 -----------------------------------------------
 PLAYER
 -----------------------------------------------
 */
-exports.checkPlayerParticipation = (req, res, next) => {
-  // Check if player already played
-  /* 
-  First endpoint in checkreward 
-  Basic endpoint validation 
-  */
-  if (!req.body) {
-    return res.status(500).send();
-  }
-  if (!req.body.userInfo.navn && !req.body.userInfo.email) {
-    return res.status(500).send();
-  }
-  let payload = {
-    userInfo: req.body.userInfo,
-    campaignId: req.params.campaignId,
-  };
-  PlayerModel.checkIfUserHasPlayedOnThisCampaing(payload, (err, data) => {
-    if (err) {
-      return res.status(403).send("You may not participate again...");
-    }
-    console.log(
-      "User did not participate and we allow them to continue",
-      err,
-      data
-    );
-    return next();
-  });
-};
+
 exports.createPlayer = (req, res, next) => {
   // Create a player
-  const newPlayer = new PlayerModel({
+  const newPlayer = new Player({
     player_name: req.body.userInfo.navn,
     player_email: req.body.userInfo.email,
-    campaign_id: Number(req.params.campaignId),
   });
 
   // Save player in the database
-  PlayerModel.create(newPlayer, (err, data) => {
+  Player.create(newPlayer, (err, data) => {
     if (err) {
       res.status(500).send({
         message:
@@ -65,11 +37,11 @@ exports.getAllPlayersByAllEntries = (req, res, next) => {
       return next();
     }
     entries.forEach((entry, index, array) => {
-      PlayerModel.getPlayerById(entry.player_id, (err, data) => {
+      Player.getPlayerById(entry.player_id, (err, data) => {
         if (err) {
           res.status(500).send({
             message:
-              err.message || "Some error occurred while retrieving player.",
+              err.message || "Some error occurred while retrieving campaigns.",
           });
         } else {
           // Success

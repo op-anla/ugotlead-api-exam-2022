@@ -66,7 +66,7 @@ Company.getAll = (result) => {
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
         err
       );
-      result(err, null);
+      result(null, err);
       return;
     }
     result(null, res);
@@ -79,7 +79,7 @@ Company.countAll = (result) => {
         "🚀 ~ file: campaign.model.js ~ line 101 ~ sql.query ~ err",
         err
       );
-      result(err, null);
+      result(null, err);
       return;
     }
     result(null, res);
@@ -94,7 +94,7 @@ Company.updateById = (id, company, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 

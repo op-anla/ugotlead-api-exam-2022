@@ -28,7 +28,7 @@ StandardLayoutModel.updateLayoutByCampaignId = (
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 

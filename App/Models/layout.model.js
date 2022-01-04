@@ -21,7 +21,7 @@ Layout.remove = (campaignId, widgetId, result) => {
           "🚀 ~ file: company.model.js ~ line 51 ~ sql.query ~ err",
           err
         );
-        result(err, null);
+        result(null, err);
         return;
       }
 
@@ -89,7 +89,7 @@ We need both the id of layout we wanna change but also the id of the campaign th
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 

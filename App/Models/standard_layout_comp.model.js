@@ -56,7 +56,7 @@ StandardLayoutCompModel.updateById = (layoutComp, layoutCompId, result) => {
     (err, res) => {
       if (err) {
         console.log("🚀 ~ file: campaign.model.js ~ line 74 ~ err", err);
-        result(err, null);
+        result(null, err);
         return;
       }
 
@@ -107,7 +107,7 @@ StandardLayoutCompModel.remove = (id, result) => {
       if (err) {
         console.log("err", err);
 
-        result(err, null);
+        result(null, err);
         return;
       }
 
