@@ -1,6 +1,7 @@
 // cluster.js
 const cluster = require("cluster");
 const os = require("os");
+
 if (cluster.isMaster) {
   const cpus = os.cpus().length / 2; //Change to const when prod
   // cpus = 2; //Testing
