@@ -69,12 +69,9 @@ User.findByUsernameAndEmail = (username, email) => {
           return reject(err);
         }
         if (res.length > 0) {
+          console.log("returnnewPromise ~ res.length", res[0]);
           //   result(null, validatedUser);
 
-          console.log(
-            "🚀 ~ file: user.model.js ~ line 48 ~ returnnewPromise ~ res[0]",
-            res[0]
-          );
           return resolve(res[0]);
         } else {
           return resolve({});
