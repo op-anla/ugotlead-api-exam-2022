@@ -87,7 +87,7 @@ User.findById = (userId, result) => {
       result(err, null);
       return;
     }
-    console.log(res[0].password);
+    console.log("What is res? ", res);
     /* 
     Here we validate the response so the client will never get the hashed password. 
     Even if the password is hashed they should NEVER be able to see it.
