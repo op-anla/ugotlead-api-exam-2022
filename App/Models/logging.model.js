@@ -28,7 +28,7 @@ Logging.getAllLogs = (result) => {
 };
 
 Logging.findLog = (campaignId, session_id, result) => {
-  console.log("🚀 ~ file: logging.model.js ~ line 14 ~ log", session_id);
+  console.log("session_id", session_id);
   sql.query(
     `SELECT * FROM logs WHERE (campaign_id = ? AND SESSION_ID = ?)`,
     [campaignId, session_id],
@@ -41,14 +41,13 @@ Logging.findLog = (campaignId, session_id, result) => {
         result(err, null);
         return;
       }
-
+      console.log("Logging res", res);
       if (res.length) {
         console.log("found logs: ", res);
         result(null, res);
         return;
       }
 
-      // not found log with the specific HTTP USER AGENT
       result(
         {
           kind: "not_found",

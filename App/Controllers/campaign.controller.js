@@ -180,32 +180,43 @@ Add user to all the integrations
 */
 exports.addUserToIntegrations = async (req, res, next) => {
   // Submit user func
+
   const submitUserToIntegrations = async (req, res, data) => {
-    const integrations = JSON.parse(data.campaign_integrations);
-    let promises = [];
-    integrations.forEach((integration) => {
-      /* Getting the keys */
-      let keys = Object.keys(integration);
-      let userTask = {};
-      switch (keys[0]) {
-        case "mailchimp":
-          userTask = {
-            mailchimpinfo: integration["mailchimp"],
-            userInfo: req.body.userInfo,
-          };
-          queueController.addUserToMailchimpQueue(userTask);
-          break;
-        case "heyLoyalty":
-          userTask = {
-            heyloyalty: integration["heyLoyalty"],
-            userInfo: req.body.userInfo,
-          };
-          queueController.addUserToHeyloyaltyQueue(userTask);
-          break;
-        default:
-          break;
-      }
-    });
+    // Check if integrations is empty
+    if (
+      data.campaign_integrations != "" &&
+      data.campaign_integrations != null &&
+      data.campaign_integrations != undefined
+    ) {
+      const integrations = JSON.parse(data.campaign_integrations);
+      let promises = [];
+      integrations.forEach((integration) => {
+        /* Getting the keys */
+        let keys = Object.keys(integration);
+        let userTask = {};
+        switch (keys[0]) {
+          case "mailchimp":
+            userTask = {
+              mailchimpinfo: integration["mailchimp"],
+              userInfo: req.body.userInfo,
+            };
+            queueController.addUserToMailchimpQueue(userTask);
+            break;
+          case "heyLoyalty":
+            userTask = {
+              heyloyalty: integration["heyLoyalty"],
+              userInfo: req.body.userInfo,
+            };
+            queueController.addUserToHeyloyaltyQueue(userTask);
+            break;
+          default:
+            break;
+        }
+      });
+    } else {
+      return;
+    }
+
     //
     const values = await Promise.all(promises);
     // We have added the user to all integrations
@@ -237,6 +248,7 @@ exports.addUserToIntegrations = async (req, res, next) => {
         60 * 60 * 24,
         JSON.stringify(data)
       );
+
       const integrationResponse = await submitUserToIntegrations(
         req,
         res,
