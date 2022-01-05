@@ -157,7 +157,7 @@ exports.delete = (req, res) => {
     } else {
       // Delete cache for this specific campaign
       redisCache.deleteKey(`cache_campaign_${req.params.campaignId}`);
-      redisCache.deleteKey(`cache_allcampaigns`);
+      redisCache.deleteKey(`cache_allCampaigns`);
 
       res.send({
         message: `Campaign was deleted successfully!`,
