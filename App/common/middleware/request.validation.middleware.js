@@ -9,6 +9,8 @@ exports.validateDomain = (req, res, next) => {
       "127.0.0.1:3000",
       "app.ugotlead.dk/",
       "app.ugotlead.dk",
+      "exam.app.ugotlead.dk",
+      "exam.app.ugotlead.dk/",
       "127.0.0.1:8000",
       "127.0.0.1:8000",
       "127.0.0.1:8005",
