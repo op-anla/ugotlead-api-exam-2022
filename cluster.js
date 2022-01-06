@@ -17,6 +17,7 @@ if (cluster.isMaster) {
   });
   // Right after the fork loop within the isMaster=true block
   cluster.on("exit", (worker, code, signal) => {
+    // Check if the error code received was intentional or if we should restart a worker.
     if (code !== 0 && !worker.exitedAfterDisconnect) {
       console.log(`Worker ${worker.id} crashed. ` + "Starting a new worker...");
       cluster.fork();
