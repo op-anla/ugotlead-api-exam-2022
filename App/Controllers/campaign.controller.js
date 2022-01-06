@@ -215,14 +215,14 @@ exports.addUserToIntegrations = async (req, res, next) => {
             break;
         }
       });
+
+      //
+      const values = await Promise.all(promises);
+      // We have added the user to all integrations
+      return values;
     } else {
       return;
     }
-
-    //
-    const values = await Promise.all(promises);
-    // We have added the user to all integrations
-    return values;
   };
   // Check redis cache
   const cachedResponse = await redisCache.getKey(
