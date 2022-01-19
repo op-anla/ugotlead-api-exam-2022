@@ -1,6 +1,7 @@
 const Campaign = require("../Models/campaign.model");
 const redisCache = require("./redisCache.controller.js");
 const queueController = require("./queue.controller.js");
+const ormDB = require("../Models/db-orm.js");
 // Create and Save a new campaign
 exports.create = (req, res) => {
   // Validate request

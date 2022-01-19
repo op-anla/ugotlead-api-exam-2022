@@ -1,5 +1,4 @@
 require("dotenv").config();
-// const mysql = require("mysql");
 const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -18,13 +17,13 @@ const sequelize = new Sequelize(
   }
 );
 
-const db = {};
+const ormDB = {};
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+ormDB.Sequelize = Sequelize;
+ormDB.sequelize = sequelize;
 // Models
-db.campaigns = require("./campaign.model.orm.js")(sequelize, Sequelize);
+ormDB.campaigns = require("./campaign.model.orm.js")(sequelize, Sequelize);
 // Sync the database to our models.
 // Basically do nothing if the models exists and create if it doesn't exist
-db.sequelize.sync();
-module.exports = db;
+ormDB.sequelize.sync();
+module.exports = ormDB;
