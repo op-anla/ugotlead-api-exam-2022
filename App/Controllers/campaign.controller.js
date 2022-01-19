@@ -48,6 +48,7 @@ exports.findAll = async (req, res) => {
     return res.status(200).send(JSON.parse(cachedResponse));
   }
   try {
+    // Built in sequelize method
     const campaigns = ormDB.campaigns.findAll();
     redisCache.saveKey(
       "cache_allCampaigns",
