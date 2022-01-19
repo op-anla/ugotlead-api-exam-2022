@@ -47,18 +47,18 @@ exports.findAll = async (req, res) => {
   if (cachedResponse != null || cachedResponse != undefined) {
     return res.status(200).send(JSON.parse(cachedResponse));
   }
-  Campaign.getAll((err, data) => {
-    if (err) {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving campaigns.",
-      });
-    } else {
-      // If we ended up getting data from DB we add it to cache
-      redisCache.saveKey("cache_allCampaigns", 60 * 30, JSON.stringify(data));
-      res.status(200).send(data);
-    }
-  });
+  try {
+    const campaigns = ormDB.campaigns.findAll();
+    redisCache.saveKey(
+      "cache_allCampaigns",
+      60 * 30,
+      JSON.stringify(campaigns)
+    );
+    res.status(200).send(campaigns);
+  } catch (error) {
+    console.log("exports.findAll= ~ error", error);
+    res.status(500).send(error);
+  }
 };
 exports.findStatsForCampaign = (req, res) => {
   Campaign.findStatsForCampaign(req.params.campaignId, (err, data) => {
