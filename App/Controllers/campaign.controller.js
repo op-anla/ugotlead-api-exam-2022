@@ -49,7 +49,7 @@ exports.findAll = async (req, res) => {
   }
   try {
     // Built in sequelize method
-    const campaigns = ormDB.campaigns.findAll();
+    const campaigns = await ormDB.campaigns.findAll();
     redisCache.saveKey(
       "cache_allCampaigns",
       60 * 30,
